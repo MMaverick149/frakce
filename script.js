@@ -1,8 +1,9 @@
 // --- DATA (LocalStorage) ---
-let m_data = JSON.parse(localStorage.getItem('syn_m')) || ["Vito Scaletta", "David Ricci"];
-let f_data = JSON.parse(localStorage.getItem('syn_f')) || {};
-let s_data = JSON.parse(localStorage.getItem('syn_s')) || { zbrane: 0, munice: 0, kontraband: 0 };
-let l_data = JSON.parse(localStorage.getItem('syn_l')) || [];
+// Formát: { jmeno: { rank: "Boss", phone: "123", items: "", notes: "" } }
+let m_list = JSON.parse(localStorage.getItem('syn_m_list')) || ["Vito Scaletta", "David Ricci"];
+let f_data = JSON.parse(localStorage.getItem('syn_f_data')) || {};
+let s_data = JSON.parse(localStorage.getItem('syn_s_data')) || { zbrane: 0, munice: 0, kontraband: 0 };
+let l_data = JSON.parse(localStorage.getItem('syn_l_data')) || [];
 let currentU = "";
 
 // --- NAVIGATION ---
@@ -11,30 +12,33 @@ function showPage(id) {
     document.querySelectorAll('.side-nav button').forEach(b => b.classList.remove('active'));
     document.getElementById('page-' + id).style.display = 'block';
     document.getElementById('nav-' + id).classList.add('active');
-    document.getElementById('current-path').innerText = id.charAt(0).toUpperCase() + id.slice(1);
+    document.getElementById('current-path').innerText = id.toUpperCase();
     
     if(id === 'members') renderMembers();
     if(id === 'storage') renderStore();
 }
 
-// --- MEMBERS / SLOŽKY ---
+// --- SLOŽKY / MEMBERS ---
 function renderMembers() {
     const s = document.getElementById('m-search').value.toLowerCase();
     const list = document.getElementById('members-list');
     
-    list.innerHTML = m_data.filter(m => m.toLowerCase().includes(s)).sort().map(m => `
-        <tr>
-            <td style="color:#222; font-weight:bold">#${Math.floor(1000+Math.random()*9000)}</td>
-            <td><strong>${m.toUpperCase()}</strong></td>
-            <td><span style="color:#2563eb">● RECORD ACTIVE</span></td>
-            <td style="text-align:right"><button class="btn-open" onclick="openDossier('${m}')">DECRYPT</button></td>
-        </tr>
-    `).join('');
+    list.innerHTML = m_list.filter(m => m.toLowerCase().includes(s)).sort().map(m => {
+        const data = f_data[m] || { rank: "NEZAŘAZEN" };
+        return `
+            <tr>
+                <td><span class="rank-tag">${data.rank}</span></td>
+                <td><strong>${m.toUpperCase()}</strong></td>
+                <td><span style="color:#22c55e; font-size: 0.8rem;">● ŠIFROVÁNO</span></td>
+                <td style="text-align:right"><button class="btn-open" onclick="openDossier('${m}')">OTEVŘÍT</button></td>
+            </tr>
+        `;
+    }).join('');
 }
 
 function openDossier(name) {
     currentU = name;
-    const f = f_data[name] || { rank: "", phone: "", items: "", notes: "" };
+    const f = f_data[name] || { rank: "NEZAŘAZEN", phone: "", items: "", notes: "" };
     
     document.getElementById('d-name').innerText = name;
     document.getElementById('in-rank').value = f.rank;
@@ -45,6 +49,79 @@ function openDossier(name) {
     document.getElementById('dossier-modal').style.display = 'block';
 }
 
+function saveFolder() {
+    const sig = document.getElementById('in-sig').value;
+    if(!sig) return alert("Nutná autorizace podpisem!");
+    
+    f_data[currentU] = {
+        rank: document.getElementById('in-rank').value || "NEZAŘAZEN",
+        phone: document.getElementById('in-phone').value,
+        items: document.getElementById('in-items').value,
+        notes: document.getElementById('in-notes').value
+    };
+    
+    localStorage.setItem('syn_f_data', JSON.stringify(f_data));
+    addLog(`Aktualizace složky: ${currentU} (Autor: ${sig})`);
+    closeModal();
+    renderMembers();
+}
+
+// --- OSTATNÍ FUNKCE ---
+function editStore(type) {
+    const who = document.getElementById('st-who').value;
+    const what = document.getElementById('st-what').value;
+    const how = parseInt(document.getElementById('st-how').value);
+    if(!who || isNaN(how)) return alert("Chybné údaje");
+    
+    if(type === 'add') s_data[what] += how;
+    else {
+        if(s_data[what] < how) return alert("Nedostatek zboží!");
+        s_data[what] -= how;
+    }
+    addLog(`${who}: ${type === 'add' ? 'NASKLADNĚNO' : 'VYDÁNO'} ${how}x ${what}`);
+    renderStore();
+}
+
+function renderStore() {
+    const grid = document.getElementById('st-grid');
+    grid.innerHTML = Object.entries(s_data).map(([k,v]) => `
+        <div class="st-item"><label>${k.toUpperCase()}</label><span>${v}</span></div>
+    `).join('');
+    localStorage.setItem('syn_s_data', JSON.stringify(s_data));
+}
+
+function loginAdmin() {
+    if(document.getElementById('admin-pin').value === "1234") {
+        document.getElementById('admin-auth').style.display = 'none';
+        document.getElementById('admin-panel').style.display = 'block';
+        renderLogs();
+    }
+}
+
+function addMem() {
+    const name = document.getElementById('new-mem-name').value;
+    const rank = document.getElementById('new-mem-rank').value;
+    if(!name) return;
+    
+    if(!m_list.includes(name)) m_list.push(name);
+    f_data[name] = { rank: rank || "NEZAŘAZEN", phone: "", items: "", notes: "" };
+    
+    localStorage.setItem('syn_m_list', JSON.stringify(m_list));
+    localStorage.setItem('syn_f_data', JSON.stringify(f_data));
+    addLog(`ROOT: Nový subjekt v síti: ${name}`);
+    document.getElementById('new-mem-name').value = "";
+    document.getElementById('new-mem-rank').value = "";
+}
+
+function addLog(m) {
+    l_data.unshift(`[${new Date().toLocaleTimeString()}] ${m}`);
+    localStorage.setItem('syn_l_data', JSON.stringify(l_data));
+}
+
+function renderLogs() {
+    document.getElementById('log-list').innerHTML = l_data.map(l => `<div>${l}</div>`).join('');
+}
+
 function switchTab(e, id) {
     document.querySelectorAll('.tab-pane').forEach(p => p.style.display = 'none');
     document.querySelectorAll('.t-btn').forEach(b => b.classList.remove('active'));
@@ -52,81 +129,6 @@ function switchTab(e, id) {
     e.target.classList.add('active');
 }
 
-function saveFolder() {
-    const sig = document.getElementById('in-sig').value;
-    if(!sig) return alert("Podpis povinný!");
-    
-    f_data[currentU] = {
-        rank: document.getElementById('in-rank').value,
-        phone: document.getElementById('in-phone').value,
-        items: document.getElementById('in-items').value,
-        notes: document.getElementById('in-notes').value
-    };
-    
-    localStorage.setItem('syn_f', JSON.stringify(f_data));
-    addLog(`Dossier update: ${currentU} (by ${sig})`);
-    closeModal();
-}
-
-// --- STORAGE ---
-function editStore(type) {
-    const who = document.getElementById('st-who').value;
-    const what = document.getElementById('st-what').value;
-    const how = parseInt(document.getElementById('st-how').value);
-    
-    if(!who || isNaN(how) || how <= 0) return alert("Neplatné údaje!");
-    
-    if(type === 'add') s_data[what] += how;
-    else {
-        if(s_data[what] < how) return alert("Nedostatečné zásoby!");
-        s_data[what] -= how;
-    }
-    
-    addLog(`${who}: ${type === 'add' ? 'PŘÍJEM' : 'VÝDEJ'} ${how}x ${what}`);
-    renderStore();
-}
-
-function renderStore() {
-    const grid = document.getElementById('st-grid');
-    grid.innerHTML = Object.entries(s_data).map(([k,v]) => `
-        <div class="st-item">
-            <label>${k.toUpperCase()}</label>
-            <span>${v}</span>
-        </div>
-    `).join('');
-    localStorage.setItem('syn_s', JSON.stringify(s_data));
-}
-
-// --- ADMIN ---
-function loginAdmin() {
-    if(document.getElementById('admin-pin').value === "1234") {
-        document.getElementById('admin-auth').style.display = 'none';
-        document.getElementById('admin-panel').style.display = 'block';
-        renderLogs();
-    } else {
-        alert("ACCESS DENIED");
-    }
-}
-
-function addMem() {
-    const n = document.getElementById('new-mem-name').value;
-    if(!n) return;
-    m_data.push(n);
-    localStorage.setItem('syn_m', JSON.stringify(m_data));
-    addLog(`ROOT: Vytvořen nový profil ${n}`);
-    document.getElementById('new-mem-name').value = "";
-}
-
-function addLog(m) {
-    l_data.unshift(`[${new Date().toLocaleTimeString()}] ${m}`);
-    localStorage.setItem('syn_l', JSON.stringify(l_data));
-}
-
-function renderLogs() {
-    document.getElementById('log-list').innerHTML = l_data.map(l => `<div>${l}</div>`).join('');
-}
-
 function closeModal() { document.getElementById('dossier-modal').style.display = 'none'; }
 
-// Inicializace
 showPage('home');

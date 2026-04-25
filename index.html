@@ -2,7 +2,6 @@
 <html lang="cs">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SYNDICATE | NETWORK</title>
     <link rel="stylesheet" href="style.css">
     <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -42,19 +41,20 @@
             <section id="page-members" class="page" style="display:none;">
                 <div class="page-top-row">
                     <h2>SLOŽKY</h2>
-                    <div class="search-container">
-                        <input type="text" id="m-search" class="search-input" placeholder="VYHLEDAT SUBJEKT..." onkeyup="renderMembers()">
-                        <div class="search-line"></div>
+                    <div class="advanced-search">
+                        <div class="search-icon"><i class="fas fa-fingerprint"></i></div>
+                        <input type="text" id="m-search" placeholder="IDENTIFIKOVAT SUBJEKT..." onkeyup="renderMembers()">
+                        <div class="search-scan-line"></div>
                     </div>
                 </div>
                 <div class="table-container">
                     <table class="data-table">
                         <thead>
                             <tr>
-                                <th>Kód</th>
-                                <th>Jméno / Alias</th>
-                                <th>Status</th>
-                                <th style="text-align:right">Akce</th>
+                                <th>POZICE / HODNOST</th>
+                                <th>JMÉNO A PŘÍJMENÍ</th>
+                                <th>STATUS</th>
+                                <th style="text-align:right">DATA</th>
                             </tr>
                         </thead>
                         <tbody id="members-list"></tbody>
@@ -95,11 +95,12 @@
                     <div class="admin-grid">
                         <div class="action-card">
                             <h3>NOVÝ PROFIL</h3>
-                            <input type="text" id="new-mem-name" placeholder="Celé jméno / Alias">
-                            <button onclick="addMem()" class="btn-blue">VYTVOŘIT</button>
+                            <input type="text" id="new-mem-name" placeholder="Jméno subjektu">
+                            <input type="text" id="new-mem-rank" placeholder="Přidělená pozice">
+                            <button onclick="addMem()" class="btn-blue">ZAPSAT DO SÍTĚ</button>
                         </div>
                         <div class="action-card log-card">
-                            <h3>LOGY</h3>
+                            <h3>SYSTÉMOVÉ LOGY</h3>
                             <div id="log-list" class="log-output"></div>
                         </div>
                     </div>
@@ -115,7 +116,7 @@
                     <div class="d-avatar"><i class="fas fa-user-ninja"></i></div>
                     <div>
                         <h2 id="d-name">David Ricci</h2>
-                        <span class="d-id">SUBJECT #<span id="d-id-val">7820</span></span>
+                        <span class="d-id">IDENTIFIED SUBJET</span>
                     </div>
                 </div>
                 <button onclick="closeModal()" class="close-x">&times;</button>
@@ -123,25 +124,25 @@
             <div class="d-tabs">
                 <button class="t-btn active" onclick="switchTab(event, 't-info')">INFO</button>
                 <button class="t-btn" onclick="switchTab(event, 't-items')">VYBAVENÍ</button>
-                <button class="t-btn" onclick="switchTab(event, 't-notes')">ZÁZNAMY</button>
+                <button class="t-btn" onclick="switchTab(event, 't-notes')">POZNÁMKY</button>
             </div>
             <div class="d-body">
                 <div id="t-info" class="tab-pane">
                     <div class="d-grid">
-                        <div class="fld"><label>POZICE</label><input type="text" id="in-rank"></div>
-                        <div class="fld"><label>KONTAKT</label><input type="text" id="in-phone"></div>
+                        <div class="fld"><label>POZICE VEDENÍ</label><input type="text" id="in-rank"></div>
+                        <div class="fld"><label>FREKVENCE / KONTAKT</label><input type="text" id="in-phone"></div>
                     </div>
                 </div>
                 <div id="t-items" class="tab-pane" style="display:none;">
-                    <textarea id="in-items" placeholder="Vydané zbraně, klíče, majetek..."></textarea>
+                    <textarea id="in-items" placeholder="Inventář subjektu..."></textarea>
                 </div>
                 <div id="t-notes" class="tab-pane" style="display:none;">
-                    <textarea id="in-notes" placeholder="Historie akcí, varování, poznámky..."></textarea>
+                    <textarea id="in-notes" placeholder="Interní záznamy..."></textarea>
                 </div>
             </div>
             <div class="d-foot">
-                <input type="text" id="in-sig" placeholder="Podpis">
-                <button onclick="saveFolder()">ULOŽIT ZMĚNY</button>
+                <input type="text" id="in-sig" placeholder="Autorizoval">
+                <button onclick="saveFolder()">AKTUALIZOVAT</button>
             </div>
         </div>
     </div>
