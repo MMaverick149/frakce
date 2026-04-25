@@ -3,77 +3,88 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SYNDICATE | HQ SYSTEM</title>
+    <title>SYNDICATE | CORE SYSTEM</title>
     <link rel="stylesheet" href="style.css">
-    <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@400;700;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 <body>
     <div class="app-container">
         <aside class="sidebar">
-            <div class="logo">SYNDICATE</div>
+            <div class="logo-box">
+                <div class="logo">SYNDICATE</div>
+                <div class="status-indicator"><span class="dot pulse"></span> SECURE CONNECTION</div>
+            </div>
             <nav>
-                <button onclick="showSection('home')" class="nav-item active" id="btn-home"><i class="fas fa-home"></i> ÚVOD</button>
-                <button onclick="showSection('storage')" class="nav-item" id="btn-storage"><i class="fas fa-box"></i> SKLAD</button>
-                <button onclick="showSection('members')" class="nav-item" id="btn-members"><i class="fas fa-users"></i> ČLENOVÉ</button>
+                <button onclick="showSection('home')" class="nav-item active" id="btn-home"><i class="fas fa-layer-group"></i> PŘEHLED</button>
+                <button onclick="showSection('storage')" class="nav-item" id="btn-storage"><i class="fas fa-box-open"></i> SKLAD</button>
+                <button onclick="showSection('members')" class="nav-item" id="btn-members"><i class="fas fa-address-card"></i> SLOŽKY</button>
                 <div class="nav-divider"></div>
                 <button onclick="showSection('admin')" class="nav-item admin-btn" id="btn-admin"><i class="fas fa-user-shield"></i> ADMINISTRACE</button>
             </nav>
         </aside>
 
-        <main class="content">
+        <main class="viewport">
             <section id="home" class="page">
-                <div class="welcome-hero">
-                    <h1>SYSTÉM AKTIVNÍ</h1>
-                    <p class="yellow-text">Vítejte v zabezpečeném rozhraní frakce.</p>
+                <div class="hero">
+                    <h1>VÍTEJTE V SYSTÉMU</h1>
+                    <p>Všechny operace jsou monitorovány a šifrovány.</p>
                 </div>
             </section>
 
             <section id="storage" class="page" style="display:none;">
-                <div class="section-header">
-                    <h1>SKLADOVÉ ZÁSOBY</h1>
-                    <div class="quick-action">
-                        <input type="text" id="worker-name" placeholder="Tvé jméno">
+                <div class="page-header">
+                    <h2>SKLADOVÉ OPERACE</h2>
+                    <div class="storage-form">
+                        <input type="text" id="worker-name" placeholder="Operátor">
                         <select id="item-type">
                             <option value="tlumic">TLUMIČ</option>
-                            <option value="drogy">DROGY</option>
+                            <option value="drogy">DROGY (KG)</option>
                             <option value="vesta">VESTA</option>
                         </select>
-                        <input type="number" id="item-count" value="1">
-                        <button onclick="updateStorage('add')" class="plus-btn">+</button>
-                        <button onclick="updateStorage('remove')" class="minus-btn">-</button>
+                        <input type="number" id="item-count" value="1" min="1">
+                        <button onclick="updateStorage('add')" class="btn-action plus"><i class="fas fa-plus"></i></button>
+                        <button onclick="updateStorage('remove')" class="btn-action minus"><i class="fas fa-minus"></i></button>
                     </div>
                 </div>
-                <div class="inventory-grid" id="inventory-render"></div>
+                <div class="inventory-list" id="inventory-render"></div>
             </section>
 
             <section id="members" class="page" style="display:none;">
-                <h1>EVIDENCE ČLENŮ</h1>
-                <div id="members-grid" class="members-grid"></div>
+                <h2>DATABÁZE OSOB</h2>
+                <div class="members-list-grid" id="members-grid"></div>
             </section>
 
             <section id="admin" class="page" style="display:none;">
-                <h1>ADMIN PANEL</h1>
-                <div id="admin-auth" class="card auth-card">
-                    <input type="password" id="admin-pin" placeholder="PIN">
-                    <button onclick="unlockAdmin()" class="btn-red">VSTOUPIT</button>
+                <h2>ADMINISTRAČNÍ CENTRÁLA</h2>
+                
+                <div id="admin-auth" class="auth-gate">
+                    <div class="auth-card">
+                        <i class="fas fa-key"></i>
+                        <input type="password" id="admin-pin" placeholder="Zadejte PIN">
+                        <button onclick="unlockAdmin()" class="btn-main">AUTORIZOVAT</button>
+                    </div>
                 </div>
+
                 <div id="admin-content" style="display:none;">
-                    <div class="admin-top-grid">
-                        <div class="card admin-panel">
-                            <h3><i class="fas fa-plus"></i> NOVÝ ČLEN</h3>
-                            <div class="admin-input-group">
-                                <input type="text" id="new-member-name" placeholder="Celé jméno">
-                                <button onclick="addNewMember()" class="btn-yellow">VYTVOŘIT</button>
+                    <div class="admin-wrapper">
+                        <div class="admin-sidebar-box">
+                            <div class="card">
+                                <h3>REGISTRACE</h3>
+                                <input type="text" id="new-member-name" placeholder="Jméno a příjmení">
+                                <button onclick="addNewMember()" class="btn-main yellow">VYTVOŘIT PROFIL</button>
                             </div>
                         </div>
-                    </div>
-                    <div class="card log-container">
-                        <div class="log-tabs">
-                            <button class="log-tab active" id="tab-storage" onclick="switchLog('storage')">LOGY SKLADU</button>
-                            <button class="log-tab" id="tab-members" onclick="switchLog('members')">LOGY SLOŽEK</button>
+
+                        <div class="admin-main-box">
+                            <div class="card log-card">
+                                <div class="log-header">
+                                    <button onclick="switchLog('storage')" id="tab-storage" class="log-tab active">LOGY SKLADU</button>
+                                    <button onclick="switchLog('members')" id="tab-members" class="log-tab">AKTIVITY SLOŽEK</button>
+                                </div>
+                                <div class="log-body" id="log-output"></div>
+                            </div>
                         </div>
-                        <div id="log-output" class="log-viewer"></div>
                     </div>
                 </div>
             </section>
@@ -81,35 +92,28 @@
     </div>
 
     <div id="member-modal" class="modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2 id="m-name" class="yellow-text"></h2>
-                <span class="close-btn" onclick="closeModal()">&times;</span>
+        <div class="modal-window">
+            <div class="modal-top">
+                <span id="m-name">JMÉNO ČLENA</span>
+                <button onclick="closeModal()" class="close-x">&times;</button>
             </div>
-            <div class="modal-body">
-                <div class="folder-tabs">
-                    <button onclick="openFolderTab('basic')" class="f-tab active" id="ftab-basic">INFO</button>
-                    <button onclick="openFolderTab('gear')" class="f-tab" id="ftab-gear">GEAR</button>
-                    <button onclick="openFolderTab('notes')" class="f-tab" id="ftab-notes">ZÁZNAMY</button>
-                </div>
-                <div id="folder-basic" class="folder-content">
-                    <label>RANK / POZICE</label>
-                    <input type="text" id="m-rank" placeholder="Např. Boss">
-                    <label>TELEFON</label>
-                    <input type="text" id="m-phone" placeholder="555-xxx">
-                </div>
-                <div id="folder-gear" class="folder-content" style="display:none;">
-                    <label>VYBAVENÍ</label>
-                    <textarea id="m-gear"></textarea>
-                </div>
-                <div id="folder-notes" class="folder-content" style="display:none;">
-                    <label>POZNÁMKY A REJSTŘÍK</label>
-                    <textarea id="m-notes"></textarea>
+            <div class="modal-inner">
+                <div class="dossier-grid">
+                    <div class="dossier-left">
+                        <label>RANK / POZICE</label>
+                        <input type="text" id="m-rank" placeholder="...">
+                        <label>KONTAKT</label>
+                        <input type="text" id="m-phone" placeholder="...">
+                    </div>
+                    <div class="dossier-right">
+                        <label>POZNÁMKY / GEAR / HISTORIE</label>
+                        <textarea id="m-notes" placeholder="Zadejte veškeré informace o subjektu..."></textarea>
+                    </div>
                 </div>
             </div>
             <div class="modal-footer">
-                <input type="text" id="editor-name" placeholder="Tvůj podpis">
-                <button onclick="saveMemberFolder()" class="btn-red">ULOŽIT</button>
+                <input type="text" id="editor-name" placeholder="Váš podpis">
+                <button onclick="saveMemberFolder()" class="btn-main">ULOŽIT ZMĚNY</button>
             </div>
         </div>
     </div>
