@@ -19,11 +19,13 @@ function renderMembers() {
     const list = document.getElementById('members-list');
     list.innerHTML = m_list.filter(m => m.toLowerCase().includes(s)).sort().map(m => {
         const data = f_data[m] || { rank: "NEZAŘAZEN" };
+        const randomID = Math.floor(1000 + Math.random() * 9000); // Generování kódu jako na image_c312b7.png
         return `
             <tr>
+                <td style="color: #444; font-weight: bold;">#${randomID}</td>
                 <td><span class="rank-tag">${data.rank}</span></td>
                 <td><strong>${m.toUpperCase()}</strong></td>
-                <td><span style="color:#22c55e; font-size: 0.8rem;">● ŠIFROVÁNO</span></td>
+                <td><span style="color:#22c55e;">● AKTIVNÍ</span></td>
                 <td style="text-align:right"><button class="btn-open" onclick="openDossier('${m}')">OTEVŘÍT</button></td>
             </tr>
         `;
@@ -41,17 +43,24 @@ function openDossier(name) {
     document.getElementById('dossier-modal').style.display = 'block';
 }
 
+function switchTab(event, tabId) {
+    document.querySelectorAll('.tab-pane').forEach(p => p.style.display = 'none');
+    document.querySelectorAll('.d-tab').forEach(t => t.classList.remove('active'));
+    document.getElementById(tabId).style.display = 'block';
+    event.currentTarget.classList.add('active');
+}
+
 function saveFolder() {
     const sig = document.getElementById('in-sig').value;
-    if(!sig) return alert("Autorizace podpisem nutná!");
+    if(!sig) return alert("Podpis nutný!");
     f_data[currentU] = {
-        rank: document.getElementById('in-rank').value || "NEZAŘAZEN",
+        rank: document.getElementById('in-rank').value,
         phone: document.getElementById('in-phone').value,
         items: document.getElementById('in-items').value,
         notes: document.getElementById('in-notes').value
     };
     localStorage.setItem('syn_f_data', JSON.stringify(f_data));
-    addLog(`Dossier update: ${currentU} (${sig})`);
+    addLog(`Dossier aktualizováno: ${currentU} (${sig})`);
     closeModal();
     renderMembers();
 }
@@ -60,19 +69,18 @@ function editStore(type) {
     const who = document.getElementById('st-who').value;
     const what = document.getElementById('st-what').value;
     const how = parseInt(document.getElementById('st-how').value);
-    if(!who || isNaN(how)) return alert("Chyba");
+    if(!who || isNaN(how)) return alert("Chyba dat");
     if(type === 'add') s_data[what] += how;
     else {
         if(s_data[what] < how) return alert("Nedostatek!");
         s_data[what] -= how;
     }
-    addLog(`${who}: ${type === 'add' ? 'PŘÍJEM' : 'VÝDEJ'} ${how}x ${what}`);
+    addLog(`${who}: ${type === 'add' ? 'PŘIDAL' : 'ODEBRAL'} ${how}x ${what}`);
     renderStore();
 }
 
 function renderStore() {
-    const grid = document.getElementById('st-grid');
-    grid.innerHTML = Object.entries(s_data).map(([k,v]) => `
+    document.getElementById('st-grid').innerHTML = Object.entries(s_data).map(([k,v]) => `
         <div class="st-item"><label>${k.toUpperCase()}</label><span>${v}</span></div>
     `).join('');
     localStorage.setItem('syn_s_data', JSON.stringify(s_data));
@@ -87,14 +95,14 @@ function loginAdmin() {
 }
 
 function addMem() {
-    const name = document.getElementById('new-mem-name').value;
-    const rank = document.getElementById('new-mem-rank').value;
-    if(!name) return;
-    if(!m_list.includes(name)) m_list.push(name);
-    f_data[name] = { rank: rank || "NEZAŘAZEN", phone: "", items: "", notes: "" };
+    const n = document.getElementById('new-mem-name').value;
+    const r = document.getElementById('new-mem-rank').value;
+    if(!n) return;
+    if(!m_list.includes(n)) m_list.push(n);
+    f_data[n] = { rank: r || "NEZAŘAZEN", phone: "", items: "", notes: "" };
     localStorage.setItem('syn_m_list', JSON.stringify(m_list));
     localStorage.setItem('syn_f_data', JSON.stringify(f_data));
-    addLog(`ROOT: Nový subjekt ${name}`);
+    addLog(`ADMIN: Nový profil ${n}`);
     document.getElementById('new-mem-name').value = "";
     document.getElementById('new-mem-rank').value = "";
 }
@@ -106,13 +114,6 @@ function addLog(m) {
 
 function renderLogs() {
     document.getElementById('log-list').innerHTML = l_data.map(l => `<div>${l}</div>`).join('');
-}
-
-function switchTab(e, id) {
-    document.querySelectorAll('.tab-pane').forEach(p => p.style.display = 'none');
-    document.querySelectorAll('.t-btn').forEach(b => b.classList.remove('active'));
-    document.getElementById(id).style.display = 'block';
-    e.target.classList.add('active');
 }
 
 function closeModal() { document.getElementById('dossier-modal').style.display = 'none'; }
