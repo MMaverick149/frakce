@@ -3,111 +3,119 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SYNDICATE | OS</title>
+    <title>SYNDICATE | MDT v3</title>
     <link rel="stylesheet" href="style.css">
-    <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 <body>
-    <div class="app">
-        <nav class="side-nav">
-            <div class="brand">SYNDICATE</div>
-            <div class="nav-links">
-                <button onclick="showPage('home')" id="nav-home" class="active"><i class="fas fa-terminal"></i> HOME</button>
-                <button onclick="showPage('storage')" id="nav-storage"><i class="fas fa-database"></i> SKLAD</button>
-                <button onclick="showPage('members')" id="nav-members"><i class="fas fa-users"></i> SLOŽKY</button>
-                <button onclick="showPage('admin')" id="nav-admin" class="admin-link"><i class="fas fa-lock"></i> ADMIN</button>
+    <div class="mdt-container">
+        <aside class="mdt-sidebar">
+            <div class="mdt-logo">
+                <i class="fas fa-shield-halved"></i>
+                <span>SYNDICATE</span>
             </div>
-        </nav>
+            <nav class="mdt-nav">
+                <button onclick="showPage('home')" id="btn-home" class="nav-btn active"><i class="fas fa-th-large"></i> Dashboard</button>
+                <button onclick="showPage('storage')" id="btn-storage" class="nav-btn"><i class="fas fa-warehouse"></i> Registr skladu</button>
+                <button onclick="showPage('members')" id="btn-members" class="nav-btn"><i class="fas fa-address-book"></i> Registr členů</button>
+                <button onclick="showPage('admin')" id="btn-admin" class="nav-btn admin-link"><i class="fas fa-terminal"></i> Administrace</button>
+            </nav>
+        </aside>
 
-        <main class="main-content">
+        <main class="mdt-main">
             <section id="page-home" class="page">
-                <div class="hero">
-                    <h1>SYSTEM ONLINE</h1>
-                    <p>Zabezpečené rozhraní pro správu frakce.</p>
+                <div class="welcome-card">
+                    <h1>MDT SYSTEM TERMINAL</h1>
+                    <p>Systém je plně funkční. Všechny přístupy jsou logovány.</p>
                 </div>
             </section>
 
             <section id="page-storage" class="page" style="display:none;">
-                <div class="header-row">
-                    <h2>SKLADOVÝ MANAŽER</h2>
-                    <div class="storage-controls">
-                        <input type="text" id="op-name" placeholder="Tvé jméno">
-                        <select id="it-name">
-                            <option value="zbrane">ZBRANĚ</option>
-                            <option value="munice">MUNICE</option>
-                            <option value="drogy">DROGY</option>
+                <div class="page-header">
+                    <h2>Skladové zásoby</h2>
+                    <div class="quick-add">
+                        <input type="text" id="store-user" placeholder="Jméno">
+                        <select id="store-item">
+                            <option value="zbrane">Zbraně</option>
+                            <option value="munice">Munice</option>
+                            <option value="med">Lékárničky</option>
                         </select>
-                        <input type="number" id="it-qty" value="1">
-                        <button onclick="editStore('add')" class="btn-g">+</button>
-                        <button onclick="editStore('rem')" class="btn-r">-</button>
+                        <input type="number" id="store-qty" value="1">
+                        <button onclick="handleStore('add')" class="plus-btn">+</button>
+                        <button onclick="handleStore('rem')" class="minus-btn">-</button>
                     </div>
                 </div>
-                <div class="inventory-display" id="inv-view"></div>
+                <div class="storage-grid" id="storage-view"></div>
             </section>
 
             <section id="page-members" class="page" style="display:none;">
-                <h2>EVIDENCE OSOB</h2>
-                <div class="members-list" id="mem-view"></div>
+                <h2>Registr osob</h2>
+                <div class="members-grid" id="members-view"></div>
             </section>
 
             <section id="page-admin" class="page" style="display:none;">
-                <div id="admin-login" class="login-box">
-                    <h3>AUTORIZACE</h3>
-                    <input type="password" id="pass" placeholder="PIN">
-                    <button onclick="login()">VSTOUPIT</button>
+                <div id="admin-gate" class="admin-gate">
+                    <div class="auth-card">
+                        <i class="fas fa-lock"></i>
+                        <input type="password" id="pin-input" placeholder="Zadejte PIN">
+                        <button onclick="tryLogin()">AUTORIZOVAT</button>
+                    </div>
                 </div>
 
                 <div id="admin-panel" style="display:none;">
-                    <h2>HLAVNÍ ŠTÁB</h2>
-                    
-                    <div class="admin-section">
-                        <div class="control-card">
-                            <label>REGISTRACE NOVÉHO AGENTA</label>
-                            <div class="input-row">
-                                <input type="text" id="new-mem" placeholder="Jméno a příjmení">
-                                <button onclick="addMem()">VYTVOŘIT PROFIL</button>
+                    <div class="admin-controls">
+                        <div class="mdt-card">
+                            <h3>Registrace nového občana</h3>
+                            <div class="input-group">
+                                <input type="text" id="new-name" placeholder="Celé jméno">
+                                <button onclick="createNewMember()">VYTVOŘIT</button>
                             </div>
                         </div>
                     </div>
-
-                    <div class="admin-section">
-                        <div class="log-card">
-                            <div class="log-tabs">
-                                <button onclick="viewLog('s')" id="tab-s" class="active">SKLAD</button>
-                                <button onclick="viewLog('m')" id="tab-m">AKTIVITA</button>
-                            </div>
-                            <div class="log-screen" id="log-screen"></div>
+                    <div class="mdt-card log-card">
+                        <div class="log-tabs">
+                            <button onclick="switchLog('s')" id="tab-s" class="active">Skladové logy</button>
+                            <button onclick="switchLog('m')" id="tab-m">Změny v registru</button>
                         </div>
+                        <div class="log-output" id="log-screen"></div>
                     </div>
                 </div>
             </section>
         </main>
     </div>
 
-    <div id="modal" class="modal">
-        <div class="modal-box">
-            <div class="modal-head">
-                <span id="target-name">DETAIL</span>
-                <button onclick="closeModal()">&times;</button>
+    <div id="mdt-modal" class="modal">
+        <div class="mdt-card dossier">
+            <div class="dossier-header">
+                <div class="user-id-box">
+                    <div class="avatar-circle"><i class="fas fa-user"></i></div>
+                    <div>
+                        <h2 id="d-full-name">Jméno Příjmení</h2>
+                        <span id="d-id-tag">#ID-7820</span>
+                    </div>
+                </div>
+                <button onclick="closeModal()" class="close-modal">&times;</button>
             </div>
-            <div class="modal-body">
-                <div class="row">
-                    <div class="col">
-                        <label>POZICE</label>
-                        <input type="text" id="f-rank">
+            <div class="dossier-body">
+                <div class="dossier-info-grid">
+                    <div class="info-item">
+                        <label>POZICE / RANK</label>
+                        <input type="text" id="d-rank" placeholder="Není určeno">
                     </div>
-                    <div class="col">
-                        <label>KONTAKT</label>
-                        <input type="text" id="f-phone">
+                    <div class="info-item">
+                        <label>TELEFONNÍ ČÍSLO</label>
+                        <input type="text" id="d-phone" placeholder="Neuvedeno">
                     </div>
                 </div>
-                <label>POZNÁMKY / VYBAVENÍ / HISTORIE</label>
-                <textarea id="f-notes"></textarea>
-                <div class="modal-foot">
-                    <input type="text" id="f-sign" placeholder="Tvůj podpis">
-                    <button onclick="saveFolder()">ULOŽIT ZÁZNAM</button>
+                <div class="info-item full">
+                    <label>POZNÁMKY A ZÁZNAMY</label>
+                    <textarea id="d-notes" placeholder="Trestní rejstřík, majetek, aktivita..."></textarea>
                 </div>
+            </div>
+            <div class="dossier-footer">
+                <input type="text" id="d-editor" placeholder="Tvůj podpis">
+                <button onclick="saveDossier()">ULOŽIT DO REGISTRU</button>
             </div>
         </div>
     </div>

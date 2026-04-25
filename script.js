@@ -1,120 +1,130 @@
-// DATA
-let storage = JSON.parse(localStorage.getItem('s_data')) || { zbrane: 0, munice: 0, drogy: 0 };
-let members = JSON.parse(localStorage.getItem('m_data')) || ["Vito Scaletta"];
-let folders = JSON.parse(localStorage.getItem('f_data')) || {};
-let logsS = JSON.parse(localStorage.getItem('l_s')) || [];
-let logsM = JSON.parse(localStorage.getItem('l_m')) || [];
-let activeM = "";
+// --- KONFIGURACE ---
+const ADMIN_PIN = "1234";
 
-// NAVIGATION
-function showPage(id) {
+// --- DATA ---
+let mdtStorage = JSON.parse(localStorage.getItem('mdt_storage')) || { zbrane: 0, munice: 0, med: 0 };
+let mdtMembers = JSON.parse(localStorage.getItem('mdt_members')) || ["Vito Scaletta"];
+let mdtFolders = JSON.parse(localStorage.getItem('mdt_folders')) || {};
+let logsStorage = JSON.parse(localStorage.getItem('mdt_logs_s')) || [];
+let logsRegistry = JSON.parse(localStorage.getItem('mdt_logs_r')) || [];
+let currentMember = "";
+
+// --- NAVIGACE ---
+function showPage(pageId) {
     document.querySelectorAll('.page').forEach(p => p.style.display = 'none');
-    document.querySelectorAll('.nav-links button').forEach(b => b.classList.remove('active'));
-    document.getElementById('page-' + id).style.display = 'block';
-    document.getElementById('nav-' + id).classList.add('active');
+    document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+    document.getElementById('page-' + pageId).style.display = 'block';
+    document.getElementById('btn-' + pageId).classList.add('active');
 }
 
-// STORAGE
-function editStore(type) {
-    const who = document.getElementById('op-name').value;
-    const item = document.getElementById('it-name').value;
-    const qty = parseInt(document.getElementById('it-qty').value);
+// --- SKLAD ---
+function handleStore(mode) {
+    const user = document.getElementById('store-user').value;
+    const item = document.getElementById('store-item').value;
+    const qty = parseInt(document.getElementById('store-qty').value);
 
-    if(!who || qty <= 0) return alert("Zadej jméno a počet!");
+    if(!user || qty <= 0) return alert("Chybí jméno nebo neplatný počet.");
 
-    if(type === 'add') storage[item] += qty;
+    if(mode === 'add') mdtStorage[item] += qty;
     else {
-        if(storage[item] < qty) return alert("Není dostatek!");
-        storage[item] -= qty;
+        if(mdtStorage[item] < qty) return alert("Nedostatečné zásoby!");
+        mdtStorage[item] -= qty;
     }
 
-    addLog('s', `${who} ${type === 'add' ? 'PŘIDAL' : 'VZAL'} ${qty}x ${item.toUpperCase()}`);
+    addLog('s', `${user}: ${mode === 'add' ? 'VYDAL' : 'ODEBRAL'} ${qty}x ${item.toUpperCase()}`);
     renderStore();
 }
 
 function renderStore() {
-    const view = document.getElementById('inv-view');
-    view.innerHTML = Object.entries(storage).map(([k, v]) => `
-        <div class="inv-card">
-            <div style="font-size:0.7rem; color:#555">${k.toUpperCase()}</div>
-            <div class="qty">${v}</div>
-        </div>
-    `).join('');
-    localStorage.setItem('s_data', JSON.stringify(storage));
+    const view = document.getElementById('storage-view');
+    view.innerHTML = "";
+    Object.entries(mdtStorage).forEach(([key, val]) => {
+        view.innerHTML += `
+            <div class="item-box">
+                <small>${key.toUpperCase()}</small>
+                <span>${val}</span>
+            </div>`;
+    });
+    localStorage.setItem('mdt_storage', JSON.stringify(mdtStorage));
 }
 
-// MEMBERS
-function renderMem() {
-    const view = document.getElementById('mem-view');
-    view.innerHTML = members.map(m => `
-        <div class="mem-item" onclick="openModal('${m}')">
+// --- REGISTR OSOB ---
+function renderMembers() {
+    const view = document.getElementById('members-view');
+    view.innerHTML = mdtMembers.sort().map(m => `
+        <div class="member-box" onclick="openDossier('${m}')">
+            <i class="fas fa-user-circle" style="font-size: 2rem; color: #2d3748; margin-bottom: 10px; display: block;"></i>
             <strong>${m}</strong>
         </div>
     `).join('');
 }
 
-function openModal(name) {
-    activeM = name;
-    const data = folders[name] || { rank: "", phone: "", notes: "" };
-    document.getElementById('target-name').innerText = name;
-    document.getElementById('f-rank').value = data.rank;
-    document.getElementById('f-phone').value = data.phone;
-    document.getElementById('f-notes').value = data.notes;
-    document.getElementById('modal').style.display = 'block';
+function openDossier(name) {
+    currentMember = name;
+    const data = mdtFolders[name] || { rank: "", phone: "", notes: "" };
+    
+    document.getElementById('d-full-name').innerText = name;
+    document.getElementById('d-id-tag').innerText = "#ID-" + Math.floor(1000 + Math.random() * 9000);
+    document.getElementById('d-rank').value = data.rank;
+    document.getElementById('d-phone').value = data.phone;
+    document.getElementById('d-notes').value = data.notes;
+    
+    document.getElementById('mdt-modal').style.display = 'block';
 }
 
-function saveFolder() {
-    const sign = document.getElementById('f-sign').value;
-    if(!sign) return alert("Zadej podpis!");
+function saveDossier() {
+    const sign = document.getElementById('d-editor').value;
+    if(!sign) return alert("Záznam musí být podepsán.");
 
-    folders[activeM] = {
-        rank: document.getElementById('f-rank').value,
-        phone: document.getElementById('f-phone').value,
-        notes: document.getElementById('f-notes').value
+    mdtFolders[currentMember] = {
+        rank: document.getElementById('d-rank').value,
+        phone: document.getElementById('d-phone').value,
+        notes: document.getElementById('d-notes').value
     };
 
-    localStorage.setItem('f_data', JSON.stringify(folders));
-    addLog('m', `${sign} UPRAVIL SLOŽKU: ${activeM}`);
+    localStorage.setItem('mdt_folders', JSON.stringify(mdtFolders));
+    addLog('r', `${sign} aktualizoval dossier: ${currentMember}`);
     closeModal();
 }
 
-// ADMIN
-function login() {
-    if(document.getElementById('pass').value === "1234") {
-        document.getElementById('admin-login').style.display = 'none';
+// --- ADMIN ---
+function tryLogin() {
+    if(document.getElementById('pin-input').value === ADMIN_PIN) {
+        document.getElementById('admin-gate').style.display = 'none';
         document.getElementById('admin-panel').style.display = 'block';
-        viewLog('s');
-    } else alert("Chyba!");
+        switchLog('s');
+    } else alert("Neautorizovaný přístup!");
 }
 
-function addMem() {
-    const name = document.getElementById('new-mem').value.trim();
-    if(!name || members.includes(name)) return;
-    members.push(name);
-    localStorage.setItem('m_data', JSON.stringify(members));
-    addLog('m', `ADMIN VYTVOŘIL AGENTA: ${name}`);
-    document.getElementById('new-mem').value = "";
-    renderMem();
+function createNewMember() {
+    const name = document.getElementById('new-name').value.trim();
+    if(!name || mdtMembers.includes(name)) return alert("Chybné jméno nebo již existuje.");
+    
+    mdtMembers.push(name);
+    localStorage.setItem('mdt_members', JSON.stringify(mdtMembers));
+    addLog('r', `ADMIN vytvořil nového občana: ${name}`);
+    document.getElementById('new-name').value = "";
+    renderMembers();
 }
 
-function viewLog(type) {
+function switchLog(type) {
     document.getElementById('tab-s').className = type === 's' ? 'active' : '';
     document.getElementById('tab-m').className = type === 'm' ? 'active' : '';
     const screen = document.getElementById('log-screen');
-    const data = type === 's' ? logsS : logsM;
-    screen.innerHTML = data.map(l => `<div style="margin-bottom:5px">${l}</div>`).join('');
+    const data = type === 's' ? logsStorage : logsRegistry;
+    screen.innerHTML = data.map(l => `<div style="border-bottom: 1px solid #1a1f26; padding: 5px 0;">${l}</div>`).join('');
 }
 
 function addLog(type, msg) {
-    const time = new Date().toLocaleString();
+    const time = new Date().toLocaleString('cs-CZ');
     const entry = `[${time}] ${msg}`;
-    if(type === 's') logsS.unshift(entry); else logsM.unshift(entry);
-    localStorage.setItem('l_s', JSON.stringify(logsS));
-    localStorage.setItem('l_m', JSON.stringify(logsM));
+    if(type === 's') logsStorage.unshift(entry); else logsRegistry.unshift(entry);
+    localStorage.setItem('mdt_logs_s', JSON.stringify(logsStorage));
+    localStorage.setItem('mdt_logs_r', JSON.stringify(logsRegistry));
 }
 
-function closeModal() { document.getElementById('modal').style.display = 'none'; }
+function closeModal() { document.getElementById('mdt-modal').style.display = 'none'; }
 
 // START
 renderStore();
-renderMem();
+renderMembers();
