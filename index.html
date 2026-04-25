@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SYNDICATE | HQ SYSTEM</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@400;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <div class="app-container">
+        <aside class="sidebar">
+            <div class="logo">SYNDICATE</div>
+            <nav>
+                <button onclick="showSection('home')" class="nav-item active" id="btn-home"><i class="fas fa-home"></i> ÚVOD</button>
+                <button onclick="showSection('storage')" class="nav-item" id="btn-storage"><i class="fas fa-box"></i> SKLAD</button>
+                <button onclick="showSection('members')" class="nav-item" id="btn-members"><i class="fas fa-users"></i> ČLENOVÉ</button>
+                <div class="nav-divider"></div>
+                <button onclick="showSection('admin')" class="nav-item admin-btn" id="btn-admin"><i class="fas fa-user-shield"></i> ADMINISTRACE</button>
+            </nav>
+        </aside>
+
+        <main class="content">
+            <section id="home" class="page">
+                <div class="welcome-hero">
+                    <h1>SYSTÉM AKTIVNÍ</h1>
+                    <p class="yellow-text">Vítejte v zabezpečeném rozhraní frakce.</p>
+                </div>
+            </section>
+
+            <section id="storage" class="page" style="display:none;">
+                <div class="section-header">
+                    <h1>SKLADOVÉ ZÁSOBY</h1>
+                    <div class="quick-action">
+                        <input type="text" id="worker-name" placeholder="Tvé jméno">
+                        <select id="item-type">
+                            <option value="tlumic">TLUMIČ</option>
+                            <option value="drogy">DROGY</option>
+                            <option value="vesta">VESTA</option>
+                        </select>
+                        <input type="number" id="item-count" value="1">
+                        <button onclick="updateStorage('add')" class="plus-btn">+</button>
+                        <button onclick="updateStorage('remove')" class="minus-btn">-</button>
+                    </div>
+                </div>
+                <div class="inventory-grid" id="inventory-render"></div>
+            </section>
+
+            <section id="members" class="page" style="display:none;">
+                <h1>EVIDENCE ČLENŮ</h1>
+                <div id="members-grid" class="members-grid"></div>
+            </section>
+
+            <section id="admin" class="page" style="display:none;">
+                <h1>ADMIN PANEL</h1>
+                <div id="admin-auth" class="card auth-card">
+                    <input type="password" id="admin-pin" placeholder="PIN">
+                    <button onclick="unlockAdmin()" class="btn-red">VSTOUPIT</button>
+                </div>
+                <div id="admin-content" style="display:none;">
+                    <div class="admin-top-grid">
+                        <div class="card admin-panel">
+                            <h3><i class="fas fa-plus"></i> NOVÝ ČLEN</h3>
+                            <div class="admin-input-group">
+                                <input type="text" id="new-member-name" placeholder="Celé jméno">
+                                <button onclick="addNewMember()" class="btn-yellow">VYTVOŘIT</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card log-container">
+                        <div class="log-tabs">
+                            <button class="log-tab active" id="tab-storage" onclick="switchLog('storage')">LOGY SKLADU</button>
+                            <button class="log-tab" id="tab-members" onclick="switchLog('members')">LOGY SLOŽEK</button>
+                        </div>
+                        <div id="log-output" class="log-viewer"></div>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <div id="member-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="m-name" class="yellow-text"></h2>
+                <span class="close-btn" onclick="closeModal()">&times;</span>
+            </div>
+            <div class="modal-body">
+                <div class="folder-tabs">
+                    <button onclick="openFolderTab('basic')" class="f-tab active" id="ftab-basic">INFO</button>
+                    <button onclick="openFolderTab('gear')" class="f-tab" id="ftab-gear">GEAR</button>
+                    <button onclick="openFolderTab('notes')" class="f-tab" id="ftab-notes">ZÁZNAMY</button>
+                </div>
+                <div id="folder-basic" class="folder-content">
+                    <label>RANK / POZICE</label>
+                    <input type="text" id="m-rank" placeholder="Např. Boss">
+                    <label>TELEFON</label>
+                    <input type="text" id="m-phone" placeholder="555-xxx">
+                </div>
+                <div id="folder-gear" class="folder-content" style="display:none;">
+                    <label>VYBAVENÍ</label>
+                    <textarea id="m-gear"></textarea>
+                </div>
+                <div id="folder-notes" class="folder-content" style="display:none;">
+                    <label>POZNÁMKY A REJSTŘÍK</label>
+                    <textarea id="m-notes"></textarea>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <input type="text" id="editor-name" placeholder="Tvůj podpis">
+                <button onclick="saveMemberFolder()" class="btn-red">ULOŽIT</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
