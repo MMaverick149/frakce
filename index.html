@@ -2,6 +2,7 @@
 <html lang="cs">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SYNDICATE | NETWORK</title>
     <link rel="stylesheet" href="style.css">
     <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -19,7 +20,7 @@
             </div>
             <nav class="side-nav">
                 <button onclick="showPage('home')" id="nav-home" class="active"><i class="fas fa-terminal"></i> Terminal</button>
-                <button onclick="showPage('members')" id="nav-members"><i class="fas fa-user-secret"></i> Evidence osob</button>
+                <button onclick="showPage('members')" id="nav-members"><i class="fas fa-folder-open"></i> Složky</button>
                 <button onclick="showPage('storage')" id="nav-storage"><i class="fas fa-box-open"></i> Černý trh</button>
                 <button onclick="showPage('admin')" id="nav-admin" class="admin-btn"><i class="fas fa-fingerprint"></i> Root Access</button>
             </nav>
@@ -40,10 +41,10 @@
 
             <section id="page-members" class="page" style="display:none;">
                 <div class="page-top-row">
-                    <h2>Registr osob</h2>
-                    <div class="search-wrap">
-                        <i class="fas fa-search"></i>
-                        <input type="text" id="m-search" placeholder="Hledat alias..." onkeyup="renderMembers()">
+                    <h2>SLOŽKY</h2>
+                    <div class="search-container">
+                        <input type="text" id="m-search" class="search-input" placeholder="VYHLEDAT SUBJEKT..." onkeyup="renderMembers()">
+                        <div class="search-line"></div>
                     </div>
                 </div>
                 <div class="table-container">
@@ -70,7 +71,7 @@
                             <select id="st-what">
                                 <option value="zbrane">Zbraně</option>
                                 <option value="munice">Munice</option>
-                                <option value="drogy">Kontraband</option>
+                                <option value="kontraband">Kontraband</option>
                             </select>
                             <input type="number" id="st-how" value="1">
                             <div class="btn-row">
