@@ -18,7 +18,7 @@
                 </div>
             </div>
             <nav class="side-nav">
-                <button onclick="showPage('home')" id="nav-home" class="active"><i class="fas fa-terminal"></i> Terminal</button>
+                <button onclick="showPage('home')" id="nav-home" class="active"><i class="fas fa-terminal"></i> Dashboard</button>
                 <button onclick="showPage('members')" id="nav-members"><i class="fas fa-folder-open"></i> Složky</button>
                 <button onclick="showPage('storage')" id="nav-storage"><i class="fas fa-box-open"></i> Černý trh</button>
                 <button onclick="showPage('admin')" id="nav-admin" class="admin-btn"><i class="fas fa-fingerprint"></i> Root Access</button>
@@ -27,7 +27,7 @@
 
         <main class="main-view">
             <header class="top-header">
-                <div class="path">Network > <span id="current-path">Terminal</span></div>
+                <div class="path">Syndicate OS > <span id="current-path">Dashboard</span></div>
                 <div class="user-status">Status: <span class="online">Encrypted Connection</span></div>
             </header>
 
@@ -116,7 +116,7 @@
                     <div class="d-avatar"><i class="fas fa-user-ninja"></i></div>
                     <div>
                         <h2 id="d-name">David Ricci</h2>
-                        <span class="d-id">IDENTIFIED SUBJET</span>
+                        <span class="d-id">IDENTIFIED SUBJECT</span>
                     </div>
                 </div>
                 <button onclick="closeModal()" class="close-x">&times;</button>
@@ -130,7 +130,7 @@
                 <div id="t-info" class="tab-pane">
                     <div class="d-grid">
                         <div class="fld"><label>POZICE VEDENÍ</label><input type="text" id="in-rank"></div>
-                        <div class="fld"><label>FREKVENCE / KONTAKT</label><input type="text" id="in-phone"></div>
+                        <div class="fld"><label>KONTAKT</label><input type="text" id="in-phone"></div>
                     </div>
                 </div>
                 <div id="t-items" class="tab-pane" style="display:none;">
@@ -146,7 +146,6 @@
             </div>
         </div>
     </div>
-
     <script src="script.js"></script>
 </body>
 </html>
