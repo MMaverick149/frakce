@@ -1,58 +1,42 @@
 :root {
-    --bg: #0b0f19; --side: #111827; --card: #1f2937;
-    --accent: #3b82f6; --text: #f3f4f6; --dim: #6b7280; --red: #ef4444;
+    --bg-dark: #090c13;
+    --bg-panel: #121826;
+    --accent: #3b82f6;
+    --text: #f1f5f9;
+    --danger: #ef4444;
 }
-* { box-sizing: border-box; margin: 0; padding: 0; }
-body { background: var(--bg); color: var(--text); font-family: 'Rajdhani', sans-serif; overflow: hidden; }
 
-.network-shell { display: flex; height: 100vh; }
+body, html { margin: 0; padding: 0; height: 100%; background: var(--bg-dark); color: var(--text); font-family: 'Rajdhani', sans-serif; overflow: hidden; }
 
-/* Sidebar */
-.sidebar { width: 260px; background: var(--side); border-right: 1px solid rgba(255,255,255,0.05); display: flex; flex-direction: column; }
-.sidebar-header { padding: 30px 20px; display: flex; align-items: center; gap: 15px; }
-.logo-box { width: 40px; height: 40px; background: var(--accent); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; }
-.brand { font-weight: 700; font-size: 1.3rem; letter-spacing: 1px; }
+.app-container { display: flex; height: 100vh; }
 
-.side-nav { flex: 1; padding: 10px; display: flex; flex-direction: column; }
-.nav-spacer { flex: 1; }
-.side-nav button { width: 100%; background: none; border: none; color: var(--dim); padding: 14px; text-align: left; cursor: pointer; font-family: inherit; font-weight: 600; border-radius: 8px; margin-bottom: 5px; transition: 0.2s; }
-.side-nav button.active, .side-nav button:hover { color: #fff; background: rgba(59, 130, 246, 0.1); }
-.btn-admin-nav { color: var(--red) !important; border: 1px solid rgba(239, 68, 68, 0.2) !important; }
+/* Sidebar vlevo */
+.sidebar { width: 260px; background: #0f1420; border-right: 1px solid rgba(255,255,255,0.05); display: flex; flex-direction: column; }
+.logo-area { padding: 30px 20px; font-weight: 700; display: flex; align-items: center; gap: 10px; color: var(--accent); }
+.menu { flex: 1; display: flex; flex-direction: column; padding: 10px; }
+.spacer { flex: 1; }
+.menu button { background: none; border: none; color: #64748b; padding: 15px; text-align: left; font-family: inherit; font-weight: 600; cursor: pointer; border-radius: 8px; transition: 0.2s; }
+.menu button.active, .menu button:hover { color: #fff; background: rgba(59, 130, 246, 0.1); }
+.admin-link { color: var(--danger) !important; border: 1px solid rgba(239, 68, 68, 0.2) !important; }
 
-/* Main Content */
-.main-view { flex: 1; padding: 40px; overflow-y: auto; }
-.header-row { margin-bottom: 30px; }
-.search-box { display: flex; align-items: center; background: var(--card); padding: 10px 15px; border-radius: 4px; width: 300px; margin-top: 10px; border: 1px solid rgba(255,255,255,0.05); }
-.search-box input { background: none; border: none; color: #fff; margin-left: 10px; width: 100%; outline: none; font-family: inherit; }
+/* Obsah vpravo */
+.content { flex: 1; padding: 40px; overflow-y: auto; }
+.page-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+.search-bar { background: var(--bg-panel); padding: 10px; border-radius: 4px; display: flex; align-items: center; border: 1px solid rgba(255,255,255,0.1); }
+.search-bar input { background: none; border: none; color: #fff; margin-left: 10px; outline: none; width: 200px; }
 
-/* Table */
-.table-container { background: var(--card); border-radius: 8px; overflow: hidden; border: 1px solid rgba(255,255,255,0.05); }
-.data-table { width: 100%; border-collapse: collapse; }
-.data-table th { background: rgba(0,0,0,0.2); padding: 15px; text-align: left; color: var(--dim); font-size: 0.8rem; }
-.data-table td { padding: 15px; border-bottom: 1px solid rgba(255,255,255,0.05); }
+/* Tabulka Složky */
+.card-table { background: var(--bg-panel); border-radius: 8px; border: 1px solid rgba(255,255,255,0.05); }
+.main-table { width: 100%; border-collapse: collapse; }
+.main-table th { text-align: left; padding: 15px; font-size: 0.8rem; color: #475569; border-bottom: 1px solid rgba(255,255,255,0.05); }
+.main-table td { padding: 15px; border-bottom: 1px solid rgba(255,255,255,0.05); }
 
-/* Storage Grid */
-.storage-grid { display: flex; gap: 20px; flex-wrap: wrap; margin-top: 25px; }
-.st-item { background: var(--card); width: 180px; padding: 25px 15px; border-radius: 12px; text-align: center; border: 1px solid rgba(255,255,255,0.05); }
-.st-img { width: 60px; height: 60px; object-fit: contain; margin-bottom: 15px; }
-.st-item span { display: block; font-size: 2rem; font-weight: 700; color: var(--accent); }
+/* Sklad Karty */
+.storage-grid { display: flex; gap: 20px; flex-wrap: wrap; margin-top: 20px; }
+.st-card { background: var(--bg-panel); width: 180px; padding: 25px; border-radius: 12px; text-align: center; border: 1px solid rgba(255,255,255,0.05); }
+.st-card span { display: block; font-size: 2rem; color: var(--accent); font-weight: 700; margin-top: 10px; }
 
-/* Controls */
-.control-row { display: flex; gap: 10px; margin-top: 15px; background: var(--card); padding: 15px; border-radius: 8px; }
-input, select, textarea { background: #0f172a; border: 1px solid rgba(255,255,255,0.1); color: #fff; padding: 10px; border-radius: 4px; font-family: inherit; }
-.btn-green { background: #10b981; border: none; padding: 10px 20px; color: #fff; cursor: pointer; border-radius: 4px; }
-.btn-red { background: var(--red); border: none; padding: 10px 20px; color: #fff; cursor: pointer; border-radius: 4px; }
-.btn-blue { background: var(--accent); border: none; padding: 10px 25px; color: #fff; cursor: pointer; border-radius: 4px; font-weight: bold; }
-
-/* Modal */
-.modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); backdrop-filter: blur(5px); z-index: 1000; }
-.dossier-card { width: 650px; margin: 50px auto; background: var(--card); border-radius: 12px; overflow: hidden; border: 1px solid rgba(255,255,255,0.1); }
-.d-header { padding: 25px; background: #1e293b; display: flex; justify-content: space-between; align-items: center; }
-.d-user-profile { display: flex; align-items: center; gap: 15px; }
-.d-icon-bg { width: 50px; height: 50px; background: var(--accent); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; }
-.d-tabs { display: flex; background: #111827; border-bottom: 1px solid rgba(255,255,255,0.1); }
-.d-tab { padding: 15px 25px; background: none; border: none; color: var(--dim); cursor: pointer; font-weight: bold; font-family: inherit; }
-.d-tab.active { color: var(--accent); border-bottom: 2px solid var(--accent); }
-.d-content { padding: 25px; }
-.d-footer { padding: 20px; background: #1e293b; display: flex; justify-content: space-between; gap: 15px; }
-.close-btn { background: none; border: none; color: var(--dim); font-size: 2rem; cursor: pointer; }
+/* Modal Dossier */
+.modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 999; }
+.dossier-box { width: 600px; margin: 5% auto; background: var(--bg-panel); border-radius: 12px; overflow: hidden; }
+/* ... (styly pro dossier podle obrázku b920f3.png) ... */
