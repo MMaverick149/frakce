@@ -3,13 +3,10 @@ let f_data = JSON.parse(localStorage.getItem('syn_f_data')) || {};
 let s_data = JSON.parse(localStorage.getItem('syn_s_data')) || { zbrane: 0, munice: 0, kontraband: 0, zlutatrava: 0 };
 let currentU = "";
 
-// Oprava NaN chyby
-for (let key in s_data) { if(isNaN(s_data[key])) s_data[key] = 0; }
-
 function showPage(id) {
-    document.querySelectorAll('.page').forEach(p => p.style.display = 'none');
-    document.querySelectorAll('.sidebar button').forEach(b => b.classList.remove('active'));
-    document.getElementById('page-' + id).style.display = 'block';
+    document.querySelectorAll('.page-frame').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+    document.getElementById('page-' + id).classList.add('active');
     document.getElementById('nav-' + id).classList.add('active');
     if(id === 'members') renderMembers();
     if(id === 'storage') renderStore();
@@ -17,28 +14,27 @@ function showPage(id) {
 
 function renderMembers() {
     const search = document.getElementById('m-search').value.toLowerCase();
-    const tbody = document.getElementById('members-list');
-    tbody.innerHTML = m_list.filter(m => m.toLowerCase().includes(search)).map(m => {
+    const list = document.getElementById('members-list');
+    list.innerHTML = m_list.filter(m => m.toLowerCase().includes(search)).map(m => {
         const data = f_data[m] || { rank: "NEZAŘAZEN" };
-        const idCode = Math.floor(1000 + (m.length * 123) % 8999);
-        return `<tr>
-            <td style="color:#334155; font-weight:700;">#${idCode}</td>
-            <td style="color:var(--accent); font-weight:700;">${data.rank.toUpperCase()}</td>
-            <td>${m}</td>
-            <td><button onclick="openDossier('${m}')" style="background:var(--accent); border:none; color:white; padding:5px 10px; border-radius:4px; cursor:pointer;">OTEVŘÍT</button></td>
-        </tr>`;
+        const idCode = (m.length * 777 % 9000 + 1000);
+        return `
+            <div class="grid-row">
+                <div style="color:var(--text-dim)">#${idCode}</div>
+                <div style="color:var(--accent); font-weight:800; font-size:0.7rem;">${data.rank.toUpperCase()}</div>
+                <div style="font-weight:600;">${m}</div>
+                <button onclick="openDossier('${m}')" class="save-btn" style="padding:5px 10px; font-size:0.6rem;">PROTOKOL</button>
+            </div>`;
     }).join('');
 }
 
 function renderStore() {
     const grid = document.getElementById('st-grid');
-    grid.innerHTML = Object.entries(s_data).map(([k, v]) => {
-        let val = isNaN(v) ? 0 : v;
-        return `<div class="st-card">
-            <label style="color:var(--text-dim); font-size:0.7rem; font-weight:700;">${k.toUpperCase()}</label>
-            <span>${val}</span>
-        </div>`;
-    }).join('');
+    grid.innerHTML = Object.entries(s_data).map(([k, v]) => `
+        <div class="inv-card">
+            <h4>${k.toUpperCase()}</h4>
+            <span>${isNaN(v) ? 0 : v}</span>
+        </div>`).join('');
     localStorage.setItem('syn_s_data', JSON.stringify(s_data));
 }
 
@@ -46,19 +42,13 @@ function openDossier(name) {
     currentU = name;
     const f = f_data[name] || { rank: "", phone: "", items: "", notes: "", sig: "" };
     document.getElementById('d-name').innerText = name;
+    document.getElementById('d-id-code').innerText = "#" + (name.length * 777 % 9000 + 1000);
     document.getElementById('in-rank').value = f.rank || "";
     document.getElementById('in-phone').value = f.phone || "";
     document.getElementById('in-items').value = f.items || "";
     document.getElementById('in-notes').value = f.notes || "";
     document.getElementById('in-sig').value = f.sig || "";
     document.getElementById('dossier-modal').style.display = 'flex';
-}
-
-function switchTab(e, tabId) {
-    document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
-    document.querySelectorAll('.d-tab').forEach(t => t.classList.remove('active'));
-    document.getElementById(tabId).classList.add('active');
-    e.currentTarget.classList.add('active');
 }
 
 function saveFolder() {
@@ -70,10 +60,23 @@ function saveFolder() {
         sig: document.getElementById('in-sig').value
     };
     localStorage.setItem('syn_f_data', JSON.stringify(f_data));
-    closeModal();
-    renderMembers();
+    closeModal(); renderMembers();
+}
+
+function switchTab(e, tabId) {
+    document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.d-tab').forEach(t => t.classList.remove('active'));
+    document.getElementById(tabId).classList.add('active');
+    e.currentTarget.classList.add('active');
+}
+
+function editStore(type) {
+    const item = document.getElementById('st-what').value;
+    const qty = parseInt(document.getElementById('st-how').value) || 0;
+    if(type === 'add') s_data[item] += qty;
+    else s_data[item] = Math.max(0, s_data[item] - qty);
+    renderStore();
 }
 
 function closeModal() { document.getElementById('dossier-modal').style.display = 'none'; }
-
 showPage('home');
