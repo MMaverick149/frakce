@@ -15,9 +15,9 @@
                 <div class="logo-text"><span class="brand">SYNDICATE</span></div>
             </div>
             <nav class="side-nav">
-                <button onclick="showPage('home')" id="nav-home" class="active"><i class="fas fa-terminal"></i> Dashboard</button>
-                <button onclick="showPage('members')" id="nav-members"><i class="fas fa-folder-open"></i> Složky</button>
-                <button onclick="showPage('storage')" id="nav-storage"><i class="fas fa-box-open"></i> Sklad</button>
+                <button onclick="showPage('home')" id="nav-home" class="active"><i class="fas fa-terminal"></i> DASHBOARD</button>
+                <button onclick="showPage('members')" id="nav-members"><i class="fas fa-folder-open"></i> SLOŽKY</button>
+                <button onclick="showPage('storage')" id="nav-storage"><i class="fas fa-box-open"></i> SKLAD</button>
                 <div class="nav-spacer"></div>
                 <button onclick="showPage('admin')" id="nav-admin" class="btn-admin-nav"><i class="fas fa-fingerprint"></i> ADMIN</button>
             </nav>
@@ -26,17 +26,17 @@
         <main class="main-view">
             <section id="page-home" class="page">
                 <div class="welcome-card">
-                    <h1>SYNDICATE DATABASE</h1>
-                    <p>Systém je online. Veškeré operace jsou šifrovány.</p>
+                    <h1>VÍTEJTE V DATABÁZI</h1>
+                    <p>Vyberte sekci v levém menu pro pokračování.</p>
                 </div>
             </section>
 
             <section id="page-members" class="page" style="display:none;">
-                <div class="header-group">
-                    <h2>REGISTR OSOB</h2>
-                    <div class="advanced-search">
+                <div class="header-row">
+                    <h2 class="glitch-text">SLOŽKY</h2>
+                    <div class="search-box">
                         <i class="fas fa-search"></i>
-                        <input type="text" id="m-search" placeholder="VYHLEDAT..." onkeyup="renderMembers()">
+                        <input type="text" id="m-search" placeholder="VYHLEDAT SUBJEKT..." onkeyup="renderMembers()">
                     </div>
                 </div>
                 <div class="table-container">
@@ -50,38 +50,37 @@
             </section>
 
             <section id="page-storage" class="page" style="display:none;">
-                <div class="storage-layout">
-                    <div class="action-card">
-                        <h3>SKLADOVÁ MANIPULACE</h3>
+                <div class="storage-controls">
+                    <h3>MANIPULACE</h3>
+                    <div class="control-row">
                         <input type="text" id="st-who" placeholder="Operátor">
                         <select id="st-what">
                             <option value="zbrane">Zbraně</option>
                             <option value="munice">Munice</option>
+                            <option value="kontraband">Kontraband</option>
                             <option value="zlutatrava">Žlutá tráva</option>
                         </select>
                         <input type="number" id="st-how" value="1">
-                        <div class="btn-row">
-                            <button onclick="editStore('add')" class="btn-green">PŘIDAT</button>
-                            <button onclick="editStore('rem')" class="btn-red">ODEBRAT</button>
-                        </div>
+                        <button onclick="editStore('add')" class="btn-green">PŘIDAT</button>
+                        <button onclick="editStore('rem')" class="btn-red">ODEBRAT</button>
                     </div>
-                    <div class="storage-grid" id="st-grid"></div>
                 </div>
+                <div class="storage-grid" id="st-grid"></div>
             </section>
 
             <section id="page-admin" class="page" style="display:none;">
-                <div class="admin-auth" id="admin-lock">
+                <div id="admin-lock" class="auth-card">
                     <i class="fas fa-lock fa-3x"></i>
-                    <h3>ZABEZPEČENÁ ZÓNA</h3>
-                    <input type="password" id="admin-pin" placeholder="PIN">
-                    <button onclick="unlockAdmin()" class="btn-red">VSTOUPIT</button>
+                    <h2>AUTORIZACE VYŽADOVÁNA</h2>
+                    <input type="password" id="admin-pin" placeholder="ZADEJTE PIN">
+                    <button onclick="unlockAdmin()">POTVRDIT</button>
                 </div>
-                <div id="admin-content" style="display:none;">
+                <div id="admin-panel" style="display:none;">
                     <div class="action-card">
-                        <h3>PŘIDAT NOVÝ PROFIL</h3>
+                        <h3>NOVÝ PROFIL</h3>
                         <input type="text" id="new-mem-name" placeholder="Celé jméno">
-                        <input type="text" id="new-mem-rank" placeholder="Hodnost">
-                        <button onclick="addMem()" class="btn-blue">ZAPSAT DO DATABÁZE</button>
+                        <input type="text" id="new-mem-rank" placeholder="Pozice">
+                        <button onclick="addMem()" class="btn-blue">ZAPROTOKOLOVAT</button>
                     </div>
                 </div>
             </section>
@@ -93,27 +92,35 @@
             <div class="d-header">
                 <div class="d-user-profile">
                     <div class="d-icon-bg"><i class="fas fa-user-secret"></i></div>
-                    <div id="d-name">Jméno</div>
+                    <div class="d-title">
+                        <h2 id="d-name">Jméno</h2>
+                        <span>IDENTIFIED SUBJECT</span>
+                    </div>
                 </div>
-                <button onclick="closeModal()" class="d-close-btn">&times;</button>
+                <button onclick="closeModal()" class="close-btn">&times;</button>
             </div>
-            <div class="d-nav-tabs">
+            <div class="d-tabs">
                 <button class="d-tab active" onclick="switchTab(event, 't-info')">INFO</button>
                 <button class="d-tab" onclick="switchTab(event, 't-items')">VYBAVENÍ</button>
+                <button class="d-tab" onclick="switchTab(event, 't-notes')">POZNÁMKY</button>
             </div>
             <div class="d-content">
                 <div id="t-info" class="tab-pane">
-                    <label>HODNOST</label>
+                    <label>POZICE VEDENÍ</label>
                     <input type="text" id="in-rank">
-                    <label>KONTAKT</label>
+                    <label>KONTAKTNÍ ÚDAJE</label>
                     <input type="text" id="in-phone">
                 </div>
                 <div id="t-items" class="tab-pane" style="display:none;">
-                    <textarea id="in-items" rows="10"></textarea>
+                    <textarea id="in-items" placeholder="Inventář subjektu..." rows="8"></textarea>
+                </div>
+                <div id="t-notes" class="tab-pane" style="display:none;">
+                    <textarea id="in-notes" placeholder="Poznámky..." rows="8"></textarea>
                 </div>
             </div>
             <div class="d-footer">
-                <button class="d-save-btn" onclick="saveFolder()">AKTUALIZOVAT DATA</button>
+                <input type="text" id="in-sig" placeholder="Autorizoval">
+                <button class="btn-blue" onclick="saveFolder()">AKTUALIZOVAT</button>
             </div>
         </div>
     </div>
