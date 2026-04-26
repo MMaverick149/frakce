@@ -36,7 +36,21 @@ function renderStore() {
     const grid = document.getElementById('st-grid');
     grid.innerHTML = Object.entries(s_data).map(([k, v]) => {
         let val = isNaN(v) ? 0 : v;
-        return `<div class="st-card"><label style="color:#475569; font-size:0.7rem;">${k.toUpperCase()}</label><span>${val}</span></div>`;
+        
+        // Výběr ikony podle typu zboží
+        let iconHtml = '<i class="fas fa-box fa-2x"></i>'; // Výchozí krabice
+        if (k === 'zlutatrava') iconHtml = '<i class="fas fa-leaf fa-2x" style="color: #fbbf24;"></i>'; // Ikona pro trávu
+        if (k === 'zbrane') iconHtml = '<i class="fas fa-gun fa-2x"></i>';
+        if (k === 'munice') iconHtml = '<i class="fas fa-car-battery fa-2x"></i>'; // Náhrada za munici
+        
+        return `
+            <div class="st-card">
+                <div class="st-icon-container" style="margin-bottom: 10px; opacity: 0.7;">
+                    ${iconHtml}
+                </div>
+                <label style="color:#475569; font-size:0.7rem; display:block;">${k.toUpperCase()}</label>
+                <span>${val}</span>
+            </div>`;
     }).join('');
     localStorage.setItem('syn_s_data', JSON.stringify(s_data));
 }
