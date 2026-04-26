@@ -2,154 +2,138 @@
 <html lang="cs">
 <head>
     <meta charset="UTF-8">
-    <title>SYNDICATE TERMINAL v5.0</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SYNDICATE TERMINAL v6.0</title>
     <link rel="stylesheet" href="style.css">
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Rajdhani:wght@500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Rajdhani:wght@400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
-    <div class="scanline"></div>
-    <div class="app-container">
-        <aside class="side-nav">
-            <div class="logo">
-                <div class="logo-icon"><i class="fas fa-atom"></i></div>
+    <div class="neon-grid"></div>
+    <div class="scanlines"></div>
+
+    <div class="app-shell">
+        <aside class="sidebar">
+            <div class="nav-header">
+                <i class="fas fa-microchip"></i>
                 <span>SYNDICATE</span>
             </div>
-            <div class="nav-group">
-                <button onclick="showPage('home')" id="nav-home" class="nav-btn active"><i class="fas fa-th-large"></i> TERMINÁL</button>
-                <button onclick="showPage('members')" id="nav-members" class="nav-btn"><i class="fas fa-address-card"></i> DATABÁZE</button>
-                <button onclick="showPage('storage')" id="nav-storage" class="nav-btn"><i class="fas fa-box"></i> LOGISTIKA</button>
-            </div>
-            <div class="nav-bottom">
-                <button onclick="showPage('admin')" id="nav-admin" class="nav-btn admin-btn"><i class="fas fa-unlock-alt"></i> ADMIN</button>
-            </div>
+            <nav class="main-nav">
+                <button onclick="showPage('home')" id="nav-home" class="nav-item active"><i class="fas fa-layer-group"></i> KONZOLE</button>
+                <button onclick="showPage('members')" id="nav-members" class="nav-item"><i class="fas fa-id-badge"></i> DATABÁZE</button>
+                <button onclick="showPage('storage')" id="nav-storage" class="nav-item"><i class="fas fa-box-open"></i> LOGISTIKA</button>
+            </nav>
+            <button onclick="showPage('admin')" id="nav-admin" class="admin-lock-btn"><i class="fas fa-fingerprint"></i> ADMIN</button>
         </aside>
 
-        <main class="content-area">
-            <header class="top-bar">
-                <div class="status-indicator">SYSTEM: <span class="online">ONLINE</span></div>
-                <div class="current-date" id="live-clock">26. 04. 2026</div>
+        <main class="content">
+            <header class="system-bar">
+                <div class="sys-status">STATUS: <span class="glow-text">ENCRYPTED</span></div>
+                <div class="sys-time" id="clock">--:--:--</div>
             </header>
 
-            <section id="page-home" class="page-frame active">
-                <div class="welcome-screen">
-                    <h1 class="glitch" data-text="SYNDICATE OS">SYNDICATE OS</h1>
-                    <p>Vítejte v hlavním uzlu. Všechny aktivity jsou monitorovány.</p>
+            <section id="page-home" class="page active">
+                <div class="hero-box">
+                    <h1 class="text-flicker">MAIN TERMINAL</h1>
+                    <p>Všechny systémy jsou pod dohledem operátora.</p>
                 </div>
             </section>
 
-            <section id="page-members" class="page-frame">
-                <div class="view-header">
+            <section id="page-members" class="page">
+                <div class="page-head">
                     <h2>EVidovaná DATA</h2>
-                    <div class="search-box">
-                        <input type="text" id="m-search" placeholder="HLEDAT SUBJEKT..." onkeyup="renderMembers()">
+                    <div class="search-wrap">
                         <i class="fas fa-search"></i>
+                        <input type="text" id="m-search" placeholder="HLEDAT SUBJEKT..." onkeyup="renderMembers()">
                     </div>
                 </div>
-                <div class="grid-table-container">
-                    <div class="grid-table-header">
-                        <div>KÓD</div><div>STATUS</div><div>JMÉNO</div><div>AKCE</div>
+                <div class="data-wrapper">
+                    <div class="table-head">
+                        <span>KÓD</span><span>STATUS</span><span>SUBJEKT</span><span>PŘÍSTUP</span>
                     </div>
-                    <div id="members-list" class="grid-table-body"></div>
+                    <div id="members-list" class="table-body"></div>
                 </div>
             </section>
 
-            <section id="page-storage" class="page-frame">
-                <div class="storage-controls">
-                    <div class="ctrl-group">
-                        <label>OPERÁTOR</label>
-                        <input type="text" id="st-who" placeholder="ID">
-                    </div>
-                    <div class="ctrl-group">
-                        <label>TYP</label>
+            <section id="page-storage" class="page">
+                <div class="storage-form card-glass">
+                    <div class="form-row">
+                        <input type="text" id="st-who" placeholder="ID OPERÁTORA">
                         <select id="st-what">
                             <option value="zbrane">ZBRANĚ</option>
                             <option value="munice">MUNICE</option>
                             <option value="kontraband">KONTRABAND</option>
                             <option value="zlutatrava">ŽLUTÁ TRÁVA</option>
                         </select>
-                    </div>
-                    <div class="ctrl-group">
-                        <label>MNOŽSTVÍ</label>
                         <input type="number" id="st-how" value="1">
-                    </div>
-                    <div class="ctrl-btns">
-                        <button onclick="editStore('add')" class="btn-neon green"><i class="fas fa-plus"></i></button>
-                        <button onclick="editStore('rem')" class="btn-neon red"><i class="fas fa-minus"></i></button>
+                        <button onclick="editStore('add')" class="btn-action add"><i class="fas fa-plus"></i></button>
+                        <button onclick="editStore('rem')" class="btn-action rem"><i class="fas fa-minus"></i></button>
                     </div>
                 </div>
-                <div id="st-grid" class="inventory-grid"></div>
+                <div id="st-grid" class="inv-grid"></div>
             </section>
 
-            <section id="page-admin" class="page-frame">
-                <div class="lock-screen" id="admin-lock">
-                    <i class="fas fa-fingerprint"></i>
-                    <h3>AUTENTIZACE VYŽADOVÁNA</h3>
-                    <input type="password" id="admin-pin" placeholder="PIN">
-                    <button onclick="unlockAdmin()">POTVRDIT</button>
+            <section id="page-admin" class="page">
+                <div id="admin-lock" class="card-glass lock-card">
+                    <i class="fas fa-shield-halved"></i>
+                    <h3>AUTORIZACE</h3>
+                    <input type="password" id="admin-pin" placeholder="PIN KÓD">
+                    <button onclick="unlockAdmin()" class="btn-prime">VSTOUPIT</button>
                 </div>
-                <div id="admin-panel" style="display:none;" class="admin-ui">
-                    <div class="glass-card">
-                        <h3>PŘIDAT NOVÝ ZÁZNAM</h3>
-                        <input type="text" id="new-mem-name" placeholder="Celé jméno">
-                        <input type="text" id="new-mem-rank" placeholder="Přiřazená hodnost">
-                        <button onclick="addMem()" class="btn-neon blue">ZAPSAT DO DATABÁZE</button>
-                    </div>
+                <div id="admin-panel" style="display:none;" class="card-glass">
+                    <h3>PŘIDAT SUBJEKT</h3>
+                    <input type="text" id="new-mem-name" placeholder="Celé jméno">
+                    <input type="text" id="new-mem-rank" placeholder="Přiřazená hodnost">
+                    <button onclick="addMem()" class="btn-prime">ZAPSAT</button>
                 </div>
             </section>
         </main>
     </div>
 
-    <div id="dossier-modal" class="modal-overlay">
-        <div class="dossier-window">
-            <div class="dossier-sidebar">
-                <div class="avatar-circle"><i class="fas fa-user-secret"></i></div>
-                <div class="id-badge">ID: <span id="d-id-code">#4582</span></div>
-            </div>
+    <div id="dossier-modal" class="modal-root">
+        <div class="glass-dossier">
+            <aside class="dossier-aside">
+                <div class="profile-icon"><i class="fas fa-user-secret"></i></div>
+                <div class="id-tag">REF: <span id="d-id-code">#0000</span></div>
+            </aside>
             <div class="dossier-main">
-                <header class="d-header">
+                <header class="d-head">
                     <div>
-                        <h2 id="d-name">Jméno Příjmení</h2>
-                        <p class="subtitle">BIOMETRICKÝ PROFIL</p>
+                        <h2 id="d-name">Jméno</h2>
+                        <span class="d-label">BIOMETRICKÝ PROFIL</span>
                     </div>
-                    <button class="close-btn" onclick="closeModal()">&times;</button>
+                    <button onclick="closeModal()" class="close-x">&times;</button>
                 </header>
-                
-                <div class="d-tabs">
-                    <button class="d-tab active" onclick="switchTab(event, 't-info')">SOUHRN</button>
-                    <button class="d-tab" onclick="switchTab(event, 't-items')">VÝBAVA</button>
-                    <button class="d-tab" onclick="switchTab(event, 't-notes')">PROTOKOL</button>
-                </div>
-
-                <div class="d-body">
+                <nav class="d-tabs">
+                    <button class="d-tab active" onclick="switchTab(event, 't-info')">INFO</button>
+                    <button class="d-tab" onclick="switchTab(event, 't-items')">INVENTÁŘ</button>
+                    <button class="d-tab" onclick="switchTab(event, 't-notes')">POZNÁMKY</button>
+                </nav>
+                <div class="d-content">
                     <div id="t-info" class="tab-pane active">
-                        <div class="input-grid">
-                            <div class="input-field">
+                        <div class="grid-2">
+                            <div class="input-box">
                                 <label>HODNOST</label>
                                 <input type="text" id="in-rank">
                             </div>
-                            <div class="input-field">
-                                <label>TELEFONNÍ ČÍSLO</label>
+                            <div class="input-box">
+                                <label>KONTAKT</label>
                                 <input type="text" id="in-phone">
                             </div>
                         </div>
                     </div>
                     <div id="t-items" class="tab-pane">
-                        <label>VLASTNĚNÉ PŘEDMĚTY</label>
-                        <textarea id="in-items"></textarea>
+                        <label>EVIDOVANÉ VYBAVENÍ</label>
+                        <textarea id="in-items" rows="6"></textarea>
                     </div>
                     <div id="t-notes" class="tab-pane">
-                        <label>OPERATIVNÍ POZNÁMKY</label>
-                        <textarea id="in-notes"></textarea>
+                        <label>OPERATIVNÍ PROTOKOL</label>
+                        <textarea id="in-notes" rows="6"></textarea>
                     </div>
                 </div>
-
-                <footer class="d-footer">
-                    <div class="sig-area">
-                        <label>PODPIS OPERÁTORA</label>
-                        <input type="text" id="in-sig">
-                    </div>
-                    <button class="save-btn" onclick="saveFolder()">AKTUALIZOVAT DATA</button>
+                <footer class="d-foot">
+                    <input type="text" id="in-sig" placeholder="OPERÁTOR...">
+                    <button onclick="saveFolder()" class="btn-save">AKTUALIZOVAT</button>
                 </footer>
             </div>
         </div>
