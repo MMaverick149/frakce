@@ -1,29 +1,39 @@
 :root {
     --bg: #0b111b; --side: #151c2a; --card: #1a2230;
-    --accent: #3b82f6; --text: #f8fafc; --dim: #64748b;
+    --accent: #3b82f6; --text: #f8fafc; --dim: #64748b; --danger: #ef4444;
 }
 * { box-sizing: border-box; margin: 0; padding: 0; }
-body { background: var(--bg); color: var(--text); font-family: 'Rajdhani', sans-serif; }
+body { background: var(--bg); color: var(--text); font-family: 'Rajdhani', sans-serif; overflow: hidden; }
 .network-shell { display: flex; height: 100vh; }
-.sidebar { width: 260px; background: var(--side); border-right: 1px solid rgba(255,255,255,0.05); }
-.side-nav button { width: 100%; background: none; border: none; color: var(--dim); padding: 15px; text-align: left; cursor: pointer; font-family: inherit; font-weight: bold; }
+
+/* Sidebar */
+.sidebar { width: 260px; background: var(--side); border-right: 1px solid rgba(255,255,255,0.05); display: flex; flex-direction: column; }
+.side-nav { display: flex; flex-direction: column; height: 100%; padding: 15px; }
+.nav-spacer { flex-grow: 1; }
+.side-nav button { width: 100%; background: none; border: none; color: var(--dim); padding: 15px; text-align: left; cursor: pointer; font-family: inherit; font-weight: bold; border-radius: 5px; margin-bottom: 5px; }
 .side-nav button.active { color: #fff; background: rgba(59, 130, 246, 0.1); }
-.main-view { flex: 1; padding: 40px; overflow-y: auto; }
 
-/* Sklad karty */
-.storage-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 20px; margin-top: 20px; }
+/* Červená administrace */
+.btn-admin-nav { color: var(--danger) !important; border: 1px solid rgba(239, 68, 68, 0.2) !important; }
+.btn-admin-nav:hover { background: rgba(239, 68, 68, 0.1) !important; }
+
+/* Hlavní pohled */
+.main-view { flex: 1; padding: 40px; overflow-y: auto; background: #0f172a; }
+
+/* Sklad */
+.storage-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 20px; margin-top: 25px; }
 .st-item { background: var(--card); padding: 20px; border-radius: 10px; border: 1px solid rgba(255,255,255,0.05); text-align: center; }
-.st-img { width: 80px; height: 80px; object-fit: contain; margin-bottom: 10px; }
-.st-item span { display: block; font-size: 1.5rem; color: var(--accent); font-weight: bold; }
+.st-img { width: 80px; height: 80px; object-fit: contain; margin-bottom: 10px; border-radius: 5px; }
+.st-item span { display: block; font-size: 1.8rem; color: var(--accent); font-weight: bold; }
 
-/* Modal */
-.modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); backdrop-filter: blur(5px); z-index: 100; }
+/* Form prvky */
+.action-card { background: var(--card); padding: 20px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.05); max-width: 400px; }
+input, select, textarea { width: 100%; padding: 10px; background: #0f172a; border: 1px solid rgba(255,255,255,0.1); color: #fff; margin-bottom: 10px; border-radius: 4px; font-family: inherit; }
+.btn-green { background: #10b981; color: white; border: none; padding: 10px; cursor: pointer; flex: 1; }
+.btn-red { background: var(--danger); color: white; border: none; padding: 10px; cursor: pointer; flex: 1; }
+.btn-row { display: flex; gap: 10px; }
+
+/* Modální okno */
+.modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 1000; }
 .dossier-card { width: 600px; margin: 50px auto; background: var(--card); border-radius: 10px; overflow: hidden; }
-.d-header { padding: 20px; background: #1e283a; display: flex; justify-content: space-between; }
-.d-nav-tabs { display: flex; background: #151c2a; }
-.d-tab { padding: 15px; background: none; border: none; color: var(--dim); cursor: pointer; font-family: inherit; }
-.d-tab.active { color: #fff; border-bottom: 2px solid var(--accent); }
-.d-content { padding: 20px; }
-.d-content input, textarea { width: 100%; margin-bottom: 10px; background: #0f172a; border: 1px solid rgba(255,255,255,0.1); color: #fff; padding: 10px; }
-.d-footer { padding: 15px; display: flex; gap: 10px; background: #1e283a; }
-.d-save-btn { background: var(--accent); color: #fff; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; }
+.d-header { padding: 20px; background: #1e283a; display: flex; justify-content: space-between; align-items: center; }
