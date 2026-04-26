@@ -1,42 +1,41 @@
-:root {
-    --bg-dark: #090c13;
-    --bg-panel: #121826;
-    --accent: #3b82f6;
-    --text: #f1f5f9;
-    --danger: #ef4444;
-}
+:root { --bg: #0b1019; --panel: #161d2a; --accent: #3b82f6; --red: #ef4444; --text: #f1f5f9; }
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { background: var(--bg); color: var(--text); font-family: 'Rajdhani', sans-serif; overflow: hidden; }
 
-body, html { margin: 0; padding: 0; height: 100%; background: var(--bg-dark); color: var(--text); font-family: 'Rajdhani', sans-serif; overflow: hidden; }
+/* Flexbox rozvržení */
+.wrapper { display: flex; height: 100vh; }
 
-.app-container { display: flex; height: 100vh; }
+.sidebar { width: 260px; background: #0f1420; border-right: 1px solid rgba(255,255,255,0.05); display: flex; flex-direction: column; padding: 20px 10px; }
+.brand-zone { padding: 10px 15px; font-weight: 700; color: var(--accent); display: flex; align-items: center; gap: 10px; margin-bottom: 30px; }
+.nav-links { flex: 1; }
+.nav-links button, .btn-admin { width: 100%; background: none; border: none; color: #64748b; padding: 15px; text-align: left; cursor: pointer; border-radius: 8px; font-family: inherit; font-weight: 600; margin-bottom: 5px; }
+.nav-links button.active, .nav-links button:hover { background: rgba(59, 130, 246, 0.1); color: #fff; }
 
-/* Sidebar vlevo */
-.sidebar { width: 260px; background: #0f1420; border-right: 1px solid rgba(255,255,255,0.05); display: flex; flex-direction: column; }
-.logo-area { padding: 30px 20px; font-weight: 700; display: flex; align-items: center; gap: 10px; color: var(--accent); }
-.menu { flex: 1; display: flex; flex-direction: column; padding: 10px; }
-.spacer { flex: 1; }
-.menu button { background: none; border: none; color: #64748b; padding: 15px; text-align: left; font-family: inherit; font-weight: 600; cursor: pointer; border-radius: 8px; transition: 0.2s; }
-.menu button.active, .menu button:hover { color: #fff; background: rgba(59, 130, 246, 0.1); }
-.admin-link { color: var(--danger) !important; border: 1px solid rgba(239, 68, 68, 0.2) !important; }
+/* Admin červeně dole */
+.btn-admin { color: var(--red) !important; border: 1px solid rgba(239, 68, 68, 0.2) !important; }
+.btn-admin:hover { background: rgba(239, 68, 68, 0.1); }
 
-/* Obsah vpravo */
-.content { flex: 1; padding: 40px; overflow-y: auto; }
-.page-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
-.search-bar { background: var(--bg-panel); padding: 10px; border-radius: 4px; display: flex; align-items: center; border: 1px solid rgba(255,255,255,0.1); }
-.search-bar input { background: none; border: none; color: #fff; margin-left: 10px; outline: none; width: 200px; }
+.viewport { flex: 1; padding: 40px; overflow-y: auto; background: #0c121e; }
 
 /* Tabulka Složky */
-.card-table { background: var(--bg-panel); border-radius: 8px; border: 1px solid rgba(255,255,255,0.05); }
-.main-table { width: 100%; border-collapse: collapse; }
-.main-table th { text-align: left; padding: 15px; font-size: 0.8rem; color: #475569; border-bottom: 1px solid rgba(255,255,255,0.05); }
-.main-table td { padding: 15px; border-bottom: 1px solid rgba(255,255,255,0.05); }
+.table-wrap { background: var(--panel); border-radius: 8px; border: 1px solid rgba(255,255,255,0.05); margin-top: 20px; }
+.syndicate-table { width: 100%; border-collapse: collapse; }
+.syndicate-table th { padding: 15px; text-align: left; color: #475569; font-size: 0.8rem; border-bottom: 1px solid rgba(255,255,255,0.05); }
+.syndicate-table td { padding: 15px; border-bottom: 1px solid rgba(255,255,255,0.05); }
 
 /* Sklad Karty */
-.storage-grid { display: flex; gap: 20px; flex-wrap: wrap; margin-top: 20px; }
-.st-card { background: var(--bg-panel); width: 180px; padding: 25px; border-radius: 12px; text-align: center; border: 1px solid rgba(255,255,255,0.05); }
-.st-card span { display: block; font-size: 2rem; color: var(--accent); font-weight: 700; margin-top: 10px; }
+.storage-grid { display: flex; gap: 15px; flex-wrap: wrap; margin-top: 20px; }
+.st-card { background: var(--panel); width: 180px; padding: 20px; border-radius: 12px; text-align: center; border: 1px solid rgba(255,255,255,0.05); }
+.st-card span { display: block; font-size: 1.8rem; color: var(--accent); font-weight: 700; }
 
-/* Modal Dossier */
-.modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 999; }
-.dossier-box { width: 600px; margin: 5% auto; background: var(--bg-panel); border-radius: 12px; overflow: hidden; }
-/* ... (styly pro dossier podle obrázku b920f3.png) ... */
+/* Form prvky */
+input, select, textarea { background: #090e17; border: 1px solid rgba(255,255,255,0.1); color: #fff; padding: 10px; border-radius: 4px; font-family: inherit; }
+.btn-g { background: #10b981; border: none; padding: 10px 15px; color: #fff; cursor: pointer; }
+.btn-r { background: var(--red); border: none; padding: 10px 15px; color: #fff; cursor: pointer; }
+.btn-b { background: var(--accent); border: none; padding: 10px 20px; color: #fff; cursor: pointer; border-radius: 4px; font-weight: 700; }
+
+/* Modal */
+.modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 1000; }
+.dossier-window { width: 600px; margin: 5% auto; background: var(--panel); border-radius: 12px; overflow: hidden; border: 1px solid rgba(255,255,255,0.1); }
+.d-head { padding: 25px; background: #1e283a; display: flex; justify-content: space-between; }
+.d-avatar { width: 50px; height: 50px; background: var(--accent); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; }

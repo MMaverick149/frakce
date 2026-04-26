@@ -3,12 +3,12 @@ let f_data = JSON.parse(localStorage.getItem('syn_f_data')) || {};
 let s_data = JSON.parse(localStorage.getItem('syn_s_data')) || { zbrane: 0, munice: 0, kontraband: 0, zlutatrava: 0 };
 let currentU = "";
 
-// Oprava NaN hned při načtení
-for (let k in s_data) { if(isNaN(s_data[k])) s_data[k] = 0; }
+// POJISTKA PROTI NaN: Projde všechna data ve skladu a pokud to není číslo, dá tam 0
+for (let k in s_data) { if(isNaN(s_data[k]) || s_data[k] === null) s_data[k] = 0; }
 
 function showPage(id) {
-    document.querySelectorAll('.page').forEach(p => p.style.display = 'none');
-    document.querySelectorAll('.menu button').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.page-content').forEach(p => p.style.display = 'none');
+    document.querySelectorAll('.sidebar button').forEach(b => b.classList.remove('active'));
     
     document.getElementById('page-' + id).style.display = 'block';
     document.getElementById('nav-' + id).classList.add('active');
@@ -18,16 +18,16 @@ function showPage(id) {
 }
 
 function renderMembers() {
-    const term = document.getElementById('m-search').value.toLowerCase();
-    const list = document.getElementById('members-list');
-    list.innerHTML = m_list.filter(m => m.toLowerCase().includes(term)).map(m => {
-        const data = f_data[m] || { rank: "NEZAŘAZEN" };
-        const idCode = Math.floor(1000 + Math.random() * 9000);
+    const s = document.getElementById('m-search').value.toLowerCase();
+    const l = document.getElementById('members-list');
+    l.innerHTML = m_list.filter(m => m.toLowerCase().includes(s)).map(m => {
+        const d = f_data[m] || { rank: "NEZAŘAZEN" };
+        const id = Math.floor(1000 + (m.length * 99) % 8999);
         return `<tr>
-            <td style="color:#334155">#${idCode}</td>
-            <td style="color:var(--accent); font-weight:600">${data.rank}</td>
+            <td style="color:#334155">#${id}</td>
+            <td style="color:var(--accent); font-weight:700">${d.rank.toUpperCase()}</td>
             <td>${m}</td>
-            <td><button onclick="openDossier('${m}')" class="btn-open">OTEVŘÍT</button></td>
+            <td><button onclick="openDossier('${m}')" style="background:none; border:1px solid var(--accent); color:var(--accent); padding:5px 10px; cursor:pointer;">OTEVŘÍT</button></td>
         </tr>`;
     }).join('');
 }
@@ -36,10 +36,7 @@ function renderStore() {
     const grid = document.getElementById('st-grid');
     grid.innerHTML = Object.entries(s_data).map(([k, v]) => {
         let val = isNaN(v) ? 0 : v;
-        return `<div class="st-card">
-            <label style="color:#64748b; font-size:0.7rem;">${k.toUpperCase()}</label>
-            <span>${val}</span>
-        </div>`;
+        return `<div class="st-card"><label style="color:#475569; font-size:0.7rem;">${k.toUpperCase()}</label><span>${val}</span></div>`;
     }).join('');
     localStorage.setItem('syn_s_data', JSON.stringify(s_data));
 }
@@ -52,5 +49,54 @@ function editStore(type) {
     renderStore();
 }
 
-// Spuštění
+function openDossier(name) {
+    currentU = name;
+    const f = f_data[name] || { rank: "", phone: "", items: "", notes: "" };
+    document.getElementById('d-name').innerText = name;
+    document.getElementById('in-rank').value = f.rank;
+    document.getElementById('in-phone').value = f.phone;
+    document.getElementById('in-items').value = f.items || "";
+    document.getElementById('in-notes').value = f.notes || "";
+    document.getElementById('dossier-modal').style.display = 'block';
+}
+
+function switchTab(e, id) {
+    document.querySelectorAll('.tab-p').forEach(p => p.style.display = 'none');
+    document.querySelectorAll('.t-btn').forEach(t => t.classList.remove('active'));
+    document.getElementById(id).style.display = 'block';
+    e.currentTarget.classList.add('active');
+}
+
+function saveFolder() {
+    f_data[currentU] = {
+        rank: document.getElementById('in-rank').value,
+        phone: document.getElementById('in-phone').value,
+        items: document.getElementById('in-items').value,
+        notes: document.getElementById('in-notes').value
+    };
+    localStorage.setItem('syn_f_data', JSON.stringify(f_data));
+    closeModal();
+    renderMembers();
+}
+
+function closeModal() { document.getElementById('dossier-modal').style.display = 'none'; }
+
+function unlockAdmin() {
+    if(document.getElementById('admin-pin').value === "1234") {
+        document.getElementById('admin-lock').style.display = 'none';
+        document.getElementById('admin-panel').style.display = 'block';
+    } else { alert("CHYBNÝ PIN"); }
+}
+
+function addMem() {
+    const n = document.getElementById('new-n').value;
+    const r = document.getElementById('new-r').value;
+    if(!n) return;
+    if(!m_list.includes(n)) m_list.push(n);
+    f_data[n] = { rank: r, phone: "", items: "", notes: "" };
+    localStorage.setItem('syn_m_list', JSON.stringify(m_list));
+    localStorage.setItem('syn_f_data', JSON.stringify(f_data));
+    showPage('members');
+}
+
 showPage('home');
