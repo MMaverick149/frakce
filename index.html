@@ -34,7 +34,7 @@
 
             <section id="page-members" class="page" style="display:none;">
                 <div class="page-header">
-                    <h2 class="glitch">SLOŽKY</h2>
+                    <h2>SLOŽKY</h2>
                     <div class="search-container">
                         <i class="fas fa-search"></i>
                         <input type="text" id="m-search" placeholder="VYHLEDAT SUBJEKT..." onkeyup="renderMembers()">
@@ -98,41 +98,44 @@
                         <span class="d-subtext"><i class="fas fa-shield-alt"></i> IDENTIFIED SUBJECT</span>
                     </div>
                 </div>
-                <button onclick="closeModal()" class="btn-close">&times;</button>
+                <button onclick="closeModal()" class="btn-close-x">&times;</button>
             </header>
             
-            <div class="d-tabs">
+            <nav class="d-tabs">
                 <button class="d-tab active" onclick="switchTab(event, 't-info')">INFO</button>
                 <button class="d-tab" onclick="switchTab(event, 't-items')">VYBAVENÍ</button>
                 <button class="d-tab" onclick="switchTab(event, 't-notes')">POZNÁMKY</button>
-            </div>
+            </nav>
 
             <div class="d-content">
-                <div id="t-info" class="tab-pane">
+                <div id="t-info" class="tab-pane active">
                     <div class="d-grid">
                         <div class="d-input-group">
-                            <label>AKTUÁLNÍ HODNOST</label>
+                            <label>HODNOST</label>
                             <input type="text" id="in-rank">
                         </div>
                         <div class="d-input-group">
-                            <label>KONTAKTNÍ SPOJENÍ</label>
+                            <label>TELEFON</label>
                             <input type="text" id="in-phone">
                         </div>
                     </div>
                 </div>
-                <div id="t-items" class="tab-pane" style="display:none;">
-                    <label>EVIDOVANÝ MAJETEK</label>
-                    <textarea id="in-items" rows="6" placeholder="Inventář..."></textarea>
+                <div id="t-items" class="tab-pane">
+                    <label class="d-label">INVENTÁŘ SUBJEKTU</label>
+                    <textarea id="in-items" rows="6"></textarea>
                 </div>
-                <div id="t-notes" class="tab-pane" style="display:none;">
-                    <label>INTERNÍ ZÁZNAMY</label>
-                    <textarea id="in-notes" rows="6" placeholder="Poznámky..."></textarea>
+                <div id="t-notes" class="tab-pane">
+                    <label class="d-label">INTERNÍ ZÁZNAMY</label>
+                    <textarea id="in-notes" rows="6"></textarea>
                 </div>
             </div>
 
             <footer class="d-footer">
-                <input type="text" id="in-sig" placeholder="Autorizoval..." class="sig-input">
-                <button class="btn-blue-save" onclick="saveFolder()">AKTUALIZOVAT</button>
+                <div class="d-auth">
+                    <label>AUTORIZOVAL</label>
+                    <input type="text" id="in-sig" placeholder="Operátor...">
+                </div>
+                <button class="btn-update" onclick="saveFolder()">AKTUALIZOVAT</button>
             </footer>
         </div>
     </div>

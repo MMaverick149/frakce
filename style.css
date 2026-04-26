@@ -12,49 +12,50 @@
 * { box-sizing: border-box; margin: 0; padding: 0; }
 body { background: var(--bg); color: var(--text); font-family: 'Rajdhani', sans-serif; overflow: hidden; }
 
-/* LAYOUT FIX */
+/* ROZVRŽENÍ */
 .app-wrapper { display: flex; height: 100vh; }
 .sidebar { width: 260px; background: var(--side); border-right: 1px solid rgba(255,255,255,0.05); display: flex; flex-direction: column; }
 .main-content { flex: 1; padding: 40px; overflow-y: auto; background: radial-gradient(circle at top right, #111827, #0b0f19); }
 
-/* SIDEBAR */
-.brand { padding: 30px; display: flex; align-items: center; gap: 12px; font-weight: 700; font-size: 1.2rem; color: var(--accent); }
+/* SIDEBAR PRVKY */
+.brand { padding: 30px; display: flex; align-items: center; gap: 12px; font-weight: 700; color: var(--accent); }
 .nav-menu { flex: 1; padding: 10px; }
 .nav-menu button, .btn-admin-nav { width: 100%; background: none; border: none; color: var(--text-dim); padding: 15px; text-align: left; font-family: inherit; font-weight: 600; cursor: pointer; border-radius: 8px; margin-bottom: 5px; transition: 0.2s; }
 .nav-menu button.active, .nav-menu button:hover { background: rgba(59, 130, 246, 0.1); color: #fff; }
-.nav-footer { padding: 10px; }
 .btn-admin-nav { color: var(--red) !important; border: 1px solid rgba(239, 68, 68, 0.2) !important; }
 
-/* TABULKA SLOŽKY */
-.table-container { background: var(--panel); border-radius: 12px; overflow: hidden; border: 1px solid rgba(255,255,255,0.05); }
-.data-table { width: 100%; border-collapse: collapse; }
-.data-table th { padding: 18px; text-align: left; background: rgba(0,0,0,0.2); color: var(--text-dim); font-size: 0.8rem; letter-spacing: 1px; }
-.data-table td { padding: 18px; border-bottom: 1px solid rgba(255,255,255,0.05); }
+/* MODERNÍ MODAL - KONEC BÍLÝCH POLÍ */
+.modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.85); backdrop-filter: blur(10px); z-index: 9999; align-items: center; justify-content: center; }
+.dossier-card { width: 750px; background: var(--panel); border: 1px solid rgba(59, 130, 246, 0.2); border-radius: 12px; box-shadow: 0 0 50px rgba(0,0,0,0.8); overflow: hidden; }
 
-/* SKLAD KARTY */
-.storage-grid { display: flex; gap: 20px; flex-wrap: wrap; margin-top: 30px; }
-.st-card { background: var(--panel); width: 190px; padding: 30px 20px; border-radius: 15px; text-align: center; border: 1px solid rgba(255,255,255,0.05); position: relative; }
-.st-card span { display: block; font-size: 2.2rem; font-weight: 700; color: var(--accent); margin-top: 10px; }
-
-/* DOSSIER MODAL VYLEPŠENÝ */
-.modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); backdrop-filter: blur(8px); z-index: 1000; align-items: center; justify-content: center; }
-.dossier-card { width: 700px; background: var(--panel); border-radius: 16px; border: 1px solid rgba(59, 130, 246, 0.3); box-shadow: 0 0 40px rgba(0,0,0,0.5); overflow: hidden; }
-
-.d-header { padding: 30px; background: #1e293b; display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid var(--accent); }
-.d-user-info { display: flex; align-items: center; gap: 20px; }
-.d-avatar-box { width: 60px; height: 60px; background: var(--accent); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.8rem; box-shadow: 0 0 15px rgba(59,130,246,0.4); }
-.d-text-box h2 { font-size: 1.8rem; letter-spacing: 1px; }
-.d-subtext { color: var(--accent); font-size: 0.8rem; font-weight: 700; }
+.d-header { background: #1e293b; padding: 25px 35px; display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid var(--accent); }
+.d-avatar-box { width: 55px; height: 55px; background: var(--accent); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; box-shadow: 0 0 15px rgba(59, 130, 246, 0.4); }
+.d-subtext { color: var(--accent); font-size: 0.75rem; font-weight: 800; letter-spacing: 1px; }
 
 .d-tabs { display: flex; background: #0f172a; }
-.d-tab { flex: 1; padding: 15px; background: none; border: none; color: var(--text-dim); cursor: pointer; font-family: inherit; font-weight: 700; border-bottom: 3px solid transparent; transition: 0.2s; }
-.d-tab.active { color: var(--accent); border-bottom-color: var(--accent); background: rgba(59,130,246,0.05); }
+.d-tab { flex: 1; padding: 15px; background: none; border: none; color: var(--text-dim); font-family: inherit; font-weight: 700; cursor: pointer; border-bottom: 3px solid transparent; }
+.d-tab.active { color: var(--accent); border-bottom-color: var(--accent); background: rgba(59, 130, 246, 0.05); }
 
 .d-content { padding: 35px; min-height: 250px; }
-.d-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 25px; }
-.d-input-group label { display: block; color: var(--accent); font-size: 0.7rem; font-weight: 700; margin-bottom: 8px; letter-spacing: 1px; }
-input, textarea, select { width: 100%; background: #090e17; border: 1px solid rgba(255,255,255,0.1); color: #fff; padding: 12px; border-radius: 6px; font-family: inherit; }
+.d-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+.d-input-group label, .d-label { display: block; color: var(--accent); font-size: 0.7rem; font-weight: 800; margin-bottom: 8px; letter-spacing: 1px; }
 
-.d-footer { padding: 25px 35px; background: #0f172a; display: flex; justify-content: space-between; align-items: center; }
-.btn-blue-save { background: var(--accent); color: #fff; border: none; padding: 12px 25px; border-radius: 6px; font-weight: 700; cursor: pointer; font-family: inherit; box-shadow: 0 4px 10px rgba(59,130,246,0.3); }
-.btn-close { background: none; border: none; color: var(--text-dim); font-size: 2rem; cursor: pointer; }
+/* OPRAVA INPUTŮ */
+.dossier-card input, .dossier-card textarea, .dossier-card select { 
+    width: 100%; background: rgba(0,0,0,0.4); border: 1px solid rgba(59,130,246,0.2); 
+    color: #fff; padding: 12px; border-radius: 6px; font-family: inherit;
+}
+.dossier-card input:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 10px rgba(59,130,246,0.2); }
+
+.d-footer { padding: 20px 35px; background: #0f172a; display: flex; justify-content: space-between; align-items: flex-end; }
+.btn-update { background: var(--accent); color: #fff; border: none; padding: 12px 25px; border-radius: 6px; font-weight: 700; cursor: pointer; }
+.btn-close-x { background: none; border: none; color: var(--text-dim); font-size: 1.5rem; cursor: pointer; }
+
+/* TABULKA A OSTATNÍ */
+.table-container { background: var(--panel); border-radius: 12px; border: 1px solid rgba(255,255,255,0.05); overflow: hidden; }
+.data-table { width: 100%; border-collapse: collapse; }
+.data-table th { padding: 15px; text-align: left; background: rgba(0,0,0,0.2); color: var(--text-dim); font-size: 0.8rem; }
+.data-table td { padding: 15px; border-bottom: 1px solid rgba(255,255,255,0.05); }
+.storage-grid { display: flex; gap: 20px; flex-wrap: wrap; margin-top: 20px; }
+.st-card { background: var(--panel); width: 180px; padding: 25px; border-radius: 12px; text-align: center; border: 1px solid rgba(255,255,255,0.05); }
+.st-card span { display: block; font-size: 2rem; font-weight: 700; color: var(--accent); margin-top: 10px; }
