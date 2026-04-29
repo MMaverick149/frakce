@@ -2,6 +2,7 @@
 <html lang="cs">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SYNDICATE OS</title>
     <link rel="stylesheet" href="style.css">
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Rajdhani:wght@500;700&display=swap" rel="stylesheet">
@@ -22,12 +23,23 @@
             <div id="clock">00:00:00</div>
             
             <section id="page-home" class="page active">
-                <div class="hero"><h1>SYNDICATE OS v7.0</h1></div>
+                <div class="hero">
+                    <h1>SYNDICATE OS v7.0</h1>
+                    <p>Systém je online. Veškeré protokoly aktivní.</p>
+                </div>
             </section>
 
             <section id="page-members" class="page">
-                <h2>EVIDOVANÉ SUBJEKTY</h2>
-                <div class="table-header"><div>KÓD</div><div>HODNOST</div><div>SUBJEKT</div><div>AKCE</div></div>
+                <h2>EVIDOVANÁ DATA</h2>
+                <div class="search-bar">
+                    <input type="text" id="m-search" placeholder="VYHLEDAT SUBJEKT..." oninput="renderMembers()">
+                </div>
+                <div class="table-header">
+                    <div>KÓD</div>
+                    <div>HODNOST</div>
+                    <div>SUBJEKT</div>
+                    <div>AKCE</div>
+                </div>
                 <div id="members-list"></div>
             </section>
 
@@ -52,7 +64,6 @@
                 </div>
                 <div id="admin-panel" style="display: none;">
                     <div class="glass-card">
-                        <h3>SPRÁVA SYSTÉMU</h3>
                         <button onclick="clearSystem()" class="btn-red">VYMAZAT VŠECHNA DATA</button>
                     </div>
                 </div>

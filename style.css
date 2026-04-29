@@ -13,24 +13,30 @@ body { background: var(--bg); color: #d1d5db; font-family: 'Rajdhani', sans-seri
 .app-shell { display: flex; height: 100vh; }
 .sidebar { width: 250px; background: var(--side); border-right: 1px solid var(--border); display: flex; flex-direction: column; padding: 25px; }
 .logo { font-family: 'Orbitron'; color: var(--accent); font-size: 1.5rem; margin-bottom: 40px; }
-.nav-btn { background: none; border: none; color: #64748b; padding: 12px; text-align: left; cursor: pointer; width: 100%; font-weight: 700; transition: 0.3s; }
+.nav-btn { background: none; border: none; color: #64748b; padding: 12px; text-align: left; cursor: pointer; font-weight: 700; width: 100%; }
 .nav-btn.active { color: var(--accent); }
 
-.admin-btn-bottom { background: rgba(255, 68, 68, 0.05); border: 1px solid var(--red); color: var(--red); padding: 12px; cursor: pointer; margin-top: auto; font-weight: 700; }
+/* OPRAVA TABULKY DATABÁZE */
+.table-header, .table-row {
+    display: grid;
+    grid-template-columns: 100px 150px 1fr 120px; /* Přesné sloupce vedle sebe */
+    gap: 10px;
+    align-items: center;
+    padding: 10px;
+}
+.table-header { color: var(--accent); font-weight: bold; border-bottom: 1px solid var(--border); margin-top: 10px; }
+.table-row { background: rgba(255,255,255,0.02); margin-bottom: 5px; border-radius: 4px; }
 
-.viewport { flex: 1; position: relative; padding: 40px; overflow-y: auto; }
+/* OPRAVA LOGISTIKY */
+.inv-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 15px; margin-top: 20px; }
+.item-card { background: var(--glass); border: 1px solid var(--border); padding: 15px; text-align: center; border-radius: 8px; }
+.item-img-container { height: 80px; display: flex; align-items: center; justify-content: center; margin-bottom: 10px; }
+.item-img-container img { max-width: 100%; max-height: 100%; filter: drop-shadow(0 0 5px var(--accent)); }
+
+.btn-cyan { background: var(--accent); color: #000; border: none; padding: 10px 15px; cursor: pointer; font-weight: bold; border-radius: 4px; }
+.btn-red { background: var(--red); color: #fff; border: none; padding: 15px; cursor: pointer; font-weight: bold; width: 100%; }
+.viewport { flex: 1; padding: 40px; position: relative; overflow-y: auto; }
 .page { display: none; }
 .page.active { display: block; }
-
-.inv-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 15px; margin-top: 20px; }
-.item-card { background: var(--glass); border: 1px solid var(--border); padding: 15px; text-align: center; border-radius: 8px; height: 220px; display: flex; flex-direction: column; justify-content: space-between; }
-.item-img-container { height: 100px; display: flex; align-items: center; justify-content: center; margin-bottom: 10px; }
-.item-img-container img { max-width: 100%; max-height: 100%; object-fit: contain; filter: drop-shadow(0 0 8px var(--accent)); }
-.item-card label { color: var(--accent); font-weight: 800; font-size: 0.8rem; }
-.item-card span { font-family: 'Orbitron'; font-size: 2.2rem; color: #fff; }
-
-input, select { background: rgba(0,0,0,0.5); border: 1px solid var(--border); color: #fff; padding: 10px; width: 100%; margin-bottom: 10px; }
-.btn-cyan { background: var(--accent); color: #000; border: none; padding: 10px; cursor: pointer; font-weight: 800; }
-.btn-red { background: var(--red); color: #fff; border: none; padding: 10px; cursor: pointer; font-weight: 800; width: 100%; }
-.table-header { display: grid; grid-template-columns: 100px 150px 1fr 120px; padding: 10px; color: var(--accent); font-weight: bold; border-bottom: 1px solid var(--border); }
-.table-row { display: grid; grid-template-columns: 100px 150px 1fr 120px; padding: 15px 10px; background: rgba(255,255,255,0.02); margin-bottom: 5px; align-items: center; }
+#clock { position: absolute; top: 20px; right: 40px; color: var(--accent); font-family: 'Orbitron'; }
+input { background: rgba(0,0,0,0.5); border: 1px solid var(--border); color: #fff; padding: 10px; border-radius: 4px; width: 100%; }
