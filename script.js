@@ -1,59 +1,67 @@
-// --- JÁDRO (DATA) ---
-function getFreshData() {
-    let data = JSON.parse(localStorage.getItem('syn_fs')) || {};
-    // Seznam věcí, které tam MUSÍ být a MUSÍ to být čísla
-    const keys = ["ZBRANĚ", "MUNICE", "KONTRABAND", "ŽLUTÁ TRÁVA"];
+// --- LOGISTIKA SYNDICATE: CORE ENGINE ---
+
+// Funkce pro načtení dat s automatickou opravou chyb
+function loadData() {
+    let saved = JSON.parse(localStorage.getItem('syn_fs')) || {};
+    // Seznam věcí, které musí existovat
+    const keys = ["ZBRANĚ", "MUNICE", "KONTRABAND", "ŽLUTÁ TRÁVA", "TLUMIČ", "DROGY", "VESTA"];
+    
     keys.forEach(k => {
-        if (typeof data[k] !== 'number' || isNaN(data[k])) data[k] = 0;
+        // Pokud to není číslo nebo je to NaN/null, dej tam 0
+        if (typeof saved[k] !== 'number' || isNaN(saved[k])) {
+            saved[k] = 0;
+        }
     });
-    return data;
+    return saved;
 }
 
-let fsData = getFreshData();
+let fsData = loadData();
 let logs = JSON.parse(localStorage.getItem('syn_logs')) || [];
 
-function save() {
+function saveAndRefresh() {
     localStorage.setItem('syn_fs', JSON.stringify(fsData));
     localStorage.setItem('syn_logs', JSON.stringify(logs));
-    render(); // Okamžitě překresli
+    renderAll();
 }
 
-// --- AKCE (ADMIN) ---
+// --- ADMIN FUNKCE ---
 function modifyStock(action) {
     const select = document.getElementById('folder-select');
-    const input = document.getElementById('item-amount');
+    const amountInput = document.getElementById('item-amount');
     
-    if (!select || !input) return;
+    if (!select || !amountInput) return;
 
-    const key = select.value;
-    const val = parseInt(input.value) || 0;
+    const item = select.value;
+    const count = parseInt(amountInput.value) || 0;
 
-    if (val <= 0) return;
+    if (count <= 0) return;
 
     if (action === 'add') {
-        fsData[key] += val;
-        addLog(`PŘIDÁNO: ${val}ks -> ${key}`);
+        fsData[item] += count;
+        addLog(`PŘIDÁNO: ${count}ks -> ${item}`);
     } else {
-        fsData[key] = Math.max(0, fsData[key] - val);
-        addLog(`ODEBRÁNO: ${val}ks -> ${key}`);
+        fsData[item] = Math.max(0, fsData[item] - count);
+        addLog(`ODEBRÁNO: ${count}ks -> ${item}`);
     }
-    save();
+    saveAndRefresh();
 }
 
 function addLog(msg) {
     const time = new Date().toLocaleTimeString('cs-CZ', {hour:'2-digit', minute:'2-digit'});
     logs.unshift({ time, msg });
-    if (logs.length > 8) logs.pop();
+    if (logs.length > 10) logs.pop();
 }
 
-// --- VZHLED (RENDER) ---
-function render() {
-    // 1. SKLAD (Karty)
+// --- VYKRESLOVÁNÍ (RENDER) ---
+function renderAll() {
+    // 1. SKLAD (Karty s ikonami)
     const grid = document.getElementById('storage-grid');
     if (grid) {
         grid.innerHTML = Object.entries(fsData).map(([name, count]) => `
             <div class="item-card">
-                <div class="item-img-box"><img src="https://i.imgur.com/8nN7pXv.png"></div>
+                <div class="item-img-box">
+                    <img src="https://i.imgur.com/8nN7pXv.png" alt="folder">
+                </div>
                 <div class="item-info">
                     <label>${name}</label>
                     <div class="count-display">${count}</div>
@@ -62,10 +70,10 @@ function render() {
         `).join('');
     }
 
-    // 2. ADMIN (Výběr a Logy)
+    // 2. ADMIN (Logy a Výběr)
     const sel = document.getElementById('folder-select');
     const logBox = document.getElementById('admin-logs');
-    
+
     if (sel) {
         sel.innerHTML = Object.keys(fsData).map(k => `<option value="${k}">${k}</option>`).join('');
     }
@@ -74,8 +82,8 @@ function render() {
     }
 }
 
-// --- SPUŠTĚNÍ ---
-window.onload = render;
+// Spuštění při načtení
+window.onload = renderAll;
 
 // Hodiny
 setInterval(() => {
@@ -84,5 +92,5 @@ setInterval(() => {
 }, 1000);
 
 function accessAdmin() {
-    if (prompt("HESLO:") === "syndicate2026") window.location.href = "admin.html";
+    if (prompt("SYSTÉMOVÝ KÓD:") === "syndicate2026") window.location.href = "admin.html";
 }
