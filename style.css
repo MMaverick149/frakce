@@ -7,63 +7,30 @@
     --glass: rgba(15, 20, 30, 0.9);
 }
 
-/* Celkové rozložení */
 * { box-sizing: border-box; margin: 0; padding: 0; }
 body { background: var(--bg); color: #d1d5db; font-family: 'Rajdhani', sans-serif; overflow: hidden; height: 100vh; }
+
 .app-shell { display: flex; height: 100vh; }
-
-/* Sidebar s červeným adminem dole */
 .sidebar { width: 250px; background: var(--side); border-right: 1px solid var(--border); display: flex; flex-direction: column; padding: 25px; }
-.main-nav { flex-grow: 1; }
-.admin-btn-bottom { 
-    background: rgba(255, 68, 68, 0.1); border: 1px solid var(--red); color: var(--red); 
-    padding: 12px; cursor: pointer; font-weight: 700; margin-top: auto; text-align: center;
-}
-.admin-btn-bottom:hover { background: var(--red); color: #000; }
-
-/* OPRAVA KARET V LOGISTICE */
-.inv-grid { 
-    display: grid; 
-    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); 
-    gap: 15px; 
-    margin-top: 20px; 
-}
-
-.item-card {
-    background: var(--glass);
-    border: 1px solid var(--border);
-    padding: 15px;
-    text-align: center;
-    border-radius: 8px;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    height: 220px; /* Pevná výška karty */
-    overflow: hidden; /* Obrázek nevyleze ven */
-}
-
-.item-img-container {
-    height: 100px; /* Prostor pro obrázek */
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin-bottom: 10px;
-}
-
-.item-img-container img {
-    max-width: 100%;
-    max-height: 100%;
-    object-fit: contain; /* Zachová poměry stran */
-    filter: drop-shadow(0 0 8px var(--accent));
-}
-
-.item-card label { color: var(--accent); font-weight: 800; font-size: 0.8rem; display: block; }
-.item-card span { font-family: 'Orbitron'; font-size: 2.2rem; color: #fff; display: block; }
-
-/* Zbytek stylů (zkráceno pro přehlednost) */
-.page { display: none; padding: 30px; }
-.page.active { display: block; flex: 1; overflow-y: auto; }
-.nav-btn { background: none; border: none; color: #64748b; padding: 12px; text-align: left; cursor: pointer; width: 100%; font-weight: 700; }
+.logo { font-family: 'Orbitron'; color: var(--accent); font-size: 1.5rem; margin-bottom: 40px; }
+.nav-btn { background: none; border: none; color: #64748b; padding: 12px; text-align: left; cursor: pointer; width: 100%; font-weight: 700; transition: 0.3s; }
 .nav-btn.active { color: var(--accent); }
-input, select { background: rgba(0,0,0,0.5); border: 1px solid var(--border); color: #fff; padding: 10px; margin-bottom: 10px; width: 100%; }
+
+.admin-btn-bottom { background: rgba(255, 68, 68, 0.05); border: 1px solid var(--red); color: var(--red); padding: 12px; cursor: pointer; margin-top: auto; font-weight: 700; }
+
+.viewport { flex: 1; position: relative; padding: 40px; overflow-y: auto; }
+.page { display: none; }
+.page.active { display: block; }
+
+.inv-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 15px; margin-top: 20px; }
+.item-card { background: var(--glass); border: 1px solid var(--border); padding: 15px; text-align: center; border-radius: 8px; height: 220px; display: flex; flex-direction: column; justify-content: space-between; }
+.item-img-container { height: 100px; display: flex; align-items: center; justify-content: center; margin-bottom: 10px; }
+.item-img-container img { max-width: 100%; max-height: 100%; object-fit: contain; filter: drop-shadow(0 0 8px var(--accent)); }
+.item-card label { color: var(--accent); font-weight: 800; font-size: 0.8rem; }
+.item-card span { font-family: 'Orbitron'; font-size: 2.2rem; color: #fff; }
+
+input, select { background: rgba(0,0,0,0.5); border: 1px solid var(--border); color: #fff; padding: 10px; width: 100%; margin-bottom: 10px; }
 .btn-cyan { background: var(--accent); color: #000; border: none; padding: 10px; cursor: pointer; font-weight: 800; }
+.btn-red { background: var(--red); color: #fff; border: none; padding: 10px; cursor: pointer; font-weight: 800; width: 100%; }
+.table-header { display: grid; grid-template-columns: 100px 150px 1fr 120px; padding: 10px; color: var(--accent); font-weight: bold; border-bottom: 1px solid var(--border); }
+.table-row { display: grid; grid-template-columns: 100px 150px 1fr 120px; padding: 15px 10px; background: rgba(255,255,255,0.02); margin-bottom: 5px; align-items: center; }
