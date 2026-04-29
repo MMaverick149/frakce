@@ -13,7 +13,7 @@
                 <button onclick="showPage('home')" class="nav-btn">TERMINÁL</button>
                 <button onclick="showPage('members')" class="nav-btn">DATABÁZE</button>
                 <button onclick="showPage('storage')" class="nav-btn">LOGISTIKA</button>
-                <button onclick="showPage('admin')" class="nav-btn admin-btn">ADMIN</button>
+                <button onclick="showPage('admin')" class="nav-btn">ADMIN</button>
             </nav>
         </aside>
 
@@ -25,18 +25,6 @@
                 <p>Systém je online. Všechny protokoly aktivní.</p>
             </section>
 
-            <section id="page-members" class="page">
-                <h2>EVIDOVANÁ DATA</h2>
-                <input type="text" id="m-search" placeholder="VYHLEDAT..." oninput="renderMembers()">
-                <div class="table-header">
-                    <div>KÓD</div>
-                    <div>HODNOST</div>
-                    <div>SUBJEKT</div>
-                    <div>AKCE</div>
-                </div>
-                <div id="members-list"></div>
-            </section>
-
             <section id="page-storage" class="page">
                 <h2>LOGISTIKA</h2>
                 <div class="controls">
@@ -46,6 +34,14 @@
                     <button onclick="editStore('rem')" class="btn-cyan">-</button>
                 </div>
                 <div id="st-grid" class="inv-grid"></div>
+            </section>
+
+            <section id="page-members" class="page">
+                <h2>DATABÁZE SUBJEKTŮ</h2>
+                <div class="table-header">
+                    <div>KÓD</div><div>HODNOST</div><div>SUBJEKT</div><div>AKCE</div>
+                </div>
+                <div id="members-list"></div>
             </section>
         </main>
     </div>
