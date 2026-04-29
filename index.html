@@ -10,21 +10,22 @@
     <div class="app-shell">
         <aside class="sidebar">
             <div class="logo">SYNDICATE</div>
-            <nav>
+            <nav id="main-nav">
                 <a href="index.html" class="nav-btn active">TERMINÁL</a>
-                <button class="nav-btn">DATABÁZE</button>
-                <a href="sklad.html" class="nav-btn">SKLAD</a>
-                <button onclick="accessAdmin()" class="nav-btn admin-link">🔒 ADMIN</button>
+                <a href="sklad.html" class="nav-btn" id="nav-sklad">SKLAD</a>
+                <button onclick="accessAdmin()" class="nav-btn admin-link">🔒 ADMIN PANEL</button>
             </nav>
         </aside>
 
         <main class="viewport">
             <div id="clock">00:00:00</div>
-            <h1>SYSTEM OVERVIEW</h1>
-            <div class="glass-card terminal-info">
+            <h1 class="glitch-text">SYSTEM ONLINE</h1>
+            <div class="glass-card terminal-status">
                 <p>> NETWORK: <span class="cyan">ENCRYPTED</span></p>
-                <p>> LOCATION: <span class="cyan">[REDACTED]</span></p>
-                <p>> STATUS: <span class="cyan">ACTIVE</span></p>
+                <p>> LOCATION: <span class="cyan">UNDISCLOSED</span></p>
+                <p>> NODES: <span class="cyan">STABLE</span></p>
+                <div class="separator"></div>
+                <p class="low-opacity">Vítejte v šifrovaném komunikačním uzlu Syndicate. Všechny operace jsou monitorovány.</p>
             </div>
         </main>
     </div>

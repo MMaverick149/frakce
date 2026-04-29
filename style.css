@@ -47,3 +47,14 @@ select, input { background: #000; border: 1px solid var(--border); color: #fff; 
 .cyan { color: var(--accent); font-weight: bold; }
 .terminal-info { padding: 20px; font-family: 'Orbitron'; line-height: 2; border-left: 4px solid var(--accent); }
 .button-actions { display: flex; gap: 10px; }
+
+.admin-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+.admin-box { padding: 25px; min-height: 250px; }
+.full-width { grid-column: span 2; min-height: auto; }
+.admin-box h3 { font-family: 'Orbitron'; color: var(--accent); margin-bottom: 20px; font-size: 0.9rem; border-bottom: 1px solid var(--border); padding-bottom: 10px; }
+
+.log-container { font-family: 'Consolas', monospace; font-size: 0.85rem; height: 180px; overflow-y: auto; color: #aaa; line-height: 1.6; }
+.control-row { display: flex; justify-content: space-between; align-items: center; margin: 15px 0; }
+.separator { height: 1px; background: var(--border); margin: 15px 0; }
+.low-opacity { opacity: 0.5; font-size: 0.9rem; }
+.glitch-text { text-shadow: 2px 0 var(--danger), -2px 0 var(--accent); }

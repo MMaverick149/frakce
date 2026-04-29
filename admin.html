@@ -11,38 +11,55 @@
         <aside class="sidebar">
             <div class="logo">SYNDICATE</div>
             <nav>
-                <a href="index.html" class="nav-btn">TERMINÁL</a>
-                <a href="sklad.html" class="nav-btn">SKLAD</a>
-                <button class="nav-btn active">🔒 ADMIN</button>
+                <a href="index.html" class="nav-btn">Zpět do Terminálu</a>
+                <button class="nav-btn active">ADMIN KONZOLE</button>
             </nav>
         </aside>
 
         <main class="viewport">
-            <h1>SPRÁVA ZÁSOB</h1>
-            <div class="inventory-manager glass-card">
-                <div class="control-group">
-                    <label>POLOŽKA</label>
-                    <select id="item-select">
-                        <option value="Flashlight">Flashlight</option>
-                        <option value="Nabojedlouhy">Náboje dlouhé</option>
-                        <option value="nabojpistol">Náboje pistol</option>
-                        <option value="Tlumic">Tlumič</option>
-                        <option value="Velkyzasobnik">Velký zásobník</option>
-                        <option value="zamerovac">Zaměřovač</option>
-                        <option value="zlutatrava">Žlutá tráva</option>
-                        <option value="kontraband">Kontraband</option>
-                    </select>
+            <h1>ADMINISTRAČNÍ ROZHRANÍ</h1>
+            
+            <div class="admin-grid">
+                <div class="glass-card admin-box">
+                    <h3>SYSTÉMOVÉ LOGY</h3>
+                    <div id="admin-logs" class="log-container">
+                        </div>
                 </div>
-                <div class="control-group">
-                    <label>MNOŽSTVÍ</label>
-                    <input type="number" id="item-amount" value="1" min="1">
+
+                <div class="glass-card admin-box">
+                    <h3>SPRÁVA SLOŽEK</h3>
+                    <div class="folder-control">
+                        <div class="control-row">
+                            <span>Složka: SKLAD</span>
+                            <button onclick="toggleFolder('sklad')" id="lock-btn-sklad" class="btn-cyan">ZAMKNOUT</button>
+                        </div>
+                        <div class="separator"></div>
+                        <div class="control-row">
+                            <input type="text" id="new-folder-name" placeholder="Název nové složky...">
+                            <button onclick="addLog('Pokus o vytvoření složky zamítnut - nedostatečná oprávnění')" class="btn-cyan">VYTVOŘIT</button>
+                        </div>
+                    </div>
                 </div>
-                <div class="button-actions">
-                    <button onclick="updateInventory('add')" class="btn-cyan">PŘIDAT +</button>
-                    <button onclick="updateInventory('rem')" class="btn-cyan btn-rem">ODEBRAT -</button>
+
+                <div class="glass-card admin-box full-width">
+                    <h3>EDITOR ZÁSOB</h3>
+                    <div class="inventory-manager">
+                        <select id="item-select">
+                            <option value="Flashlight">Flashlight</option>
+                            <option value="Nabojedlouhy">Náboje dlouhé</option>
+                            <option value="nabojpistol">Náboje pistol</option>
+                            <option value="Tlumic">Tlumič</option>
+                            <option value="Velkyzasobnik">Velký zásobník</option>
+                            <option value="zamerovac">Zaměřovač</option>
+                            <option value="zlutatrava">Žlutá tráva</option>
+                            <option value="kontraband">Kontraband</option>
+                        </select>
+                        <input type="number" id="item-amount" value="1">
+                        <button onclick="updateInventory('add')" class="btn-cyan">PŘIDAT</button>
+                        <button onclick="updateInventory('rem')" class="btn-cyan btn-rem">ODEBRAT</button>
+                    </div>
                 </div>
             </div>
-            <div id="storage-grid" class="inv-grid"></div>
         </main>
     </div>
     <script src="script.js"></script>
