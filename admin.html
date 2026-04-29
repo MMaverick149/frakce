@@ -20,31 +20,31 @@
         <main class="viewport">
             <h1>ADMINISTRAČNÍ KONZOLE</h1>
             
-            <div class="admin-grid">
-                <div class="glass-card admin-box">
-                    <h3>FS MANAGER (SLOŽKY)</h3>
-                    <div class="control-row">
-                        <input type="text" id="new-folder-input" placeholder="NÁZEV SLOŽKY...">
-                        <button onclick="createNewFolder()" class="btn-cyan">VYTVOŘIT</button>
+                <div class="admin-grid">
+                    <div class="glass-card admin-box">
+                        <h3>FS MANAGER (SLOŽKY)</h3>
+                        <div class="control-row">
+                            <input type="text" id="new-folder-input" placeholder="NÁZEV SLOŽKY...">
+                            <button onclick="createNewFolder()" class="btn-cyan">VYTVOŘIT</button>
+                        </div>
+                        <div id="active-folders" class="folder-list"></div>
                     </div>
-                    <div id="active-folders" class="folder-list"></div>
-                </div>
 
-                <div class="glass-card admin-box">
-                    <h3>SYSTÉMOVÉ LOGY ACTIVITY</h3>
-                    <div id="admin-logs" class="log-container"></div>
-                </div>
+                    <div class="glass-card admin-box">
+                        <h3>SYSTÉMOVÉ LOGY ACTIVITY</h3>
+                        <div id="admin-logs" class="log-container"></div>
+                    </div>
 
-                <div class="glass-card admin-box full-width">
-                    <h3>MANIPULACE SE ZBOŽÍM</h3>
-                    <div class="editor-ui">
-                        <select id="folder-select"></select>
-                        <input type="number" id="item-amount" value="1">
-                        <button onclick="modifyStock('add')" class="btn-cyan">PŘIDAT +</button>
-                        <button onclick="modifyStock('rem')" class="btn-cyan btn-rem">ODEBRAT -</button>
+                    <div class="glass-card admin-box full-width">
+                        <h3>MANIPULACE SE ZBOŽÍM</h3>
+                        <div class="editor-ui">
+                            <select id="folder-select"></select>
+                            <input type="number" id="item-amount" value="1">
+                            <button onclick="modifyStock('add')" class="btn-cyan">PŘIDAT +</button>
+                            <button onclick="modifyStock('rem')" class="btn-cyan btn-rem">ODEBRAT -</button>
+                        </div>
                     </div>
                 </div>
-            </div>
         </main>
     </div>
     <script src="script.js"></script>

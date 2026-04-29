@@ -1,21 +1,30 @@
-// Načtení dat z prohlížeče
+// --- UNIVERZÁLNÍ DATA ---
 let fsData = JSON.parse(localStorage.getItem('syn_fs')) || {
-    "ZBRANĚ": 24,
-    "MUNICE": 4,
-    "ŽLUTÁ TRÁVA": 1
+    "ZBRANĚ": 0,
+    "MUNICE": 0,
+    "KONTRABAND": 0,
+    "ŽLUTÁ TRÁVA": 0
 };
 
 let logs = JSON.parse(localStorage.getItem('syn_logs')) || [];
 
-// 1. FUNKCE PRO ADMINA
+// Funkce pro ukládání
+function saveAll() {
+    localStorage.setItem('syn_fs', JSON.stringify(fsData));
+    localStorage.setItem('syn_logs', JSON.stringify(logs));
+}
+
+// --- LOGIKA PRO ADMINA ---
 function createNewFolder() {
-    const nameInput = document.getElementById('new-folder-input');
-    const name = nameInput.value.toUpperCase().trim();
+    const input = document.getElementById('new-folder-input');
+    if (!input) return;
+    const name = input.value.toUpperCase().trim();
     if (name && !fsData[name]) {
         fsData[name] = 0;
         addLog(`VYTVOŘENA SLOŽKA: ${name}`);
-        nameInput.value = "";
-        saveAndRefresh();
+        input.value = "";
+        saveAll();
+        renderAdmin(); // Překreslíme admina
     }
 }
 
@@ -23,60 +32,45 @@ function deleteFolder(name) {
     if (confirm(`Smazat složku ${name}?`)) {
         delete fsData[name];
         addLog(`SMAZÁNA SLOŽKA: ${name}`);
-        saveAndRefresh();
+        saveAll();
+        renderAdmin();
     }
 }
 
 function modifyStock(action) {
-    const folder = document.getElementById('folder-select').value;
-    const amount = parseInt(document.getElementById('item-amount').value) || 0;
+    const select = document.getElementById('folder-select');
+    const amountInput = document.getElementById('item-amount');
+    if (!select || !amountInput) return;
+
+    const folder = select.value;
+    const amount = parseInt(amountInput.value) || 0;
 
     if (action === 'add') {
         fsData[folder] += amount;
-        addLog(`AKTUALIZACE: ${folder} +${amount}`);
+        addLog(`PŘIDÁNO: ${amount}ks -> ${folder}`);
     } else {
         fsData[folder] = Math.max(0, fsData[folder] - amount);
-        addLog(`AKTUALIZACE: ${folder} -${amount}`);
+        addLog(`ODEBRÁNO: ${amount}ks -> ${folder}`);
     }
-    saveAndRefresh();
+    saveAll();
+    renderAdmin();
 }
 
-// 2. LOGOVÁNÍ
 function addLog(msg) {
     const time = new Date().toLocaleTimeString('cs-CZ', {hour:'2-digit', minute:'2-digit'});
     logs.unshift({ time, msg });
-    if (logs.length > 15) logs.pop();
+    if (logs.length > 10) logs.pop();
 }
 
-// 3. ZOBRAZOVÁNÍ (RENDERING)
-function saveAndRefresh() {
-    localStorage.setItem('syn_fs', JSON.stringify(fsData));
-    localStorage.setItem('syn_logs', JSON.stringify(logs));
-    render();
-}
+// --- RENDEROVÁNÍ (ZOBRAZOVÁNÍ) ---
 
-function render() {
-    // Skladová mřížka
-    const grid = document.getElementById('storage-grid');
-    if (grid) {
-        grid.innerHTML = Object.entries(fsData).map(([name, count]) => `
-            <div class="item-card">
-                <div class="item-img-box"><img src="images/folder.png" onerror="this.src='images/zlutatrava.png'"></div>
-                <div class="item-info">
-                    <label>${name}</label>
-                    <div class="count-display">${count}</div>
-                </div>
-            </div>
-        `).join('');
-    }
-
-    // Admin prvky
-    const folderList = document.getElementById('active-folders');
+function renderAdmin() {
+    const list = document.getElementById('active-folders');
     const select = document.getElementById('folder-select');
     const logBox = document.getElementById('admin-logs');
 
-    if (folderList) {
-        folderList.innerHTML = Object.keys(fsData).map(name => `
+    if (list) {
+        list.innerHTML = Object.keys(fsData).map(name => `
             <div class="folder-row">
                 <span>📁 ${name}</span>
                 <button onclick="deleteFolder('${name}')" class="btn-mini">SMAZAT</button>
@@ -91,17 +85,35 @@ function render() {
     }
 }
 
-// Ochrana heslem
-function accessAdmin() {
-    if (prompt("ZADEJTE SYNDICATE KÓD:") === "syndicate2026") {
-        window.location.href = "admin.html";
-    }
+function renderSklad() {
+    const grid = document.getElementById('storage-grid');
+    if (!grid) return;
+
+    grid.innerHTML = Object.entries(fsData).map(([name, count]) => `
+        <div class="item-card">
+            <div class="item-img-box"><img src="images/folder.png" onerror="this.src='images/zlutatrava.png'"></div>
+            <div class="item-info">
+                <label>${name}</label>
+                <div class="count-display">${count}</div>
+            </div>
+        </div>
+    `).join('');
 }
 
-// Hodiny a Start
-setInterval(() => {
-    const clock = document.getElementById('clock');
-    if(clock) clock.innerText = new Date().toLocaleTimeString();
-}, 1000);
+// --- SPOUŠTĚNÍ PŘI NAČTENÍ ---
+window.onload = () => {
+    // Podle toho, jaké ID najde na stránce, spustí správnou funkci
+    if (document.getElementById('active-folders')) renderAdmin();
+    if (document.getElementById('storage-grid')) renderSklad();
+    
+    // Hodiny (pokud existují)
+    setInterval(() => {
+        const c = document.getElementById('clock');
+        if(c) c.innerText = new Date().toLocaleTimeString();
+    }, 1000);
+};
 
-window.onload = render;
+// Heslo pro admina
+function accessAdmin() {
+    if (prompt("ZADEJTE KÓD:") === "syndicate2026") window.location.href = "admin.html";
+}
