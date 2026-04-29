@@ -10,11 +10,11 @@
 <body>
     <div class="app-shell">
         <aside class="sidebar">
-            <div class="logo"><i class="fas fa-terminal"></i> New Frakce</div>
+            <div class="logo"><i class="fas fa-terminal"></i> SYNDICATE</div>
             <nav>
                 <button onclick="showPage('home')" id="nav-home" class="nav-btn active"><i class="fas fa-home"></i> KONZOLE</button>
-                <button onclick="showPage('members')" id="nav-members" class="nav-btn"><i class="fas fa-users"></i> Složky</button>
-                <button onclick="showPage('storage')" id="nav-storage" class="nav-btn"><i class="fas fa-box"></i> Sklad</button>
+                <button onclick="showPage('members')" id="nav-members" class="nav-btn"><i class="fas fa-users"></i> DATABÁZE</button>
+                <button onclick="showPage('storage')" id="nav-storage" class="nav-btn"><i class="fas fa-box"></i> LOGISTIKA</button>
             </nav>
             <button onclick="showPage('admin')" id="nav-admin" class="admin-lock"><i class="fas fa-lock"></i> ADMIN</button>
         </aside>
@@ -67,9 +67,9 @@
                 </div>
                 <div id="admin-panel" style="display:none;" class="glass-card">
                     <h3>PŘIDAT NOVÝ SUBJEKT</h3>
-                    <input type="text" id="new-mem-name" placeholder="Celé jméno">
+                    <input type="text" id="new-mem-name" placeholder="Jméno a Příjmení">
                     <input type="text" id="new-mem-rank" placeholder="Hodnost">
-                    <button onclick="addMem()" class="btn-cyan">ZAPSAT DO DATABÁZE</button>
+                    <button onclick="addMem()" class="btn-cyan">ZAPSAT</button>
                 </div>
             </section>
         </main>
@@ -104,7 +104,6 @@
                     </div>
                 </div>
                 <footer>
-                    <input type="text" id="in-sig" placeholder="AUTORIZOVAL...">
                     <button onclick="saveFolder()" class="btn-update">AKTUALIZOVAT</button>
                 </footer>
             </div>

@@ -1,37 +1,23 @@
-// Data inicializace
-let m_list = JSON.parse(localStorage.getItem('syn_m_list')) || []; // Teď je prázdné pro začátek
+let m_list = JSON.parse(localStorage.getItem('syn_m_list')) || [];
 let f_data = JSON.parse(localStorage.getItem('syn_f_data')) || {};
 let s_data = JSON.parse(localStorage.getItem('syn_s_data')) || { 
-    Nabojedlouhy: 0, 
-    Nabojpistol: 0, 
-    Kontraband: 0, 
-    zlutatrava: 0, 
-    Tlumic: 0, 
-    Flashlight: 0, 
-    velkyzasobnik: 0, 
-    Zamerovac: 0 
+    Nabojedlouhy: 0, Nabojpistol: 0, Kontraband: 0, zlutatrava: 0, 
+    Tlumic: 0, Flashlight: 0, velkyzasobnik: 0, Zamerovac: 0 
 };
 let currentU = "";
 
-// Funkce pro přepínání stránek
 function showPage(id) {
     document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
     document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
     document.getElementById('page-' + id).classList.add('active');
     document.getElementById('nav-' + id).classList.add('active');
     if(id === 'members') renderMembers();
-    if(id === 'storage') {
-        renderStore();
-        updateStorageSelectors(); // Automaticky aktualizuje výběr zboží
-    }
+    if(id === 'storage') { renderStore(); updateSelect(); }
 }
 
-// Dynamické naplnění <select> v logistice
-function updateStorageSelectors() {
-    const select = document.getElementById('st-what');
-    select.innerHTML = Object.keys(s_data).map(key => 
-        `<option value="${key}">${key.toUpperCase()}</option>`
-    ).join('');
+function updateSelect() {
+    const sel = document.getElementById('st-what');
+    sel.innerHTML = Object.keys(s_data).map(k => `<option value="${k}">${k.toUpperCase()}</option>`).join('');
 }
 
 function renderMembers() {
@@ -67,7 +53,6 @@ function editStore(type) {
     renderStore();
 }
 
-// Administrace - Přidávání složek
 function unlockAdmin() {
     if(document.getElementById('admin-pin').value === "1234") {
         document.getElementById('admin-lock').style.display = 'none';
@@ -80,34 +65,25 @@ function addMem() {
     const rank = document.getElementById('new-mem-rank').value;
     if(name && !m_list.includes(name)) {
         m_list.push(name);
-        f_data[name] = { rank: rank, phone: "", items: "", notes: "", sig: "" };
+        f_data[name] = { rank: rank, phone: "", items: "", notes: "" };
         localStorage.setItem('syn_m_list', JSON.stringify(m_list));
         localStorage.setItem('syn_f_data', JSON.stringify(f_data));
-        alert("Subjekt zapsán.");
         document.getElementById('new-mem-name').value = "";
+        alert("Subjekt zapsán.");
     }
 }
 
-// Modal Dossier Logika
 function openDossier(name) {
     currentU = name;
     const f = f_data[name] || {};
     document.getElementById('d-name').innerText = name;
+    document.getElementById('d-id-code').innerText = "#" + (name.length * 999 % 9000 + 1000);
     document.getElementById('in-rank').value = f.rank || "";
     document.getElementById('in-phone').value = f.phone || "";
     document.getElementById('in-items').value = f.items || "";
     document.getElementById('in-notes').value = f.notes || "";
     document.getElementById('dossier-modal').style.display = 'flex';
 }
-
-function switchTab(e, id) {
-    document.querySelectorAll('.pane').forEach(p => p.classList.remove('active'));
-    document.querySelectorAll('.tab-btn').forEach(t => t.classList.remove('active'));
-    document.getElementById(id).classList.add('active');
-    e.currentTarget.classList.add('active');
-}
-
-function closeModal() { document.getElementById('dossier-modal').style.display = 'none'; }
 
 function saveFolder() {
     f_data[currentU] = {
@@ -119,6 +95,15 @@ function saveFolder() {
     localStorage.setItem('syn_f_data', JSON.stringify(f_data));
     closeModal(); renderMembers();
 }
+
+function switchTab(e, id) {
+    document.querySelectorAll('.pane').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.tab-btn').forEach(t => t.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+    e.currentTarget.classList.add('active');
+}
+
+function closeModal() { document.getElementById('dossier-modal').style.display = 'none'; }
 
 setInterval(() => { document.getElementById('clock').innerText = new Date().toLocaleTimeString(); }, 1000);
 showPage('home');
