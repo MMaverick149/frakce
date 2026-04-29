@@ -2,7 +2,7 @@
 <html lang="cs">
 <head>
     <meta charset="UTF-8">
-    <title>SYNDICATE - ADMIN EDITOR</title>
+    <title>SYNDICATE - SKLAD ADMIN</title>
     <link rel="stylesheet" href="style.css">
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Rajdhani:wght@500;700&display=swap" rel="stylesheet">
 </head>
@@ -12,31 +12,37 @@
             <div class="logo">SYNDICATE</div>
             <nav>
                 <a href="index.html" class="nav-btn">⬅ ZPĚT</a>
-                <div class="nav-btn active" style="color: #ff4444;">🛠 EDITOR REŽIM</div>
+                <div class="nav-btn admin-active">🔒 EDITOR REŽIM</div>
             </nav>
         </aside>
 
         <main class="viewport">
             <div id="clock">00:00:00</div>
-            
-            <h1>LOGISTICKÝ EDITOR</h1>
+            <h1>LOGISTIKA - EDITOR</h1>
 
-            <div class="glass-card editor-panel">
-                <div class="editor-controls">
-                    <select id="st-what"></select>
-                    <input type="number" id="st-how" value="1">
+            <div class="admin-panel glass-card">
+                <div class="editor-row">
+                    <select id="st-what">
+                        <option value="Flashlight">FLASHLIGHT</option>
+                        <option value="Nabojedlouhy">NÁBOJE DLOUHÉ</option>
+                        <option value="nabojpistol">NÁBOJE PISTOL</option>
+                        <option value="Tlumic">TLUMIČ</option>
+                        <option value="Velkyzasobnik">VELKÝ ZÁSOBNÍK</option>
+                        <option value="zamerovac">ZAMĚŘOVAČ</option>
+                        <option value="zlutatrava">ŽLUTÁ TRÁVA</option>
+                    </select>
+                    <input type="number" id="st-how" value="1" min="1">
                     <button onclick="editStore('add')" class="btn-cyan">+</button>
                     <button onclick="editStore('rem')" class="btn-cyan">-</button>
                 </div>
             </div>
 
-            <div id="st-grid" class="inv-grid">
-                </div>
+            <div id="st-grid" class="inv-grid"></div>
         </main>
     </div>
 
     <script>
-        // Synchronizace s tvými obrázky v images/
+        // Načítání a ukládání dat do localStorage, aby se změny projevily i v index.html
         let s_data = JSON.parse(localStorage.getItem('syn_s_data')) || { 
             "Flashlight": 0, "Nabojedlouhy": 0, "nabojpistol": 0, 
             "Tlumic": 0, "Velkyzasobnik": 0, "zamerovac": 0, "zlutatrava": 0 
@@ -44,8 +50,6 @@
 
         function renderStore() {
             const grid = document.getElementById('st-grid');
-            const sel = document.getElementById('st-what');
-            
             grid.innerHTML = Object.entries(s_data).map(([k, v]) => `
                 <div class="item-card">
                     <div class="item-img-container">
@@ -54,8 +58,6 @@
                     <label>${k.toUpperCase()}</label>
                     <span class="item-count">${v}</span>
                 </div>`).join('');
-
-            sel.innerHTML = Object.keys(s_data).map(k => `<option value="${k}">${k.toUpperCase()}</option>`).join('');
             localStorage.setItem('syn_s_data', JSON.stringify(s_data));
         }
 
