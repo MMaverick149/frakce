@@ -1,75 +1,24 @@
-<!DOCTYPE html>
-<html lang="cs">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SYNDICATE OS</title>
-    <link rel="stylesheet" href="style.css">
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Rajdhani:wght@500;700&display=swap" rel="stylesheet">
-</head>
-<body>
-    <div class="app-shell">
-        <aside class="sidebar">
-            <div class="logo">SYNDICATE</div>
-            <nav class="main-nav">
-                <button onclick="showPage('home')" id="nav-home" class="nav-btn active">TERMINÁL</button>
-                <button onclick="showPage('members')" id="nav-members" class="nav-btn">DATABÁZE</button>
-                <button onclick="showPage('storage')" id="nav-storage" class="nav-btn">LOGISTIKA</button>
-            </nav>
-            <button onclick="showPage('admin')" id="nav-admin" class="admin-btn-bottom">ADMIN</button>
-        </aside>
-
-        <main class="viewport">
-            <div id="clock">00:00:00</div>
-            
-            <section id="page-home" class="page active">
-                <div class="hero">
-                    <h1>SYNDICATE OS v7.0</h1>
-                    <p>Systém je online. Veškeré protokoly aktivní.</p>
-                </div>
-            </section>
-
-            <section id="page-members" class="page">
-                <h2>EVIDOVANÁ DATA</h2>
-                <div class="search-bar">
-                    <input type="text" id="m-search" placeholder="VYHLEDAT SUBJEKT..." oninput="renderMembers()">
-                </div>
-                <div class="table-header">
-                    <div>KÓD</div>
-                    <div>HODNOST</div>
-                    <div>SUBJEKT</div>
-                    <div>AKCE</div>
-                </div>
-                <div id="members-list"></div>
-            </section>
-
-            <section id="page-storage" class="page">
-                <h2>LOGISTIKA</h2>
-                <div class="controls">
-                    <select id="st-what"></select>
-                    <input type="number" id="st-how" value="1">
-                    <button onclick="editStore('add')" class="btn-cyan">+</button>
-                    <button onclick="editStore('rem')" class="btn-cyan">-</button>
-                </div>
-                <div id="st-grid" class="inv-grid"></div>
-            </section>
-
-            <section id="page-admin" class="page">
-                <div id="admin-lock">
-                    <div class="glass-card">
-                        <h3>AUTENTIZACE</h3>
-                        <input type="password" id="admin-pin" placeholder="PIN KÓD">
-                        <button onclick="unlockAdmin()" class="btn-cyan">VSTOUPIT</button>
-                    </div>
-                </div>
-                <div id="admin-panel" style="display: none;">
-                    <div class="glass-card">
-                        <button onclick="clearSystem()" class="btn-red">VYMAZAT VŠECHNA DATA</button>
-                    </div>
-                </div>
-            </section>
-        </main>
+<section id="page-members" class="page">
+    <h2>EVIDOVANÁ DATA</h2>
+    <div class="search-bar">
+        <input type="text" id="m-search" placeholder="VYHLEDAT SUBJEKT..." oninput="renderMembers()">
     </div>
-    <script src="script.js"></script>
-</body>
-</html>
+    <div class="table-header">
+        <div>KÓD</div>
+        <div>HODNOST</div>
+        <div>SUBJEKT</div>
+        <div>AKCE</div>
+    </div>
+    <div id="members-list"></div>
+</section>
+
+<section id="page-storage" class="page">
+    <h2>LOGISTIKA</h2>
+    <div class="controls">
+        <select id="st-what"></select>
+        <input type="number" id="st-how" value="1">
+        <button onclick="editStore('add')" class="btn-cyan">+</button>
+        <button onclick="editStore('rem')" class="btn-cyan">-</button>
+    </div>
+    <div id="st-grid" class="inv-grid"></div>
+</section>
