@@ -2,7 +2,7 @@
 <html lang="cs">
 <head>
     <meta charset="UTF-8">
-    <title>SYNDICATE - EDITOR</title>
+    <title>SYNDICATE - ADMIN</title>
     <link rel="stylesheet" href="style.css">
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Rajdhani:wght@500;700&display=swap" rel="stylesheet">
 </head>
@@ -12,7 +12,7 @@
             <div class="logo">SYNDICATE</div>
             <nav>
                 <a href="index.html" class="nav-btn">⬅ ZPĚT</a>
-                <div class="nav-btn active-admin">🛠 EDITOR</div>
+                <div class="nav-btn admin-status">🛠 EDITOR REŽIM</div>
             </nav>
         </aside>
 
@@ -20,8 +20,8 @@
             <div id="clock">00:00:00</div>
             <h1>SPRÁVA SKLADU</h1>
 
-            <div class="admin-controls glass-card">
-                <select id="st-what">
+            <div class="admin-panel glass-card">
+                <select id="st-item">
                     <option value="Flashlight">FLASHLIGHT</option>
                     <option value="Nabojedlouhy">NÁBOJE DLOUHÉ</option>
                     <option value="nabojpistol">NÁBOJE PISTOL</option>
@@ -30,51 +30,17 @@
                     <option value="zamerovac">ZAMĚŘOVAČ</option>
                     <option value="zlutatrava">ŽLUTÁ TRÁVA</option>
                 </select>
-                <input type="number" id="st-how" value="1" min="1">
-                <div class="btn-group">
-                    <button onclick="editStore('add')" class="btn-cyan">+</button>
-                    <button onclick="editStore('rem')" class="btn-cyan">-</button>
+                <input type="number" id="st-amount" value="1" min="1">
+                <div class="admin-btns">
+                    <button onclick="updateStore('add')" class="btn-cyan">+</button>
+                    <button onclick="updateStore('rem')" class="btn-cyan">-</button>
                 </div>
             </div>
 
-            <div id="st-grid" class="inv-grid">
-                </div>
+            <div id="st-grid" class="inv-grid"></div>
         </main>
     </div>
 
-    <script>
-        // Data se ukládají do localStorage, aby je viděl i index.html
-        let s_data = JSON.parse(localStorage.getItem('syn_s_data')) || { 
-            "Flashlight": 0, "Nabojedlouhy": 0, "nabojpistol": 0, 
-            "Tlumic": 0, "Velkyzasobnik": 0, "zamerovac": 0, "zlutatrava": 0 
-        };
-
-        function renderStore() {
-            const grid = document.getElementById('st-grid');
-            grid.innerHTML = Object.entries(s_data).map(([k, v]) => `
-                <div class="item-card">
-                    <div class="item-img-container">
-                        <img src="images/${k}.png" onerror="this.src='images/zlutatrava.png'">
-                    </div>
-                    <label>${k.toUpperCase()}</label>
-                    <span class="item-count">${v}</span>
-                </div>`).join('');
-            localStorage.setItem('syn_s_data', JSON.stringify(s_data));
-        }
-
-        function editStore(type) {
-            const item = document.getElementById('st-what').value;
-            const qty = parseInt(document.getElementById('st-how').value) || 0;
-            if(type === 'add') s_data[item] += qty;
-            else s_data[item] = Math.max(0, s_data[item] - qty);
-            renderStore();
-        }
-
-        setInterval(() => {
-            document.getElementById('clock').innerText = new Date().toLocaleTimeString();
-        }, 1000);
-
-        renderStore();
-    </script>
+    <script src="script.js"></script>
 </body>
 </html>
