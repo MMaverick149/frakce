@@ -10,11 +10,11 @@
 <body>
     <div class="app-shell">
         <aside class="sidebar">
-            <div class="logo"><i class="fas fa-terminal"></i> SYNDICATE</div>
+            <div class="logo"><i class="fas fa-terminal"></i> New Frakce</div>
             <nav>
                 <button onclick="showPage('home')" id="nav-home" class="nav-btn active"><i class="fas fa-home"></i> KONZOLE</button>
-                <button onclick="showPage('members')" id="nav-members" class="nav-btn"><i class="fas fa-users"></i> DATABÁZE</button>
-                <button onclick="showPage('storage')" id="nav-storage" class="nav-btn"><i class="fas fa-box"></i> LOGISTIKA</button>
+                <button onclick="showPage('members')" id="nav-members" class="nav-btn"><i class="fas fa-users"></i> Složky</button>
+                <button onclick="showPage('storage')" id="nav-storage" class="nav-btn"><i class="fas fa-box"></i> Sklad</button>
             </nav>
             <button onclick="showPage('admin')" id="nav-admin" class="admin-lock"><i class="fas fa-lock"></i> ADMIN</button>
         </aside>
@@ -48,12 +48,7 @@
             <section id="page-storage" class="page">
                 <div class="log-controls">
                     <input type="text" id="st-who" placeholder="OPERÁTOR">
-                    <select id="st-what">
-                        <option value="zbrane">ZBRANĚ</option>
-                        <option value="munice">MUNICE</option>
-                        <option value="kontraband">KONTRABAND</option>
-                        <option value="zlutatrava">ŽLUTÁ TRÁVA</option>
-                    </select>
+                    <select id="st-what"></select>
                     <input type="number" id="st-how" value="1">
                     <div class="btn-group">
                         <button onclick="editStore('add')" class="btn-add">+</button>
@@ -71,10 +66,10 @@
                     <button onclick="unlockAdmin()" class="btn-cyan">POTVRDIT</button>
                 </div>
                 <div id="admin-panel" style="display:none;" class="glass-card">
-                    <h3>PŘIDAT SUBJEKT</h3>
-                    <input type="text" id="new-mem-name" placeholder="Jméno">
+                    <h3>PŘIDAT NOVÝ SUBJEKT</h3>
+                    <input type="text" id="new-mem-name" placeholder="Celé jméno">
                     <input type="text" id="new-mem-rank" placeholder="Hodnost">
-                    <button onclick="addMem()" class="btn-cyan">ZAPSAT</button>
+                    <button onclick="addMem()" class="btn-cyan">ZAPSAT DO DATABÁZE</button>
                 </div>
             </section>
         </main>
