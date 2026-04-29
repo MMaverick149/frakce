@@ -2,7 +2,7 @@
 <html lang="cs">
 <head>
     <meta charset="UTF-8">
-    <title>SYNDICATE - ADMIN</title>
+    <title>SYNDICATE - TERMINÁL</title>
     <link rel="stylesheet" href="style.css">
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Rajdhani:wght@500;700&display=swap" rel="stylesheet">
 </head>
@@ -10,49 +10,21 @@
     <div class="app-shell">
         <aside class="sidebar">
             <div class="logo">SYNDICATE</div>
-            <nav id="admin-nav">
-                <a href="index.html" class="nav-btn">TERMINÁL</a>
+            <nav>
+                <a href="index.html" class="nav-btn active">TERMINÁL</a>
                 <a href="sklad.html" class="nav-btn">SKLAD</a>
-                <button class="nav-btn active">🔒 ADMIN PANEL</button>
+                <button onclick="accessAdmin()" class="nav-btn admin-btn">🔒 ADMIN</button>
             </nav>
         </aside>
 
         <main class="viewport">
-            <h1>ADMINISTRAČNÍ KONZOLE</h1>
-            
-            <div class="admin-grid">
-                <div class="glass-card admin-box">
-                    <h3>FS MANAGER (SLOŽKY)</h3>
-                    <div class="folder-input-group">
-                        <input type="text" id="new-folder-input" placeholder="NÁZEV NOVÉ SLOŽKY...">
-                        <button onclick="createNewFolder()" class="btn-cyan">VYTVOŘIT</button>
-                    </div>
-                    <div id="active-folders" class="folder-list">
-                        </div>
-                </div>
-
-                <div class="glass-card admin-box">
-                    <h3>SYSTÉMOVÉ LOGY ACTIVITY</h3>
-                    <div id="admin-logs" class="log-container"></div>
-                </div>
-
-                <div class="glass-card admin-box full-width">
-                    <h3>MANIPULACE SE ZBOŽÍM</h3>
-                    <div class="inventory-manager">
-                        <div class="control-group">
-                            <label>CÍLOVÁ SLOŽKA</label>
-                            <select id="folder-select"></select>
-                        </div>
-                        <div class="control-group">
-                            <label>MNOŽSTVÍ</label>
-                            <input type="number" id="item-amount" value="1">
-                        </div>
-                        <div class="button-actions">
-                            <button onclick="modifyStock('add')" class="btn-cyan">PŘIDAT +</button>
-                            <button onclick="modifyStock('rem')" class="btn-cyan btn-rem">ODEBRAT -</button>
-                        </div>
-                    </div>
-                </div>
+            <div id="clock">00:00:00</div>
+            <h1 class="glitch-text">SYSTEM ONLINE</h1>
+            <div class="glass-card terminal-status">
+                <p>> NETWORK: <span class="cyan">ŠIFROVÁNÍ AKTIVNÍ</span></p>
+                <p>> STATUS: <span class="cyan">ZABEZPEČENO</span></p>
+                <div class="separator"></div>
+                <p class="low-opacity">Vítejte v komunikačním uzlu. Veškerá aktivita je logována v reálném čase.</p>
             </div>
         </main>
     </div>
