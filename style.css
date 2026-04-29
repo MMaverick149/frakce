@@ -58,3 +58,9 @@ select, input { background: #000; border: 1px solid var(--border); color: #fff; 
 .separator { height: 1px; background: var(--border); margin: 15px 0; }
 .low-opacity { opacity: 0.5; font-size: 0.9rem; }
 .glitch-text { text-shadow: 2px 0 var(--danger), -2px 0 var(--accent); }
+
+.folder-list { margin-top: 20px; max-height: 200px; overflow-y: auto; }
+.folder-item { display: flex; justify-content: space-between; background: rgba(255,255,255,0.05); padding: 10px; margin-bottom: 5px; border-left: 2px solid var(--accent); }
+.btn-mini-rem { background: var(--danger); border: none; color: white; padding: 2px 8px; cursor: pointer; font-family: 'Orbitron'; font-size: 0.6rem; }
+.folder-input-group { display: flex; gap: 10px; }
+.folder-input-group input { flex: 1; }

@@ -1,103 +1,109 @@
-// Konfigurace a data
-let inventory = JSON.parse(localStorage.getItem('syn_inventory')) || {
-    "Flashlight": 0, "Nabojedlouhy": 0, "nabojpistol": 0, 
-    "Tlumic": 0, "Velkyzasobnik": 0, "zamerovac": 0, 
-    "zlutatrava": 0, "kontraband": 0
+// Inicializace dat
+let fsData = JSON.parse(localStorage.getItem('syn_fs')) || {
+    "ZBRANĚ": 24,
+    "MUNICE": 4,
+    "KONTRABAND": 0,
+    "ŽLUTÁ TRÁVA": 1
 };
 
 let logs = JSON.parse(localStorage.getItem('syn_logs')) || [
-    { time: "18:42", msg: "Přístup do skladu autorizován" },
-    { time: "19:15", msg: "Systém šifrování aktualizován" }
+    { time: "10:00", msg: "FS System Initialized" }
 ];
 
-let folderStatus = JSON.parse(localStorage.getItem('syn_folders')) || {
-    "sklad": true // true = odemčeno/viditelné
-};
-
-// Funkce pro ADMIN HESLO
-function accessAdmin() {
-    const pass = prompt("ZADEJTE SYNDICATE KÓD:");
-    if (pass === "syndicate2026") {
-        window.location.href = "admin.html";
-    } else {
-        addLog("Neúspěšný pokus o vstup do Admin Panelu!");
-        alert("PŘÍSTUP ZAMÍTNUT");
+// Funkce pro vytváření složek
+function createNewFolder() {
+    const name = document.getElementById('new-folder-input').value.toUpperCase().trim();
+    if (name && !fsData[name]) {
+        fsData[name] = 0;
+        addLog(`Vytvořena nová složka: ${name}`);
+        saveAndRefresh();
+        document.getElementById('new-folder-input').value = "";
     }
 }
 
-// Správa logů
+// Odstranění složky (Zamykání/Mazání)
+function deleteFolder(name) {
+    if (confirm(`Opravdu smazat složku ${name}?`)) {
+        delete fsData[name];
+        addLog(`Složka ${name} byla odstraněna ze systému`);
+        saveAndRefresh();
+    }
+}
+
+// Logování aktivity
 function addLog(message) {
-    const now = new Date();
-    const timeStr = `${now.getHours()}:${now.getMinutes()}`;
-    logs.unshift({ time: timeStr, msg: message });
-    if (logs.length > 15) logs.pop(); // Udržujeme max 15 logů
+    const time = new Date().toLocaleTimeString('cs-CZ', { hour: '2-digit', minute: '2-digit' });
+    logs.unshift({ time, msg: message });
+    if (logs.length > 20) logs.pop();
     localStorage.setItem('syn_logs', JSON.stringify(logs));
     renderLogs();
 }
 
-function renderLogs() {
-    const logContainer = document.getElementById('admin-logs');
-    if (!logContainer) return;
-    logContainer.innerHTML = logs.map(l => `
-        <p><span class="cyan">[${l.time}]</span> ${l.msg}</p>
-    `).join('');
-}
-
-// Zamykání složek
-function toggleFolder(folderId) {
-    folderStatus[folderId] = !folderStatus[folderId];
-    localStorage.setItem('syn_folders', JSON.stringify(folderStatus));
-    addLog(`Složka ${folderId.toUpperCase()} byla ${folderStatus[folderId] ? 'ODEMČENA' : 'ZAMČENA'}`);
-    updateLockUI();
-}
-
-function updateLockUI() {
-    const btn = document.getElementById('lock-btn-sklad');
-    if (btn) {
-        btn.innerText = folderStatus.sklad ? "ZAMKNOUT" : "ODEMKNOUT";
-        btn.style.background = folderStatus.sklad ? "" : "#ff3e3e";
-    }
-    // Skrytí/Zobrazení v navigaci
-    const navSklad = document.getElementById('nav-sklad');
-    if (navSklad) {
-        navSklad.style.display = folderStatus.sklad ? "block" : "none";
-    }
-}
-
-// Původní logika skladu
-function updateInventory(action) {
-    const item = document.getElementById('item-select').value;
+// Manipulace se zbožím ve složkách
+function modifyStock(action) {
+    const folder = document.getElementById('folder-select').value;
     const amount = parseInt(document.getElementById('item-amount').value) || 0;
+    
     if (action === 'add') {
-        inventory[item] += amount;
-        addLog(`Zásoby: Přidáno ${amount}x ${item}`);
+        fsData[folder] += amount;
+        addLog(`Změna: ${folder} +${amount}`);
     } else {
-        inventory[item] = Math.max(0, inventory[item] - amount);
-        addLog(`Zásoby: Odebráno ${amount}x ${item}`);
+        fsData[folder] = Math.max(0, fsData[folder] - amount);
+        addLog(`Změna: ${folder} -${amount}`);
     }
-    localStorage.setItem('syn_inventory', JSON.stringify(inventory));
+    saveAndRefresh();
+}
+
+function saveAndRefresh() {
+    localStorage.setItem('syn_fs', JSON.stringify(fsData));
+    renderAdminUI();
     renderInventory();
 }
 
+// Vykreslování Admin prvků
+function renderAdminUI() {
+    const folderList = document.getElementById('active-folders');
+    const select = document.getElementById('folder-select');
+    if (!folderList || !select) return;
+
+    folderList.innerHTML = Object.keys(fsData).map(name => `
+        <div class="folder-item">
+            <span>📁 ${name}</span>
+            <button onclick="deleteFolder('${name}')" class="btn-mini-rem">SMAZAT</button>
+        </div>
+    `).join('');
+
+    select.innerHTML = Object.keys(fsData).map(name => `
+        <option value="${name}">${name}</option>
+    `).join('');
+}
+
+function renderLogs() {
+    const container = document.getElementById('admin-logs');
+    if (container) {
+        container.innerHTML = logs.map(l => `<p><span class="cyan">[${l.time}]</span> ${l.msg}</p>`).join('');
+    }
+}
+
+// Vykreslování skladu (sklad.html)
 function renderInventory() {
     const grid = document.getElementById('storage-grid');
     if (!grid) return;
-    grid.innerHTML = Object.entries(inventory).map(([name, count]) => `
+
+    grid.innerHTML = Object.entries(fsData).map(([name, count]) => `
         <div class="item-card">
-            <div class="item-img-box"><img src="images/${name}.png" onerror="this.src='images/zlutatrava.png'"></div>
+            <div class="item-img-box">
+                <img src="images/folder_icon.png" onerror="this.src='images/zlutatrava.png'">
+            </div>
             <div class="item-info">
-                <label>${name.toUpperCase()}</label>
+                <label>${name}</label>
                 <div class="count-display">${count}</div>
             </div>
         </div>
     `).join('');
 }
 
-// Spuštění při načtení
-setInterval(() => {
-    if(document.getElementById('clock')) document.getElementById('clock').innerText = new Date().toLocaleTimeString();
-}, 1000);
-
+// Init
+renderAdminUI();
 renderLogs();
 renderInventory();
-updateLockUI();
