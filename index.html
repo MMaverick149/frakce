@@ -11,32 +11,20 @@
         <aside class="sidebar">
             <div class="logo">SYNDICATE</div>
             <nav>
-                <button class="nav-btn active">TERMINÁL</button>
+                <a href="index.html" class="nav-btn active">TERMINÁL</a>
                 <button class="nav-btn">DATABÁZE</button>
                 <a href="sklad.html" class="nav-btn">SKLAD</a>
-                <div class="status-tag">SYSTÉM ONLINE</div>
+                <button onclick="accessAdmin()" class="nav-btn admin-link">🔒 ADMIN</button>
             </nav>
         </aside>
 
-        <main class="viewport terminal-bg">
+        <main class="viewport">
             <div id="clock">00:00:00</div>
             <h1>SYSTEM OVERVIEW</h1>
-            
-            <div class="terminal-grid">
-                <div class="glass-card status-panel">
-                    <div class="panel-header">NETWORK STATUS</div>
-                    <p>> Šifrování: AES-256 AKTIVNÍ</p>
-                    <p>> Umístění: [REDACTED]</p>
-                    <p>> Připojení: ZABEZPEČENO</p>
-                </div>
-                
-                <div class="glass-card activity-panel">
-                    <div class="panel-header">RECENT ACTIVITY</div>
-                    <div id="log-entries">
-                        <p class="log-info">[18:42] Přístup do skladu autorizován</p>
-                        <p class="log-warn">[19:15] Aktualizace zásob: Munice +50</p>
-                    </div>
-                </div>
+            <div class="glass-card terminal-info">
+                <p>> NETWORK: <span class="cyan">ENCRYPTED</span></p>
+                <p>> LOCATION: <span class="cyan">[REDACTED]</span></p>
+                <p>> STATUS: <span class="cyan">ACTIVE</span></p>
             </div>
         </main>
     </div>

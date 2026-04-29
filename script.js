@@ -1,40 +1,54 @@
-// Načtení dat nebo vytvoření základních hodnot
-let storeData = JSON.parse(localStorage.getItem('syn_storage')) || {
+// Data skladu
+let inventory = JSON.parse(localStorage.getItem('syn_inventory')) || {
     "Flashlight": 0, "Nabojedlouhy": 0, "nabojpistol": 0, 
-    "Tlumic": 0, "Velkyzasobnik": 0, "zamerovac": 0, "zlutatrava": 0
+    "Tlumic": 0, "Velkyzasobnik": 0, "zamerovac": 0, 
+    "zlutatrava": 0, "kontraband": 0
 };
 
-function renderUI() {
-    const grid = document.getElementById('st-grid');
+// Funkce pro heslo do ADMIN zóny
+function accessAdmin() {
+    const pass = prompt("ZADEJ PŘÍSTUPOVÝ KÓD:");
+    if (pass === "syndicate2026") {
+        window.location.href = "admin.html";
+    } else {
+        alert("PŘÍSTUP ZAMÍTNUT!");
+    }
+}
+
+function renderInventory() {
+    const grid = document.getElementById('storage-grid');
     if (!grid) return;
 
-    grid.innerHTML = Object.entries(storeData).map(([name, count]) => `
+    grid.innerHTML = Object.entries(inventory).map(([name, count]) => `
         <div class="item-card">
-            <div class="item-img">
+            <div class="item-img-box">
                 <img src="images/${name}.png" onerror="this.src='images/zlutatrava.png'">
             </div>
-            <label>${name.toUpperCase()}</label>
-            <span class="count">${count}</span>
+            <div class="item-info">
+                <label>${name.toUpperCase()}</label>
+                <div class="count-display">${count}</div>
+            </div>
         </div>
     `).join('');
-    
-    localStorage.setItem('syn_storage', JSON.stringify(storeData));
+    localStorage.setItem('syn_inventory', JSON.stringify(inventory));
 }
 
-function updateStore(mode) {
-    const item = document.getElementById('st-item').value;
-    const amount = parseInt(document.getElementById('st-amount').value) || 0;
+function updateInventory(action) {
+    const item = document.getElementById('item-select').value;
+    const amount = parseInt(document.getElementById('item-amount').value) || 0;
 
-    if (mode === 'add') storeData[item] += amount;
-    else storeData[item] = Math.max(0, storeData[item] - amount);
-
-    renderUI();
+    if (action === 'add') {
+        inventory[item] += amount;
+    } else {
+        inventory[item] = Math.max(0, inventory[item] - amount);
+    }
+    renderInventory();
 }
 
-// Hodiny pro horní roh
+// Hodiny
 setInterval(() => {
-    const clock = document.getElementById('clock');
-    if (clock) clock.innerText = new Date().toLocaleTimeString();
+    const clockEl = document.getElementById('clock');
+    if (clockEl) clockEl.innerText = new Date().toLocaleTimeString();
 }, 1000);
 
-renderUI();
+renderInventory();
