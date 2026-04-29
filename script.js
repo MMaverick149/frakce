@@ -16,7 +16,7 @@ function renderStore() {
                 <img src="images/${k}.png" onerror="this.src='images/zlutatrava.png'">
             </div>
             <label>${k.toUpperCase()}</label>
-            <span>${v}</span>
+            <span class="item-count">${v}</span>
         </div>`).join('');
 }
 

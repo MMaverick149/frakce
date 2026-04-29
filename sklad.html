@@ -2,31 +2,41 @@
 <html lang="cs">
 <head>
     <meta charset="UTF-8">
-    <title>EDITOR SKLADU</title>
+    <title>SYNDICATE - ADMIN EDITOR</title>
     <link rel="stylesheet" href="style.css">
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Rajdhani:wght@500;700&display=swap" rel="stylesheet">
 </head>
-<body style="background: #03060a; padding: 40px; overflow-y: auto;">
-    <h1 style="color: var(--accent); font-family: 'Orbitron'; margin-bottom: 20px;">SPRÁVA SKLADU</h1>
-    
-    <div class="glass-card" style="padding: 20px; margin-bottom: 30px;">
-        <div style="display: flex; gap: 10px;">
-            <select id="st-what" style="flex: 2; padding: 10px; background: #000; color: #fff; border: 1px solid var(--border);">
-                </select>
-            <input type="number" id="st-how" value="1" style="width: 80px; padding: 10px; background: #000; color: #fff; border: 1px solid var(--border);">
-            <button onclick="editStore('add')" class="btn-cyan">+</button>
-            <button onclick="editStore('rem')" class="btn-cyan">-</button>
-        </div>
-    </div>
+<body>
+    <div class="app-shell">
+        <aside class="sidebar">
+            <div class="logo">SYNDICATE</div>
+            <nav>
+                <a href="index.html" class="nav-btn">⬅ ZPĚT</a>
+                <div class="nav-btn active" style="color: #ff4444;">🛠 EDITOR REŽIM</div>
+            </nav>
+        </aside>
 
-    <div id="st-grid" class="inv-grid"></div>
+        <main class="viewport">
+            <div id="clock">00:00:00</div>
+            
+            <h1>LOGISTICKÝ EDITOR</h1>
 
-    <div style="margin-top: 40px;">
-        <a href="index.html" class="btn-cyan" style="text-decoration: none;">ZPĚT DO TERMINÁLU</a>
+            <div class="glass-card editor-panel">
+                <div class="editor-controls">
+                    <select id="st-what"></select>
+                    <input type="number" id="st-how" value="1">
+                    <button onclick="editStore('add')" class="btn-cyan">+</button>
+                    <button onclick="editStore('rem')" class="btn-cyan">-</button>
+                </div>
+            </div>
+
+            <div id="st-grid" class="inv-grid">
+                </div>
+        </main>
     </div>
 
     <script>
-        // Klíče musí přesně odpovídat tvým souborům v images/
+        // Synchronizace s tvými obrázky v images/
         let s_data = JSON.parse(localStorage.getItem('syn_s_data')) || { 
             "Flashlight": 0, "Nabojedlouhy": 0, "nabojpistol": 0, 
             "Tlumic": 0, "Velkyzasobnik": 0, "zamerovac": 0, "zlutatrava": 0 
@@ -42,7 +52,7 @@
                         <img src="images/${k}.png" onerror="this.src='images/zlutatrava.png'">
                     </div>
                     <label>${k.toUpperCase()}</label>
-                    <span style="font-size: 2rem; font-weight: bold;">${v}</span>
+                    <span class="item-count">${v}</span>
                 </div>`).join('');
 
             sel.innerHTML = Object.keys(s_data).map(k => `<option value="${k}">${k.toUpperCase()}</option>`).join('');
@@ -56,6 +66,10 @@
             else s_data[item] = Math.max(0, s_data[item] - qty);
             renderStore();
         }
+
+        setInterval(() => {
+            document.getElementById('clock').innerText = new Date().toLocaleTimeString();
+        }, 1000);
 
         renderStore();
     </script>
