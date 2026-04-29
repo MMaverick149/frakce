@@ -4,36 +4,35 @@
     <meta charset="UTF-8">
     <title>SYNDICATE - EDITOR SKLADU</title>
     <link rel="stylesheet" href="style.css">
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Rajdhani:wght@500;700&display=swap" rel="stylesheet">
 </head>
-<body style="overflow-y: auto; background: #03060a;">
-    <div style="padding: 40px; max-width: 800px; margin: 0 auto;">
-        <h1 style="color: var(--accent); font-family: 'Orbitron';">LOGISTICKÝ EDITOR</h1>
-        <p>Změny se okamžitě projeví v hlavním terminálu.</p>
-        
-        <div class="glass-card" style="margin-top: 20px;">
-            <div class="controls" style="display: grid; grid-template-columns: 1fr 100px 60px 60px; gap: 10px;">
-                <select id="st-what"></select>
-                <input type="number" id="st-how" value="1">
-                <button onclick="editStore('add')" class="btn-cyan" style="width:100%;">+</button>
-                <button onclick="editStore('rem')" class="btn-cyan" style="width:100%;">-</button>
-            </div>
-        </div>
-
-        <div id="st-grid" class="inv-grid" style="margin-top: 30px;">
-            </div>
-
-        <div style="margin-top: 40px; border-top: 1px solid var(--border); padding-top: 20px;">
-            <a href="index.html" class="btn-cyan" style="text-decoration: none; display: inline-block;">ZPĚT DO TERMINÁLU</a>
+<body style="background: #03060a; padding: 40px;">
+    <h1 style="color: var(--accent); font-family: sans-serif;">LOGISTICKÝ EDITOR</h1>
+    
+    <div class="glass-card" style="padding: 20px; margin-bottom: 20px; border: 1px solid var(--border);">
+        <div style="display: flex; gap: 10px; align-items: center;">
+            <select id="st-what" style="flex: 1; padding: 10px; background: #000; color: #fff; border: 1px solid var(--border);"></select>
+            <input type="number" id="st-how" value="1" style="width: 80px; padding: 10px; background: #000; color: #fff; border: 1px solid var(--border);">
+            <button onclick="editStore('add')" class="btn-cyan" style="width: 50px;">+</button>
+            <button onclick="editStore('rem')" class="btn-cyan" style="width: 50px;">-</button>
         </div>
     </div>
 
+    <div id="st-grid" class="inv-grid"></div>
+
+    <div style="margin-top: 30px;">
+        <a href="index.html" class="btn-cyan" style="text-decoration: none; display: inline-block;">NÁVRAT DO TERMINÁLU</a>
+    </div>
+
     <script>
-        // DATA - Musí být stejná jako v indexu
+        // Názvy musí přesně odpovídat tvým souborům v images/
         let s_data = JSON.parse(localStorage.getItem('syn_s_data')) || { 
-            "Nabojedlouhy": 0, "Nabojpistol": 0, "kontraband": 0, 
-            "zlutatrava": 0, "Tlumic": 0, "Flashlight": 0, 
-            "velkyzasobnik": 0, "Zamerovac": 0 
+            "Nabojedlouhy": 0, 
+            "nabojpistol": 0, 
+            "Tlumic": 0, 
+            "Flashlight": 0, 
+            "Velkyzasobnik": 0, 
+            "zamerovac": 0, 
+            "zlutatrava": 0 
         };
 
         function renderStore() {
@@ -41,12 +40,12 @@
             const sel = document.getElementById('st-what');
             
             grid.innerHTML = Object.entries(s_data).map(([k, v]) => `
-                <div class="item-card" style="height: 180px;">
+                <div class="item-card">
                     <div class="item-img-container">
                         <img src="images/${k}.png" onerror="this.src='images/zlutatrava.png'">
                     </div>
                     <label>${k.toUpperCase()}</label>
-                    <span style="font-size: 1.5rem;">${v}</span>
+                    <span>${v}</span>
                 </div>`).join('');
 
             sel.innerHTML = Object.keys(s_data).map(k => `<option value="${k}">${k.toUpperCase()}</option>`).join('');
