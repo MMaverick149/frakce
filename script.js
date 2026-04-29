@@ -1,20 +1,20 @@
-// --- UNIVERZÁLNÍ DATA ---
-let fsData = JSON.parse(localStorage.getItem('syn_fs')) || {
+// --- JÁDRO SYSTÉMU (Data a ukládání) ---
+const DEFAULT_DATA = {
     "ZBRANĚ": 0,
     "MUNICE": 0,
     "KONTRABAND": 0,
     "ŽLUTÁ TRÁVA": 0
 };
 
+let fsData = JSON.parse(localStorage.getItem('syn_fs')) || DEFAULT_DATA;
 let logs = JSON.parse(localStorage.getItem('syn_logs')) || [];
 
-// Funkce pro ukládání
 function saveAll() {
     localStorage.setItem('syn_fs', JSON.stringify(fsData));
     localStorage.setItem('syn_logs', JSON.stringify(logs));
 }
 
-// --- LOGIKA PRO ADMINA ---
+// --- FUNKCE PRO ADMINA (Tlačítka v konzoli) ---
 function createNewFolder() {
     const input = document.getElementById('new-folder-input');
     if (!input) return;
@@ -24,7 +24,7 @@ function createNewFolder() {
         addLog(`VYTVOŘENA SLOŽKA: ${name}`);
         input.value = "";
         saveAll();
-        renderAdmin(); // Překreslíme admina
+        refreshUI();
     }
 }
 
@@ -33,13 +33,15 @@ function deleteFolder(name) {
         delete fsData[name];
         addLog(`SMAZÁNA SLOŽKA: ${name}`);
         saveAll();
-        renderAdmin();
+        refreshUI();
     }
 }
 
 function modifyStock(action) {
     const select = document.getElementById('folder-select');
     const amountInput = document.getElementById('item-amount');
+    
+    // Ochrana: pokud prvky neexistují, skript se nezastaví
     if (!select || !amountInput) return;
 
     const folder = select.value;
@@ -53,7 +55,7 @@ function modifyStock(action) {
         addLog(`ODEBRÁNO: ${amount}ks -> ${folder}`);
     }
     saveAll();
-    renderAdmin();
+    refreshUI();
 }
 
 function addLog(msg) {
@@ -62,9 +64,25 @@ function addLog(msg) {
     if (logs.length > 10) logs.pop();
 }
 
-// --- RENDEROVÁNÍ (ZOBRAZOVÁNÍ) ---
+// --- ZOBRAZOVÁNÍ (RENDERING) ---
+function refreshUI() {
+    // 1. Vykreslení SKLADU (Karty se jménem a číslem)
+    const grid = document.getElementById('storage-grid');
+    if (grid) {
+        grid.innerHTML = Object.entries(fsData).map(([name, count]) => `
+            <div class="item-card">
+                <div class="item-img-box">
+                    <img src="images/folder.png" onerror="this.src='https://i.imgur.com/8nN7pXv.png'">
+                </div>
+                <div class="item-info">
+                    <label>${name}</label>
+                    <div class="count-display">${count}</div>
+                </div>
+            </div>
+        `).join('');
+    }
 
-function renderAdmin() {
+    // 2. Vykreslení ADMINA (Seznam složek a Logy)
     const list = document.getElementById('active-folders');
     const select = document.getElementById('folder-select');
     const logBox = document.getElementById('admin-logs');
@@ -85,35 +103,16 @@ function renderAdmin() {
     }
 }
 
-function renderSklad() {
-    const grid = document.getElementById('storage-grid');
-    if (!grid) return;
-
-    grid.innerHTML = Object.entries(fsData).map(([name, count]) => `
-        <div class="item-card">
-            <div class="item-img-box"><img src="images/folder.png" onerror="this.src='images/zlutatrava.png'"></div>
-            <div class="item-info">
-                <label>${name}</label>
-                <div class="count-display">${count}</div>
-            </div>
-        </div>
-    `).join('');
+// --- SPOUŠTĚNÍ ---
+function accessAdmin() {
+    if (prompt("ZADEJTE KÓD:") === "syndicate2026") window.location.href = "admin.html";
 }
 
-// --- SPOUŠTĚNÍ PŘI NAČTENÍ ---
-window.onload = () => {
-    // Podle toho, jaké ID najde na stránce, spustí správnou funkci
-    if (document.getElementById('active-folders')) renderAdmin();
-    if (document.getElementById('storage-grid')) renderSklad();
-    
-    // Hodiny (pokud existují)
+// Spustit hned po načtení
+window.addEventListener('DOMContentLoaded', () => {
+    refreshUI();
     setInterval(() => {
         const c = document.getElementById('clock');
         if(c) c.innerText = new Date().toLocaleTimeString();
     }, 1000);
-};
-
-// Heslo pro admina
-function accessAdmin() {
-    if (prompt("ZADEJTE KÓD:") === "syndicate2026") window.location.href = "admin.html";
-}
+});
