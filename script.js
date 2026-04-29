@@ -4,13 +4,27 @@ let s_data = JSON.parse(localStorage.getItem('syn_s_data')) || {
     Nabojedlouhy: 0, Nabojpistol: 0, Kontraband: 0, zlutatrava: 0, 
     Tlumic: 0, Flashlight: 0, velkyzasobnik: 0, Zamerovac: 0 
 };
-let currentU = "";
+
+// Mapa ikon pro sklad
+const itemIcons = {
+    Nabojedlouhy: "fa-solid fa-box-archive",
+    Nabojpistol: "fa-solid fa-gun",
+    Kontraband: "fa-solid fa-box",
+    zlutatrava: "fa-solid fa-leaf",
+    Tlumic: "fa-solid fa-screwdriver-wrench",
+    Flashlight: "fa-solid fa-flashlight",
+    velkyzasobnik: "fa-solid fa-plus-square",
+    Zamerovac: "fa-solid fa-crosshairs"
+};
 
 function showPage(id) {
     document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-    document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.nav-btn, .admin-btn-bottom').forEach(b => b.classList.remove('active'));
     document.getElementById('page-' + id).classList.add('active');
-    document.getElementById('nav-' + id).classList.add('active');
+    
+    let navBtn = document.getElementById('nav-' + id);
+    if(navBtn) navBtn.classList.add('active');
+
     if(id === 'members') renderMembers();
     if(id === 'storage') { renderStore(); updateSelect(); }
 }
@@ -18,6 +32,20 @@ function showPage(id) {
 function updateSelect() {
     const sel = document.getElementById('st-what');
     sel.innerHTML = Object.keys(s_data).map(k => `<option value="${k}">${k.toUpperCase()}</option>`).join('');
+}
+
+function renderStore() {
+    const grid = document.getElementById('st-grid');
+    grid.innerHTML = Object.entries(s_data).map(([k, v]) => {
+        const icon = itemIcons[k] || "fa-solid fa-cubes";
+        return `
+        <div class="item-card">
+            <i class="${icon}"></i>
+            <label style="color:var(--accent); font-size:0.8rem; font-weight:800;">${k.toUpperCase()}</label>
+            <span>${v || 0}</span>
+        </div>`;
+    }).join('');
+    localStorage.setItem('syn_s_data', JSON.stringify(s_data));
 }
 
 function renderMembers() {
@@ -30,19 +58,9 @@ function renderMembers() {
             <div style="color:#64748b">#${code}</div>
             <div style="color:var(--accent); font-weight:800;">${d.rank.toUpperCase()}</div>
             <div>${m}</div>
-            <button onclick="openDossier('${m}')" class="btn-update" style="padding:5px; font-size:0.7rem;">OTEVŘÍT</button>
+            <button onclick="openDossier('${m}')" class="btn-cyan" style="padding:5px; font-size:0.7rem; width:80px;">OTEVŘÍT</button>
         </div>`;
     }).join('');
-}
-
-function renderStore() {
-    const grid = document.getElementById('st-grid');
-    grid.innerHTML = Object.entries(s_data).map(([k, v]) => `
-        <div class="glass-card">
-            <label style="color:var(--accent); font-size:0.7rem; font-weight:800;">${k.toUpperCase()}</label>
-            <span>${isNaN(v) ? 0 : v}</span>
-        </div>`).join('');
-    localStorage.setItem('syn_s_data', JSON.stringify(s_data));
 }
 
 function editStore(type) {
@@ -57,6 +75,8 @@ function unlockAdmin() {
     if(document.getElementById('admin-pin').value === "1234") {
         document.getElementById('admin-lock').style.display = 'none';
         document.getElementById('admin-panel').style.display = 'block';
+    } else {
+        alert("PŘÍSTUP ODEPŘEN");
     }
 }
 
@@ -69,7 +89,7 @@ function addMem() {
         localStorage.setItem('syn_m_list', JSON.stringify(m_list));
         localStorage.setItem('syn_f_data', JSON.stringify(f_data));
         document.getElementById('new-mem-name').value = "";
-        alert("Subjekt zapsán.");
+        alert("Subjekt zapsán do systému.");
     }
 }
 
@@ -96,14 +116,14 @@ function saveFolder() {
     closeModal(); renderMembers();
 }
 
+function closeModal() { document.getElementById('dossier-modal').style.display = 'none'; }
+
 function switchTab(e, id) {
     document.querySelectorAll('.pane').forEach(p => p.classList.remove('active'));
     document.querySelectorAll('.tab-btn').forEach(t => t.classList.remove('active'));
     document.getElementById(id).classList.add('active');
     e.currentTarget.classList.add('active');
 }
-
-function closeModal() { document.getElementById('dossier-modal').style.display = 'none'; }
 
 setInterval(() => { document.getElementById('clock').innerText = new Date().toLocaleTimeString(); }, 1000);
 showPage('home');
