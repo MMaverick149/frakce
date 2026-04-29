@@ -2,8 +2,9 @@
 <html lang="cs">
 <head>
     <meta charset="UTF-8">
-    <title>SYNDICATE OS v7.0</title>
+    <title>SYNDICATE OS</title>
     <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Rajdhani:wght@500;700&display=swap" rel="stylesheet">
 </head>
 <body>
     <div class="app-shell">
@@ -13,7 +14,7 @@
                 <button onclick="showPage('home')" class="nav-btn">KONZOLE</button>
                 <button onclick="showPage('members')" class="nav-btn">DATABÁZE</button>
                 <button onclick="showPage('storage')" class="nav-btn">LOGISTIKA</button>
-                <a href="sklad.html" class="nav-btn" style="text-decoration:none; color:#ff4444;">⚙ EDITOR SKLADU</a>
+                <a href="sklad.html" class="nav-btn admin-link">🔒 ADMIN</a>
             </nav>
         </aside>
 
@@ -21,21 +22,20 @@
             <div id="clock">00:00:00</div>
             
             <section id="page-home" class="page active">
-                <h1>MAIN TERMINAL</h1>
-                <p>Všechny systémy pod dohledem operátora. Protokoly v7.0 aktivní.</p>
+                <h1>SYSTÉM ONLINE</h1>
+                <p>Vítejte v hlavním terminálu. Všechny moduly jsou aktivní.</p>
             </section>
 
             <section id="page-members" class="page">
                 <h2>EVIDOVANÁ DATA</h2>
-                <div class="table-header">
-                    <div>KÓD</div><div>HODNOST</div><div>SUBJEKT</div><div>AKCE</div>
-                </div>
-                <div id="members-list"></div>
+                <div id="members-list">
+                    </div>
             </section>
 
             <section id="page-storage" class="page">
                 <h2>LOGISTIKA - PŘEHLED</h2>
-                <div id="st-grid" class="inv-grid"></div>
+                <div id="st-grid" class="inv-grid">
+                    </div>
             </section>
         </main>
     </div>

@@ -7,7 +7,7 @@ function showPage(id) {
 
 function renderStore() {
     const grid = document.getElementById('st-grid');
-    // Načtení dat ze sdílené paměti
+    if(!grid) return;
     const s_data = JSON.parse(localStorage.getItem('syn_s_data')) || {};
     
     grid.innerHTML = Object.entries(s_data).map(([k, v]) => `
@@ -22,22 +22,30 @@ function renderStore() {
 
 function renderMembers() {
     const list = document.getElementById('members-list');
-    // Ukázková data pro databázi
-    const m_list = ["David Ricci", "Vito Scaletta", "we"];
-    const ranks = {"David Ricci": "DAS", "Vito Scaletta": "NEZAŘAZEN", "we": "AS"};
+    const m_data = [
+        { id: "#2989", rank: "DAS", name: "David Ricci" },
+        { id: "#4987", rank: "NEZAŘAZEN", name: "Vito Scaletta" },
+        { id: "#2998", rank: "AS", name: "we" }
+    ];
 
-    list.innerHTML = m_list.map(m => `
-        <div class="table-row">
-            <div style="color:gray;">#${Math.floor(Math.random()*9000)+1000}</div>
-            <div style="color:var(--accent); font-weight:bold;">${ranks[m]}</div>
-            <div>${m}</div>
-            <button class="btn-cyan">OTEVŘÍT</button>
-        </div>`).join('');
+    list.innerHTML = `
+        <div class="table-header">
+            <div>KÓD</div><div>HODNOST</div><div>SUBJEKT</div><div>AKCE</div>
+        </div>
+        ${m_data.map(m => `
+            <div class="table-row">
+                <div style="color: gray;">${m.id}</div>
+                <div style="color: var(--accent); font-weight: bold;">${m.rank}</div>
+                <div>${m.name}</div>
+                <button class="btn-cyan">OTEVŘÍT</button>
+            </div>
+        `).join('')}
+    `;
 }
 
-setInterval(() => { 
-    const c = document.getElementById('clock');
-    if(c) c.innerText = new Date().toLocaleTimeString(); 
+setInterval(() => {
+    const clock = document.getElementById('clock');
+    if(clock) clock.innerText = new Date().toLocaleTimeString();
 }, 1000);
 
 showPage('home');
