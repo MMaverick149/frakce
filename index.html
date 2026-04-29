@@ -1,24 +1,54 @@
-<section id="page-members" class="page">
-    <h2>EVIDOVANÁ DATA</h2>
-    <div class="search-bar">
-        <input type="text" id="m-search" placeholder="VYHLEDAT SUBJEKT..." oninput="renderMembers()">
-    </div>
-    <div class="table-header">
-        <div>KÓD</div>
-        <div>HODNOST</div>
-        <div>SUBJEKT</div>
-        <div>AKCE</div>
-    </div>
-    <div id="members-list"></div>
-</section>
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+    <meta charset="UTF-8">
+    <title>SYNDICATE OS v7.0</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="app-shell">
+        <aside class="sidebar">
+            <div class="logo">SYNDICATE</div>
+            <nav>
+                <button onclick="showPage('home')" class="nav-btn">TERMINÁL</button>
+                <button onclick="showPage('members')" class="nav-btn">DATABÁZE</button>
+                <button onclick="showPage('storage')" class="nav-btn">LOGISTIKA</button>
+                <button onclick="showPage('admin')" class="nav-btn admin-btn">ADMIN</button>
+            </nav>
+        </aside>
 
-<section id="page-storage" class="page">
-    <h2>LOGISTIKA</h2>
-    <div class="controls">
-        <select id="st-what"></select>
-        <input type="number" id="st-how" value="1">
-        <button onclick="editStore('add')" class="btn-cyan">+</button>
-        <button onclick="editStore('rem')" class="btn-cyan">-</button>
+        <main class="viewport">
+            <div id="clock">00:00:00</div>
+            
+            <section id="page-home" class="page active">
+                <h1>MAIN TERMINAL</h1>
+                <p>Systém je online. Všechny protokoly aktivní.</p>
+            </section>
+
+            <section id="page-members" class="page">
+                <h2>EVIDOVANÁ DATA</h2>
+                <input type="text" id="m-search" placeholder="VYHLEDAT..." oninput="renderMembers()">
+                <div class="table-header">
+                    <div>KÓD</div>
+                    <div>HODNOST</div>
+                    <div>SUBJEKT</div>
+                    <div>AKCE</div>
+                </div>
+                <div id="members-list"></div>
+            </section>
+
+            <section id="page-storage" class="page">
+                <h2>LOGISTIKA</h2>
+                <div class="controls">
+                    <select id="st-what"></select>
+                    <input type="number" id="st-how" value="1">
+                    <button onclick="editStore('add')" class="btn-cyan">+</button>
+                    <button onclick="editStore('rem')" class="btn-cyan">-</button>
+                </div>
+                <div id="st-grid" class="inv-grid"></div>
+            </section>
+        </main>
     </div>
-    <div id="st-grid" class="inv-grid"></div>
-</section>
+    <script src="script.js"></script>
+</body>
+</html>

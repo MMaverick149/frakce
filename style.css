@@ -1,39 +1,43 @@
-/* Styl pro tabulku databáze */
+:root {
+    --accent: #00d2ff;
+    --bg: #03060a;
+    --glass: rgba(15, 20, 30, 0.9);
+}
+
+body { background: var(--bg); color: #fff; font-family: sans-serif; margin: 0; }
+.app-shell { display: flex; height: 100vh; }
+.sidebar { width: 200px; background: #080b12; padding: 20px; border-right: 1px solid #1a202c; }
+.nav-btn { width: 100%; padding: 10px; margin-bottom: 5px; background: none; border: none; color: #64748b; cursor: pointer; text-align: left; }
+
+.viewport { flex: 1; padding: 40px; position: relative; }
+.page { display: none; }
+.page.active { display: block; }
+
+/* OPRAVA TABULKY */
 .table-header, .table-row {
     display: grid;
-    /* Rozdělení na 4 sloupce: ID, Hodnost, Jméno, Tlačítko */
-    grid-template-columns: 100px 150px 1fr 120px; 
-    gap: 15px;
+    grid-template-columns: 100px 150px 1fr 100px; /* Sloupce vedle sebe */
+    gap: 10px;
+    padding: 10px;
     align-items: center;
-    padding: 12px;
-    border-bottom: 1px solid rgba(0, 210, 255, 0.1);
 }
+.table-header { color: var(--accent); border-bottom: 1px solid #1a202c; font-weight: bold; }
+.table-row { background: rgba(255,255,255,0.02); margin-top: 5px; }
 
-.table-header {
-    color: var(--accent);
-    font-weight: bold;
-    text-transform: uppercase;
-}
-
-/* Styl pro logistiku (grid s kartami) */
+/* OPRAVA LOGISTIKY */
 .inv-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-    gap: 20px;
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 15px;
     margin-top: 20px;
 }
-
 .item-card {
-    background: rgba(15, 20, 30, 0.8);
+    background: var(--glass);
     border: 1px solid rgba(0, 210, 255, 0.2);
-    padding: 20px;
+    padding: 15px;
     text-align: center;
-    border-radius: 8px;
 }
+.item-card img { height: 60px; display: block; margin: 0 auto 10px; }
 
-.item-card img {
-    height: 80px;
-    object-fit: contain;
-    margin-bottom: 15px;
-    filter: drop-shadow(0 0 5px var(--accent));
-}
+.btn-cyan { background: var(--accent); border: none; padding: 5px 15px; cursor: pointer; }
+#clock { position: absolute; top: 20px; right: 40px; color: var(--accent); }
