@@ -14,7 +14,7 @@
                 <a href="index.html" class="nav-btn">TERMINÁL</a>
                 <button class="nav-btn">DATABÁZE</button>
                 <button class="nav-btn active">SKLAD</button>
-                <div class="status-tag">SYSTÉM AKTIVNÍ</div>
+                <div class="status-tag">SKLAD ZABEZPEČEN</div>
             </nav>
         </aside>
 
@@ -24,7 +24,7 @@
 
             <div class="inventory-manager glass-card">
                 <div class="control-group">
-                    <label>POLOŽKA</label>
+                    <label>ZBOŽÍ</label>
                     <select id="item-select">
                         <option value="Flashlight">Flashlight</option>
                         <option value="Nabojedlouhy">Náboje dlouhé</option>
@@ -33,6 +33,7 @@
                         <option value="Velkyzasobnik">Velký zásobník</option>
                         <option value="zamerovac">Zaměřovač</option>
                         <option value="zlutatrava">Žlutá tráva</option>
+                        <option value="kontraband">Kontraband</option>
                     </select>
                 </div>
                 <div class="control-group">
@@ -48,47 +49,6 @@
             <div id="storage-grid" class="inv-grid"></div>
         </main>
     </div>
-
-    <script>
-        // Inicializace dat z obrázků, které jsi poslal
-        let inventory = JSON.parse(localStorage.getItem('syn_inventory')) || {
-            "Flashlight": 0, "Nabojedlouhy": 0, "nabojpistol": 0, 
-            "Tlumic": 0, "Velkyzasobnik": 0, "zamerovac": 0, "zlutatrava": 0
-        };
-
-        function renderInventory() {
-            const grid = document.getElementById('storage-grid');
-            grid.innerHTML = Object.entries(inventory).map(([name, count]) => `
-                <div class="item-card">
-                    <div class="item-img-box">
-                        <img src="images/${name}.png" onerror="this.src='images/zlutatrava.png'">
-                    </div>
-                    <div class="item-info">
-                        <label>${name.toUpperCase()}</label>
-                        <div class="count-display">${count}</div>
-                    </div>
-                </div>
-            `).join('');
-            localStorage.setItem('syn_inventory', JSON.stringify(inventory));
-        }
-
-        function updateInventory(action) {
-            const item = document.getElementById('item-select').value;
-            const amount = parseInt(document.getElementById('item-amount').value) || 0;
-
-            if (action === 'add') {
-                inventory[item] += amount;
-            } else {
-                inventory[item] = Math.max(0, inventory[item] - amount);
-            }
-            renderInventory();
-        }
-
-        setInterval(() => {
-            document.getElementById('clock').innerText = new Date().toLocaleTimeString();
-        }, 1000);
-
-        renderInventory();
-    </script>
+    <script src="script.js"></script>
 </body>
 </html>

@@ -2,7 +2,7 @@
 <html lang="cs">
 <head>
     <meta charset="UTF-8">
-    <title>SYNDICATE - SKLAD</title>
+    <title>SYNDICATE - TERMINÁL</title>
     <link rel="stylesheet" href="style.css">
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Rajdhani:wght@500;700&display=swap" rel="stylesheet">
 </head>
@@ -11,84 +11,35 @@
         <aside class="sidebar">
             <div class="logo">SYNDICATE</div>
             <nav>
-                <a href="index.html" class="nav-btn">TERMINÁL</a>
+                <button class="nav-btn active">TERMINÁL</button>
                 <button class="nav-btn">DATABÁZE</button>
-                <button class="nav-btn active">SKLAD</button>
-                <div class="status-tag">SYSTÉM AKTIVNÍ</div>
+                <a href="sklad.html" class="nav-btn">SKLAD</a>
+                <div class="status-tag">SYSTÉM ONLINE</div>
             </nav>
         </aside>
 
-        <main class="viewport">
+        <main class="viewport terminal-bg">
             <div id="clock">00:00:00</div>
-            <h1>SPRÁVA ZÁSOB</h1>
-
-            <div class="inventory-manager glass-card">
-                <div class="control-group">
-                    <label>ZBOŽÍ</label>
-                    <select id="item-select">
-                        <option value="Flashlight">Flashlight</option>
-                        <option value="Nabojedlouhy">Náboje dlouhé</option>
-                        <option value="nabojpistol">Náboje pistol</option>
-                        <option value="Tlumic">Tlumič</option>
-                        <option value="Velkyzasobnik">Velký zásobník</option>
-                        <option value="zamerovac">Zaměřovač</option>
-                        <option value="zlutatrava">Žlutá tráva</option> </select>
+            <h1>SYSTEM OVERVIEW</h1>
+            
+            <div class="terminal-grid">
+                <div class="glass-card status-panel">
+                    <div class="panel-header">NETWORK STATUS</div>
+                    <p>> Šifrování: AES-256 AKTIVNÍ</p>
+                    <p>> Umístění: [REDACTED]</p>
+                    <p>> Připojení: ZABEZPEČENO</p>
                 </div>
-                <div class="control-group">
-                    <label>MNOŽSTVÍ</label>
-                    <input type="number" id="item-amount" value="1" min="1">
-                </div>
-                <div class="button-actions">
-                    <button onclick="updateInventory('add')" class="btn-cyan">PŘIDAT +</button>
-                    <button onclick="updateInventory('rem')" class="btn-cyan btn-rem">ODEBRAT -</button>
+                
+                <div class="glass-card activity-panel">
+                    <div class="panel-header">RECENT ACTIVITY</div>
+                    <div id="log-entries">
+                        <p class="log-info">[18:42] Přístup do skladu autorizován</p>
+                        <p class="log-warn">[19:15] Aktualizace zásob: Munice +50</p>
+                    </div>
                 </div>
             </div>
-
-            <div id="storage-grid" class="inv-grid"></div>
         </main>
     </div>
-
-    <script>
-        // Inicializace dat z obrázků a nových položek
-        let inventory = JSON.parse(localStorage.getItem('syn_inventory')) || {
-            "Flashlight": 0, "Nabojedlouhy": 0, "nabojpistol": 0, 
-            "Tlumic": 0, "Velkyzasobnik": 0, "zamerovac": 0, "zlutatrava": 0,
-            "kontraband": 0 // Nová položka
-        };
-
-        function renderInventory() {
-            const grid = document.getElementById('storage-grid');
-            grid.innerHTML = Object.entries(inventory).map(([name, count]) => `
-                <div class="item-card">
-                    <div class="item-img-box">
-                        <img src="images/${name}.png" onerror="this.src='images/zlutatrava.png'">
-                    </div>
-                    <div class="item-info">
-                        <label>${name.toUpperCase()}</label>
-                        <div class="count-display">${count}</div>
-                    </div>
-                </div>
-            `).join('');
-            localStorage.setItem('syn_inventory', JSON.stringify(inventory));
-        }
-
-        function updateInventory(action) {
-            const item = document.getElementById('item-select').value;
-            const amount = parseInt(document.getElementById('item-amount').value) || 0;
-
-            if (action === 'add') {
-                inventory[item] += amount;
-            } else {
-                inventory[item] = Math.max(0, inventory[item] - amount);
-            }
-            renderInventory();
-        }
-
-        setInterval(() => {
-            document.getElementById('clock').innerText = new Date().toLocaleTimeString();
-        }, 1000);
-
-        renderInventory();
-    </script>
+    <script src="script.js"></script>
 </body>
 </html>

@@ -1,10 +1,10 @@
 :root {
-    --bg: #020406;
-    --panel: #080c12;
-    --accent: #00d2ff; /* Původní Syndicate neon modrá */
-    --danger: #ff4444; /* Pro odebrání */
-    --border: rgba(0, 210, 255, 0.1); /* Jemnější glow */
-    --glass: rgba(10, 15, 25, 0.85); /* Tmavší sklo */
+    --bg: #020408;
+    --side: #05080c;
+    --accent: #00d2ff;
+    --danger: #ff3e3e;
+    --glass: rgba(10, 20, 30, 0.7);
+    --border: rgba(0, 210, 255, 0.15);
 }
 
 * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -12,37 +12,32 @@ body { background: var(--bg); color: #fff; font-family: 'Rajdhani', sans-serif; 
 
 .app-shell { display: flex; height: 100vh; }
 
-/* Sidebar s nelegálním nádechem */
-.sidebar { width: 260px; background: var(--panel); border-right: 1px solid var(--border); padding: 30px; display: flex; flex-direction: column; }
-.logo { font-family: 'Orbitron'; color: var(--accent); font-size: 1.8rem; margin-bottom: 50px; text-shadow: 0 0 20px var(--accent); letter-spacing: 2px; }
+/* Sidebar */
+.sidebar { width: 260px; background: var(--side); border-right: 1px solid var(--border); padding: 30px; display: flex; flex-direction: column; }
+.logo { font-family: 'Orbitron'; color: var(--accent); font-size: 1.8rem; margin-bottom: 50px; text-shadow: 0 0 15px var(--accent); }
 .nav-btn { display: block; width: 100%; padding: 15px; background: none; border: none; color: #506070; text-align: left; font-weight: bold; cursor: pointer; text-decoration: none; transition: 0.3s; }
 .nav-btn.active, .nav-btn:hover { color: var(--accent); background: rgba(0, 210, 255, 0.05); border-left: 3px solid var(--accent); }
-.status-tag { margin-top: auto; font-size: 0.7rem; color: var(--accent); opacity: 0.5; font-family: 'Orbitron'; }
 
-/* Hlavní plocha */
-.viewport { flex: 1; padding: 50px; position: relative; overflow-y: auto; background: radial-gradient(circle at top right, #0a1520, #020406); }
-#clock { position: absolute; top: 25px; right: 50px; font-family: 'Orbitron'; color: var(--accent); font-size: 1rem; opacity: 0.8; }
-h1 { font-family: 'Orbitron'; margin-bottom: 40px; letter-spacing: 4px; font-size: 2rem; color: #fff; }
+/* Viewport */
+.viewport { flex: 1; padding: 50px; position: relative; overflow-y: auto; background: radial-gradient(circle at top right, #0a1a2a, #020408); }
+#clock { position: absolute; top: 25px; right: 50px; font-family: 'Orbitron'; color: var(--accent); opacity: 0.7; }
+h1 { font-family: 'Orbitron'; margin-bottom: 40px; letter-spacing: 4px; font-size: 2.2rem; text-transform: uppercase; }
 
-/* Integrovaný editor zásob pro nelegální frakci */
-.inventory-manager { display: flex; gap: 20px; padding: 30px; border: 1px solid var(--border); margin-bottom: 50px; align-items: flex-end; background: var(--glass); }
+/* Editor */
+.glass-card { background: var(--glass); border: 1px solid var(--border); backdrop-filter: blur(10px); border-radius: 4px; }
+.inventory-manager { display: flex; gap: 20px; padding: 30px; margin-bottom: 50px; align-items: flex-end; }
 .control-group { display: flex; flex-direction: column; flex: 1; }
-.control-group label { font-size: 0.7rem; color: var(--accent); font-family: 'Orbitron'; margin-bottom: 10px; opacity: 0.8; }
-select, input { background: #000; border: 1px solid var(--border); color: #fff; padding: 12px; font-family: 'Rajdhani'; font-size: 1.1rem; }
-select:focus, input:focus { outline: 1px solid var(--accent); }
+.control-group label { font-size: 0.7rem; color: var(--accent); font-family: 'Orbitron'; margin-bottom: 10px; }
+select, input { background: #000; border: 1px solid var(--border); color: #fff; padding: 12px; font-family: 'Rajdhani'; font-size: 1.1rem; border-radius: 2px; }
 
-.btn-cyan { background: var(--accent); color: #000; border: none; padding: 12px 25px; font-family: 'Orbitron'; font-weight: bold; cursor: pointer; transition: 0.3s; letter-spacing: 1px; }
-.btn-cyan:hover { box-shadow: 0 0 20px var(--accent); transform: translateY(-1px); }
+.btn-cyan { background: var(--accent); color: #000; border: none; padding: 12px 25px; font-family: 'Orbitron'; font-weight: bold; cursor: pointer; }
 .btn-rem { background: var(--danger); color: #fff; }
-.btn-rem:hover { box-shadow: 0 0 20px var(--danger); }
 
-/* Drsná mřížka položek skladu */
-.inv-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 25px; }
-.item-card { background: var(--glass); border: 1px solid var(--border); padding: 30px; text-align: center; position: relative; overflow: hidden; transition: 0.3s; }
-.item-card:hover { border-color: rgba(0, 210, 255, 0.4); box-shadow: 0 0 20px rgba(0, 210, 255, 0.1); }
-.item-card::before { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 2px; background: var(--accent); opacity: 0.3; }
-
-.item-img-box { height: 100px; display: flex; align-items: center; justify-content: center; margin-bottom: 20px; }
-.item-img-box img { max-width: 85%; max-height: 85%; filter: drop-shadow(0 0 10px var(--accent)); } /* Glow pro fotky */
-.item-info label { display: block; color: var(--accent); font-family: 'Orbitron'; font-size: 0.75rem; margin-bottom: 10px; opacity: 0.9; letter-spacing: 1px; }
-.count-display { font-family: 'Orbitron'; font-size: 2.5rem; color: #fff; text-shadow: 0 0 10px rgba(255,255,255,0.3); }
+/* Grid a Karty */
+.inv-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 20px; }
+.item-card { background: var(--glass); border: 1px solid var(--border); padding: 25px; text-align: center; transition: 0.3s; }
+.item-card:hover { border-color: var(--accent); box-shadow: 0 0 20px rgba(0, 210, 255, 0.15); }
+.item-img-box { height: 90px; display: flex; align-items: center; justify-content: center; margin-bottom: 15px; }
+.item-img-box img { max-width: 80%; max-height: 80%; filter: drop-shadow(0 0 10px var(--accent)); }
+.item-info label { display: block; color: var(--accent); font-family: 'Orbitron'; font-size: 0.7rem; margin-bottom: 8px; }
+.count-display { font-family: 'Orbitron'; font-size: 2.4rem; }
