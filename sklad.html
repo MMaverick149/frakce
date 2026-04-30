@@ -2,22 +2,43 @@
 <html lang="cs">
 <head>
     <meta charset="UTF-8">
-    <title>SYNDICATE - SKLAD</title>
+    <title>SYNDICATE - LOGISTIKA</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <div class="app-shell">
         <aside class="sidebar">
             <div class="logo">SYNDICATE</div>
-            <nav>
-                <a href="sklad.html" class="nav-btn active">SKLAD</a>
-                <a href="admin.html" class="nav-btn">🔒 ADMIN</a>
-            </nav>
+            <nav><a href="sklad.html" class="nav-btn active">SKLAD & ADMIN</a></nav>
         </aside>
+
         <main class="viewport">
             <div id="clock">00:00:00</div>
             <h1>LOGISTIKA - PŘEHLED</h1>
+            
+            <!-- Mřížka skladu -->
             <div id="storage-grid" class="inv-grid"></div>
+
+            <hr style="border: 1px solid #0ff; margin: 30px 0; opacity: 0.3;">
+
+            <!-- Ovládací panel přímo ve skladu -->
+            <div class="admin-combined-ui" style="display: flex; gap: 20px;">
+                <div class="glass-card" style="flex: 1;">
+                    <h3>MANIPULACE SE ZBOŽÍM</h3>
+                    <input type="text" id="operator-name" placeholder="Jméno operátora" class="admin-input">
+                    <select id="folder-select" class="admin-input"></select>
+                    <input type="number" id="item-amount" value="1" class="admin-input">
+                    <div style="display: flex; gap: 10px; margin-top: 10px;">
+                        <button onclick="modifyStock('add')" class="btn-cyan">PŘIDAT +</button>
+                        <button onclick="modifyStock('rem')" class="btn-cyan btn-rem">ODEBRAT -</button>
+                    </div>
+                </div>
+
+                <div class="glass-card" style="flex: 1;">
+                    <h3>HISTORIE OPERACÍ</h3>
+                    <div id="admin-logs" class="log-container"></div>
+                </div>
+            </div>
         </main>
     </div>
     <script src="script.js"></script>

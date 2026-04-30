@@ -1,11 +1,9 @@
-// Definice všech tvých složek ve skladu
 const POLOZKY = ["ZBRANĚ", "MUNICE", "KONTRABAND", "ŽLUTÁ TRÁVA", "TLUMIČ", "DROGY", "VESTA", "FLASHLIGHT", "NABOJE DLOUHY", "NABOJE PISTOL", "VELKY ZASOBNIK", "ZAMEROVAC"];
 
-// Načtení dat (Sklad + Logy)
 let fsData = JSON.parse(localStorage.getItem('syn_fs')) || {};
 let logs = JSON.parse(localStorage.getItem('syn_logs')) || [];
 
-// Pojistka: Každá položka musí mít číslo (oprava NaN/null)
+// Oprava dat a inicializace nul
 POLOZKY.forEach(p => {
     if (typeof fsData[p] !== 'number' || isNaN(fsData[p])) fsData[p] = 0;
 });
@@ -16,7 +14,6 @@ function saveAll() {
     render();
 }
 
-// Funkce pro ADMINA (Přidat/Odebrat + Jméno + Log)
 function modifyStock(action) {
     const select = document.getElementById('folder-select');
     const input = document.getElementById('item-amount');
@@ -26,15 +23,11 @@ function modifyStock(action) {
 
     const item = select.value;
     const amount = parseInt(input.value) || 0;
-    const opName = operator.value.trim();
+    const opName = operator.value.trim() || "Neznámý";
 
-    if (!opName) {
-        alert("Zadej jméno operátora!");
-        return;
-    }
     if (amount <= 0) return;
 
-    const time = new Date().toLocaleTimeString('cs-CZ');
+    const time = new Date().toLocaleTimeString('cs-CZ', {hour:'2-digit', minute:'2-digit'});
     let type = action === 'add' ? "PŘIDAL" : "ODEBRAL";
 
     if (action === 'add') {
@@ -43,20 +36,21 @@ function modifyStock(action) {
         fsData[item] = Math.max(0, fsData[item] - amount);
     }
 
-    // Zápis logu: [Čas] Jméno Akce: Kolik -> Co
     logs.unshift(`[${time}] ${opName} ${type}: ${amount}ks -> ${item}`);
-    if (logs.length > 20) logs.pop();
+    if (logs.length > 15) logs.pop();
 
     saveAll();
 }
 
 function render() {
-    // Vykreslení SKLADU (Mřížka)
+    // 1. Mřížka skladu s opravou obrázků
     const grid = document.getElementById('storage-grid');
     if (grid) {
         grid.innerHTML = Object.entries(fsData).map(([name, count]) => `
             <div class="item-card">
-                <div class="item-img-box"><img src="images/folder.png" onerror="this.src='https://i.imgur.com/8nN7pXv.png'"></div>
+                <div class="item-img-box">
+                    <img src="images/${name.toLowerCase()}.png" onerror="this.src='images/neninic.png'">
+                </div>
                 <div class="item-info">
                     <label>${name}</label>
                     <div class="count-display">${count}</div>
@@ -65,11 +59,14 @@ function render() {
         `).join('');
     }
 
-    // Vykreslení ADMINA (Výběr + Historie)
+    // 2. Historie logů
     const logBox = document.getElementById('admin-logs');
+    if (logBox) {
+        logBox.innerHTML = logs.map(l => `<div class="log-entry">${l}</div>`).join('');
+    }
+
+    // 3. Naplnění výběru (jen pokud je prázdný)
     const sel = document.getElementById('folder-select');
-    
-    if (logBox) logBox.innerHTML = logs.map(l => `<div class="log-entry">${l}</div>`).join('');
     if (sel && sel.innerHTML === "") {
         sel.innerHTML = POLOZKY.map(p => `<option value="${p}">${p}</option>`).join('');
     }
