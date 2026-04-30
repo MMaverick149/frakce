@@ -1,35 +1,42 @@
-<main class="viewport">
-    <h1>ADMIN PANEL</h1>
-    <div class="admin-grid" style="display: flex; gap: 20px;">
-        
-        <!-- MANIPULACE -->
-        <div class="glass-card" style="flex: 1;">
-            <h3>MANIPULACE SE ZBOŽÍM</h3>
-            <div class="editor-ui">
-                <label>JMÉNO OPERÁTORA:</label>
-                <input type="text" id="operator-name" placeholder="Tvé jméno..." class="admin-input">
-                
-                <label>POLOŽKA:</label>
-                <select id="folder-select" class="admin-input"></select>
-                
-                <label>MNOŽSTVÍ:</label>
-                <input type="number" id="item-amount" value="1" class="admin-input">
-                
-                <div style="margin-top: 10px;">
-                    <button onclick="modifyStock('add')" class="btn-cyan">PŘIDAT +</button>
-                    <button onclick="modifyStock('rem')" class="btn-cyan btn-rem">ODEBRAT -</button>
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+    <meta charset="UTF-8">
+    <title>SYNDICATE - ADMIN</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="app-shell">
+        <aside class="sidebar">
+            <div class="logo">SYNDICATE</div>
+            <nav><a href="sklad.html" class="nav-btn">ZPĚT DO SKLADU</a></nav>
+        </aside>
+        <main class="viewport">
+            <h1>ADMINISTRAČNÍ KONZOLE</h1>
+            <div style="display: flex; gap: 30px;">
+                <!-- FORMULÁŘ -->
+                <div class="glass-card" style="flex: 1; padding: 20px;">
+                    <h3>MANIPULACE SE ZBOŽÍM</h3>
+                    <div class="editor-ui" style="display: flex; flex-direction: column; gap: 10px;">
+                        <input type="text" id="operator-name" placeholder="Tvoje jméno (Operátor)" class="admin-input">
+                        <select id="folder-select" class="admin-input"></select>
+                        <input type="number" id="item-amount" value="1" class="admin-input">
+                        <div style="display: flex; gap: 10px;">
+                            <button onclick="modifyStock('add')" class="btn-cyan">PŘIDAT +</button>
+                            <button onclick="modifyStock('rem')" class="btn-cyan btn-rem">ODEBRAT -</button>
+                        </div>
+                    </div>
+                </div>
+                <!-- HISTORIE -->
+                <div class="glass-card" style="flex: 1; padding: 20px;">
+                    <h3>HISTORIE OPERACÍ</h3>
+                    <div id="admin-logs" style="max-height: 400px; overflow-y: auto; color: #0ff; font-family: monospace;">
+                        <!-- Sem se píší logy -->
+                    </div>
                 </div>
             </div>
-        </div>
-
-        <!-- LOGOVÁNÍ -->
-        <div class="glass-card" style="flex: 1;">
-            <h3>HISTORIE OPERACÍ</h3>
-            <div id="admin-logs" class="log-container" style="max-height: 400px; overflow-y: auto; color: #0ff; font-family: monospace;">
-                <!-- Zde se zobrazí: [Čas] Jméno PŘIDAL: 5ks -> MUNICE -->
-            </div>
-        </div>
-
+        </main>
     </div>
-</main>
-<script src="script.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
