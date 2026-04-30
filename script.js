@@ -7,16 +7,17 @@ let logs = JSON.parse(localStorage.getItem('syn_logs')) || [];
 POLOZKY.forEach(p => { if (typeof fsData[p] !== 'number') fsData[p] = 0; });
 
 function render() {
-    // Část pro SKLAD (sklad.html)
     const grid = document.getElementById('storage-grid');
     if (grid) {
         grid.innerHTML = Object.entries(fsData).map(([name, count]) => {
-            // Tohle udělá z "ŽLUTÁ TRÁVA" -> "zlutatrava", aby to našlo tvůj obrázek
-            const imgName = name.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/\s+/g, '');
+            // Tohle je nejjednodušší cesta: vezme název, dá ho na malá písmena a smaže mezery
+            // "ZBRANĚ" -> "zbraně.png", "NABOJE PISTOL" -> "nabojepistol.png"
+            const imgFileName = name.toLowerCase().replace(/\s+/g, '');
+            
             return `
                 <div class="item-card">
                     <div class="item-img-box">
-                        <img src="images/${imgName}.png" onerror="this.src='images/neninic.png'">
+                        <img src="images/${imgFileName}.png" onerror="this.src='images/neninic.png'">
                     </div>
                     <div class="item-info">
                         <label>${name}</label>
@@ -26,7 +27,6 @@ function render() {
         }).join('');
     }
 
-    // Část pro ADMINA (admin.html)
     const logBox = document.getElementById('admin-logs');
     if (logBox) {
         logBox.innerHTML = logs.map(l => `<div class="log-entry">${l}</div>`).join('');
