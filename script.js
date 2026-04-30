@@ -1,78 +1,79 @@
-// --- KONFIGURACE DAT ---
-const SEZNAM_POLOZEK = ["ZBRANĚ", "MUNICE", "KONTRABAND", "ŽLUTÁ TRÁVA", "TLUMIČ", "DROGY", "VESTA", "FLASHLIGHT", "NABOJE DLOUHY", "NABOJE PISTOL", "VELKY ZASOBNIK", "ZAMEROVAC"];
+// Nastavení položek přesně podle tvého skladu
+const POLOZKY = ["ZBRANĚ", "MUNICE", "KONTRABAND", "ŽLUTÁ TRÁVA", "TLUMIČ", "DROGY", "VESTA", "FLASHLIGHT", "NABOJE DLOUHY", "NABOJE PISTOL", "VELKY ZASOBNIK", "ZAMEROVAC"];
 
-function nactiData() {
-    let ulozenaData = JSON.parse(localStorage.getItem('syn_fs')) || {};
-    // Pojistka: Pokud položka neexistuje nebo není číslo, nastavíme 0
-    SEZNAM_POLOZEK.forEach(item => {
-        if (typeof ulozenaData[item] !== 'number' || isNaN(ulozenaData[item])) {
-            ulozenaData[item] = 0;
-        }
-    });
-    return ulozenaData;
-}
+// Načtení dat a logů
+let fsData = JSON.parse(localStorage.getItem('syn_fs')) || {};
+let logs = JSON.parse(localStorage.getItem('syn_logs')) || [];
 
-let fsData = nactiData();
+// Oprava dat, aby tam byly nuly místo chyb
+POLOZKY.forEach(p => {
+    if (typeof fsData[p] !== 'number' || isNaN(fsData[p])) fsData[p] = 0;
+});
 
-function uloz() {
+function saveAll() {
     localStorage.setItem('syn_fs', JSON.stringify(fsData));
-    vykresliVse();
+    localStorage.setItem('syn_logs', JSON.stringify(logs));
+    renderSklad();
+    if (document.getElementById('admin-logs')) renderAdmin();
 }
 
-// --- FUNKCE PRO ADMIN PANEL ---
-function modifyStock(akce) {
+// Funkce pro přidávání/odebírání + LOGOVÁNÍ
+function modifyStock(action) {
     const select = document.getElementById('folder-select');
     const input = document.getElementById('item-amount');
-    
     if (!select || !input) return;
 
-    const polozka = select.value;
-    const mnozstvi = parseInt(input.value) || 0;
+    const item = select.value;
+    const amount = parseInt(input.value) || 0;
+    if (amount <= 0) return;
 
-    if (mnozstvi <= 0) return;
+    const time = new Date().toLocaleTimeString('cs-CZ', {hour:'2-digit', minute:'2-digit'});
 
-    if (akce === 'add') {
-        fsData[polozka] += mnozstvi;
+    if (action === 'add') {
+        fsData[item] += amount;
+        logs.unshift(`[${time}] PŘIDÁNO: ${amount}x ${item}`);
     } else {
-        fsData[polozka] = Math.max(0, fsData[polozka] - mnozstvi);
+        fsData[item] = Math.max(0, fsData[item] - amount);
+        logs.unshift(`[${time}] ODEBRÁNO: ${amount}x ${item}`);
     }
-    uloz();
+
+    if (logs.length > 15) logs.pop(); // Udržíme jen posledních 15 záznamů
+    saveAll();
 }
 
-// --- VYKRESLOVÁNÍ ---
-function vykresliVse() {
-    // 1. Karty ve skladu
+function renderSklad() {
     const grid = document.getElementById('storage-grid');
-    if (grid) {
-        grid.innerHTML = Object.entries(fsData).map(([name, count]) => `
-            <div class="item-card">
-                <div class="item-img-box">
-                    <img src="images/folder.png" onerror="this.src='https://i.imgur.com/8nN7pXv.png'">
-                </div>
-                <div class="item-info">
-                    <label>${name}</label>
-                    <div class="count-display">${count}</div>
-                </div>
+    if (!grid) return;
+    grid.innerHTML = Object.entries(fsData).map(([name, count]) => `
+        <div class="item-card">
+            <div class="item-img-box"><img src="images/folder.png" onerror="this.src='https://i.imgur.com/8nN7pXv.png'"></div>
+            <div class="item-info">
+                <label>${name}</label>
+                <div class="count-display">${count}</div>
             </div>
-        `).join('');
-    }
+        </div>
+    `).join('');
+}
 
-    // 2. Výběr v adminu
-    const sel = document.getElementById('folder-select');
-    if (sel) {
-        sel.innerHTML = Object.keys(fsData).map(k => `<option value="${k}">${k}</option>`).join('');
+function renderAdmin() {
+    const logBox = document.getElementById('admin-logs');
+    const select = document.getElementById('folder-select');
+    
+    if (logBox) logBox.innerHTML = logs.map(l => `<p class="log-entry">${l}</p>`).join('');
+    if (select && select.innerHTML === "") {
+        select.innerHTML = POLOZKY.map(p => `<option value="${p}">${p}</option>`).join('');
     }
 }
 
-// Inicializace
-window.onload = vykresliVse;
-
-// Hodiny
-setInterval(() => {
-    const clock = document.getElementById('clock');
-    if (clock) clock.innerText = new Date().toLocaleTimeString('cs-CZ');
-}, 1000);
+window.onload = () => {
+    renderSklad();
+    if (document.getElementById('admin-logs')) renderAdmin();
+    setInterval(() => {
+        const c = document.getElementById('clock');
+        if(c) c.innerText = new Date().toLocaleTimeString();
+    }, 1000);
+};
 
 function accessAdmin() {
-    if (prompt("SYSTÉMOVÝ KÓD:") === "syndicate2026") window.location.href = "admin.html";
+    if (prompt("VSTUPNÍ KÓD:") === "syndicate2026") window.location.href = "admin.html";
 }

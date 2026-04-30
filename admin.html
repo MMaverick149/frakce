@@ -1,35 +1,24 @@
-<!DOCTYPE html>
-<html lang="cs">
-<head>
-    <meta charset="UTF-8">
-    <title>SYNDICATE - ADMIN</title>
-    <link rel="stylesheet" href="style.css">
-</head>
-<body>
-    <div class="app-shell">
-        <aside class="sidebar">
-            <div class="logo">SYNDICATE</div>
-            <nav>
-                <a href="index.html" class="nav-btn">TERMINÁL</a>
-                <a href="sklad.html" class="nav-btn">SKLAD</a>
-                <button class="nav-btn active">🔒 ADMIN PANEL</button>
-            </nav>
-        </aside>
-        <main class="viewport">
-            <h1>ADMINISTRAČNÍ KONZOLE</h1>
-            <div class="glass-card admin-box">
-                <h3>MANIPULACE SE ZBOŽÍM</h3>
-                <div class="editor-ui">
-                    <select id="folder-select"></select>
-                    <input type="number" id="item-amount" value="1" min="1">
-                    <div class="actions">
-                        <button onclick="modifyStock('add')" class="btn-cyan">PŘIDAT +</button>
-                        <button onclick="modifyStock('rem')" class="btn-cyan btn-rem">ODEBRAT -</button>
-                    </div>
-                </div>
+<main class="viewport">
+    <h1>ADMIN PANEL</h1>
+    <div class="admin-grid">
+        <!-- Ovládání -->
+        <div class="glass-card admin-box">
+            <h3>MANIPULACE SE ZBOŽÍM</h3>
+            <div class="editor-ui">
+                <select id="folder-select"></select>
+                <input type="number" id="item-amount" value="1">
+                <button onclick="modifyStock('add')" class="btn-cyan">PŘIDAT +</button>
+                <button onclick="modifyStock('rem')" class="btn-cyan btn-rem">ODEBRAT -</button>
             </div>
-        </main>
+        </div>
+
+        <!-- TADY JE TO LOGOVÁNÍ -->
+        <div class="glass-card admin-box">
+            <h3>HISTORIE OPERACÍ</h3>
+            <div id="admin-logs" class="log-container">
+                <!-- Sem se zapisují změny -->
+            </div>
+        </div>
     </div>
-    <script src="script.js"></script>
-</body>
-</html>
+</main>
+<script src="script.js"></script>
