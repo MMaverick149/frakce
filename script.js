@@ -3,77 +3,71 @@ const POLOZKY = ["ZBRANĚ", "MUNICE", "KONTRABAND", "ŽLUTÁ TRÁVA", "TLUMIČ",
 let fsData = JSON.parse(localStorage.getItem('syn_fs')) || {};
 let logs = JSON.parse(localStorage.getItem('syn_logs')) || [];
 
-// Oprava dat a inicializace nul
+// Inicializace nul
 POLOZKY.forEach(p => {
-    if (typeof fsData[p] !== 'number' || isNaN(fsData[p])) fsData[p] = 0;
+    if (typeof fsData[p] !== 'number') fsData[p] = 0;
 });
 
-function saveAll() {
+function modifyStock(action) {
+    const item = document.getElementById('folder-select').value;
+    const amount = parseInt(document.getElementById('item-amount').value) || 0;
+    const opInput = document.getElementById('operator-name');
+    const opName = opInput ? opInput.value.trim() : "Neznámý";
+
+    if (amount <= 0) return;
+    if (opName === "") { alert("Zadej jméno!"); return; }
+
+    const time = new Date().toLocaleTimeString('cs-CZ');
+    if (action === 'add') {
+        fsData[item] += amount;
+        logs.unshift(`[${time}] ${opName} PŘIDAL: ${amount}ks ${item}`);
+    } else {
+        fsData[item] = Math.max(0, fsData[item] - amount);
+        logs.unshift(`[${time}] ${opName} ODEBRAL: ${amount}ks ${item}`);
+    }
+
+    if (logs.length > 15) logs.pop();
     localStorage.setItem('syn_fs', JSON.stringify(fsData));
     localStorage.setItem('syn_logs', JSON.stringify(logs));
     render();
 }
 
-function modifyStock(action) {
-    const select = document.getElementById('folder-select');
-    const input = document.getElementById('item-amount');
-    const operator = document.getElementById('operator-name');
-    
-    if (!select || !input || !operator) return;
-
-    const item = select.value;
-    const amount = parseInt(input.value) || 0;
-    const opName = operator.value.trim() || "Neznámý";
-
-    if (amount <= 0) return;
-
-    const time = new Date().toLocaleTimeString('cs-CZ', {hour:'2-digit', minute:'2-digit'});
-    let type = action === 'add' ? "PŘIDAL" : "ODEBRAL";
-
-    if (action === 'add') {
-        fsData[item] += amount;
-    } else {
-        fsData[item] = Math.max(0, fsData[item] - amount);
-    }
-
-    logs.unshift(`[${time}] ${opName} ${type}: ${amount}ks -> ${item}`);
-    if (logs.length > 15) logs.pop();
-
-    saveAll();
-}
-
 function render() {
-    // 1. Mřížka skladu s opravou obrázků
     const grid = document.getElementById('storage-grid');
-    if (grid) {
-        grid.innerHTML = Object.entries(fsData).map(([name, count]) => `
+    if (!grid) return;
+
+    grid.innerHTML = Object.entries(fsData).map(([name, count]) => {
+        // Převede "ŽLUTÁ TRÁVA" na "zlutatrava" (bez diakritiky, malá písmena, bez mezer)
+        // Aby to přesně sedělo na tvoje soubory v images/
+        const fileName = name.toLowerCase()
+            .normalize("NFD").replace(/[\u0300-\u036f]/g, "")
+            .replace(/\s+/g, '');
+
+        return `
             <div class="item-card">
                 <div class="item-img-box">
-                    <img src="images/${name.toLowerCase()}.png" onerror="this.src='images/neninic.png'">
+                    <img src="images/${fileName}.png" onerror="this.src='images/neninic.png'">
                 </div>
                 <div class="item-info">
-                    <label>${name}</label>
+                    <div style="color: #0ff; font-size: 11px;">${name}</div>
                     <div class="count-display">${count}</div>
                 </div>
             </div>
-        `).join('');
-    }
+        `;
+    }).join('');
 
-    // 2. Historie logů
     const logBox = document.getElementById('admin-logs');
-    if (logBox) {
-        logBox.innerHTML = logs.map(l => `<div class="log-entry">${l}</div>`).join('');
-    }
+    if (logBox) logBox.innerHTML = logs.map(l => `<div>${l}</div>`).join('');
 
-    // 3. Naplnění výběru (jen pokud je prázdný)
     const sel = document.getElementById('folder-select');
     if (sel && sel.innerHTML === "") {
         sel.innerHTML = POLOZKY.map(p => `<option value="${p}">${p}</option>`).join('');
     }
 }
 
-window.onload = render;
 setInterval(() => {
     const c = document.getElementById('clock');
-    if(c) c.innerText = new Date().toLocaleTimeString();
+    if (c) c.innerText = new Date().toLocaleTimeString();
 }, 1000);
+
+window.onload = render;
