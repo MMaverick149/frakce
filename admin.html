@@ -12,20 +12,20 @@
         </aside>
         <main class="viewport">
             <h1>ADMINISTRAČNÍ KONZOLE</h1>
-            <div class="admin-layout" style="display: flex; gap: 20px;">
+            <div style="display: flex; gap: 20px;">
                 <div class="glass-card" style="flex: 1;">
-                    <h3>MANIPULACE SE ZBOŽÍM</h3>
+                    <h3>MANIPULACE</h3>
                     <input type="text" id="operator-name" placeholder="Jméno operátora" class="admin-input">
                     <select id="folder-select" class="admin-input"></select>
                     <input type="number" id="item-amount" value="1" class="admin-input">
                     <div style="display: flex; gap: 10px;">
                         <button onclick="modifyStock('add')" class="btn-cyan">PŘIDAT +</button>
-                        <button onclick="modifyStock('rem')" class="btn-cyan btn-rem" style="background:red;">ODEBRAT -</button>
+                        <button onclick="modifyStock('rem')" class="btn-cyan" style="background:#ff4444; color:white;">ODEBRAT -</button>
                     </div>
                 </div>
                 <div class="glass-card" style="flex: 1;">
-                    <h3>HISTORIE OPERACÍ</h3>
-                    <div id="admin-logs" class="log-container"></div>
+                    <h3>HISTORIE</h3>
+                    <div id="admin-logs" style="height: 300px; overflow-y: auto; color: #0ff; font-family: monospace;"></div>
                 </div>
             </div>
         </main>
