@@ -1,24 +1,37 @@
-<main class="viewport">
-    <h1>ADMIN PANEL</h1>
-    <div class="admin-grid">
-        <!-- Ovládání -->
-        <div class="glass-card admin-box">
-            <h3>MANIPULACE SE ZBOŽÍM</h3>
-            <div class="editor-ui">
-                <select id="folder-select"></select>
-                <input type="number" id="item-amount" value="1">
-                <button onclick="modifyStock('add')" class="btn-cyan">PŘIDAT +</button>
-                <button onclick="modifyStock('rem')" class="btn-cyan btn-rem">ODEBRAT -</button>
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+    <meta charset="UTF-8">
+    <title>SYNDICATE - ADMIN</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="app-shell">
+        <aside class="sidebar">
+            <div class="logo">SYNDICATE</div>
+            <nav><a href="sklad.html" class="nav-btn">ZPĚT DO SKLADU</a></nav>
+        </aside>
+        <main class="viewport">
+            <h1>ADMINISTRAČNÍ KONZOLE</h1>
+            <div class="admin-layout" style="display: flex; gap: 20px;">
+                <!-- Ovládání -->
+                <div class="glass-card" style="flex: 1;">
+                    <h3>MANIPULACE SE ZBOŽÍM</h3>
+                    <select id="folder-select" class="admin-input"></select>
+                    <input type="number" id="item-amount" value="1" class="admin-input">
+                    <button onclick="modifyStock('add')" class="btn-cyan">PŘIDAT</button>
+                    <button onclick="modifyStock('rem')" class="btn-cyan btn-rem">ODEBRAT</button>
+                </div>
+                <!-- Logy -->
+                <div class="glass-card" style="flex: 1;">
+                    <h3>HISTORIE OPERACÍ</h3>
+                    <div id="admin-logs" style="max-height: 300px; overflow-y: auto; font-family: monospace; color: #0ff;">
+                        <!-- Sem se píšou logy -->
+                    </div>
+                </div>
             </div>
-        </div>
-
-        <!-- TADY JE TO LOGOVÁNÍ -->
-        <div class="glass-card admin-box">
-            <h3>HISTORIE OPERACÍ</h3>
-            <div id="admin-logs" class="log-container">
-                <!-- Sem se zapisují změny -->
-            </div>
-        </div>
+        </main>
     </div>
-</main>
-<script src="script.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
