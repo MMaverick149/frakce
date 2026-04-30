@@ -1,33 +1,468 @@
 <!DOCTYPE html>
 <html lang="cs">
 <head>
-    <meta charset="UTF-8">
-    <title>SYNDICATE - TERMINÁL</title>
-    <link rel="stylesheet" href="style.css">
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Rajdhani:wght@500;700&display=swap" rel="stylesheet">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>NEXUS // Secure Portal</title>
+  <link rel="stylesheet" href="style.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Rajdhani:wght@300;400;600;700&family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet" />
 </head>
 <body>
-    <div class="app-shell">
-        <aside class="sidebar">
-            <div class="logo">SYNDICATE</div>
-            <nav>
-                <a href="index.html" class="nav-btn active">TERMINÁL</a>
-                <a href="sklad.html" class="nav-btn">SKLAD</a>
-                <button onclick="accessAdmin()" class="nav-btn admin-btn">🔒 ADMIN</button>
-            </nav>
-        </aside>
+  <canvas id="bgCanvas"></canvas>
+  <div id="scanline"></div>
 
-        <main class="viewport">
-            <div id="clock">00:00:00</div>
-            <h1 class="glitch-text">SYSTEM ONLINE</h1>
-            <div class="glass-card terminal-status">
-                <p>> NETWORK: <span class="cyan">ŠIFROVÁNÍ AKTIVNÍ</span></p>
-                <p>> STATUS: <span class="cyan">ZABEZPEČENO</span></p>
-                <div class="separator"></div>
-                <p class="low-opacity">Vítejte v komunikačním uzlu. Veškerá aktivita je logována v reálném čase.</p>
-            </div>
-        </main>
+  <!-- BOOT SEQUENCE -->
+  <div id="bootScreen" class="screen active">
+    <div class="boot-wrap">
+      <div class="boot-logo">N<span class="blink">█</span>XUS</div>
+      <div class="boot-lines" id="bootLines"></div>
     </div>
-    <script src="script.js"></script>
+  </div>
+
+  <!-- LOGIN SCREEN -->
+  <div id="loginScreen" class="screen">
+    <div class="login-outer">
+      <div class="login-container">
+        <div class="login-header">
+          <div class="corner tl"></div>
+          <div class="corner tr"></div>
+          <div class="corner bl"></div>
+          <div class="corner br"></div>
+          <div class="org-id">ORG // NEXUS FRAMEWORK</div>
+          <div class="portal-title">SECURE<br/>ACCESS</div>
+          <div class="clearance">CLEARANCE REQUIRED</div>
+        </div>
+        <div class="login-fields">
+          <div class="field-group">
+            <label class="field-label">AGENT ID</label>
+            <div class="input-wrap">
+              <span class="input-prefix">&gt;_</span>
+              <input type="text" id="loginName" autocomplete="off" spellcheck="false" />
+            </div>
+          </div>
+          <div class="field-group">
+            <label class="field-label">AUTH KEY</label>
+            <div class="input-wrap">
+              <span class="input-prefix">&gt;_</span>
+              <input type="password" id="loginPass" />
+            </div>
+          </div>
+          <div id="loginError" class="login-error"></div>
+          <button class="btn-access" onclick="doLogin()">
+            <span class="btn-text">INITIATE ACCESS</span>
+            <span class="btn-arrow">▶▶</span>
+          </button>
+        </div>
+        <div class="login-footer">
+          <span>SYS v4.1.7</span>
+          <span id="loginClock"></span>
+          <span>ENCRYPTED</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MEMBER SCREEN -->
+  <div id="memberScreen" class="screen">
+    <div class="app-layout">
+      <!-- Sidebar -->
+      <aside class="sidebar">
+        <div class="sidebar-logo">NX<span class="accent">//</span></div>
+        <nav class="sidebar-nav">
+          <button class="nav-item active" onclick="showMemberTab('overview', this)">
+            <span class="nav-icon">◈</span><span class="nav-label">PŘEHLED</span>
+          </button>
+          <button class="nav-item" onclick="showMemberTab('tasks', this)">
+            <span class="nav-icon">▣</span><span class="nav-label">ÚKOLY</span>
+            <span class="nav-badge" id="taskBadge"></span>
+          </button>
+          <button class="nav-item" onclick="showMemberTab('messages', this)">
+            <span class="nav-icon">◉</span><span class="nav-label">ZPRÁVY</span>
+            <span class="nav-badge" id="msgBadge"></span>
+          </button>
+          <button class="nav-item" onclick="showMemberTab('report', this)">
+            <span class="nav-icon">▲</span><span class="nav-label">HLÁŠENÍ</span>
+          </button>
+          <button class="nav-item" onclick="showMemberTab('warehouse', this)">
+            <span class="nav-icon">⬡</span><span class="nav-label">SKLAD</span>
+          </button>
+        </nav>
+        <div class="sidebar-agent">
+          <div class="agent-dot"></div>
+          <div class="agent-info">
+            <div class="agent-name" id="sidebarName"></div>
+            <div class="agent-rank" id="sidebarRank"></div>
+          </div>
+          <button class="logout-btn" onclick="doLogout()" title="Odhlásit">⏻</button>
+        </div>
+      </aside>
+
+      <!-- Main Content -->
+      <main class="main-content">
+        <!-- OVERVIEW TAB -->
+        <div id="mtab-overview" class="member-tab active">
+          <div class="page-header">
+            <div class="page-title">STATUS // PŘEHLED</div>
+            <div class="page-time" id="dashClock"></div>
+          </div>
+          <div class="overview-grid">
+            <div class="ov-card" id="ov-profile">
+              <div class="card-label">IDENTIFIKACE AGENTA</div>
+              <div class="profile-display">
+                <div class="profile-hex" id="profileHex"></div>
+                <div class="profile-data">
+                  <div class="profile-name" id="ovName"></div>
+                  <div class="profile-rank-row">
+                    <div class="rank-chip" id="ovRank"></div>
+                    <div class="rating-stars" id="ovRating"></div>
+                  </div>
+                  <div class="profile-note" id="ovNote"></div>
+                </div>
+              </div>
+            </div>
+            <div class="ov-card">
+              <div class="card-label">AKTIVNÍ ÚKOLY</div>
+              <div class="stat-num" id="ovTaskCount">0</div>
+              <div class="stat-sub">ČEKÁ NA SPLNĚNÍ</div>
+            </div>
+            <div class="ov-card">
+              <div class="card-label">HODNOCENÍ</div>
+              <div class="rating-large" id="ovRatingLarge"></div>
+            </div>
+            <div class="ov-card full-width">
+              <div class="card-label">POSLEDNÍ ÚKOL</div>
+              <div id="ovLastTask" class="last-task-preview"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- TASKS TAB -->
+        <div id="mtab-tasks" class="member-tab">
+          <div class="page-header">
+            <div class="page-title">▣ // OPERAČNÍ ÚKOLY</div>
+          </div>
+          <div id="memberTaskList" class="task-stream"></div>
+        </div>
+
+        <!-- MESSAGES TAB -->
+        <div id="mtab-messages" class="member-tab">
+          <div class="page-header">
+            <div class="page-title">◉ // PŘÍCHOZÍ PŘENOSY</div>
+          </div>
+          <div id="memberMsgList" class="msg-stream"></div>
+        </div>
+
+        <!-- REPORT TAB -->
+        <div id="mtab-report" class="member-tab">
+          <div class="page-header">
+            <div class="page-title">▲ // ODESLAT HLÁŠENÍ</div>
+          </div>
+          <div class="report-terminal">
+            <div class="terminal-header">
+              <span>SECURE UPLINK // HQ</span>
+              <span id="termClock"></span>
+            </div>
+            <div class="terminal-body">
+              <div class="term-prompt">[<span id="termAgent"></span>@nexus ~]$ </div>
+              <textarea id="memberReport" class="term-input" placeholder="Zadejte zprávu pro velení..." spellcheck="false"></textarea>
+            </div>
+            <div class="terminal-footer">
+              <button class="btn-transmit" onclick="submitReport()">
+                ▲ ODESLAT PŘENOS
+              </button>
+              <span id="reportStatus" class="transmit-status"></span>
+            </div>
+          </div>
+          <div class="sent-header">// ODESLANÉ PŘENOSY</div>
+          <div id="reportHistory" class="sent-list"></div>
+        </div>
+        <!-- WAREHOUSE TAB (member) -->
+        <div id="mtab-warehouse" class="member-tab">
+          <div class="page-header">
+            <div class="page-title">⬡ // FRAKČNÍ SKLAD</div>
+          </div>
+
+          <!-- Category filter -->
+          <div class="wh-filter-bar">
+            <button class="wh-filter active" onclick="filterWarehouse('all', this)">VŠE</button>
+            <button class="wh-filter" onclick="filterWarehouse('weapons', this)">⚔ ZBRANĚ</button>
+            <button class="wh-filter" onclick="filterWarehouse('ammo', this)">◎ MUNICE</button>
+            <button class="wh-filter" onclick="filterWarehouse('vehicles', this)">◧ VOZIDLA</button>
+            <button class="wh-filter" onclick="filterWarehouse('equipment', this)">⬢ VYBAVENÍ</button>
+            <button class="wh-filter" onclick="filterWarehouse('other', this)">◆ OSTATNÍ</button>
+          </div>
+
+          <div id="memberWarehouseGrid" class="wh-grid"></div>
+
+          <!-- Request panel -->
+          <div class="wh-request-panel">
+            <div class="panel-title">// ŽÁDOST O VÝDEJ ITEMU</div>
+            <div class="wh-request-form">
+              <div class="field-group">
+                <label class="field-label">ITEM</label>
+                <div class="input-wrap"><span class="input-prefix">&gt;_</span>
+                  <select id="req-item" class="full-select"></select>
+                </div>
+              </div>
+              <div class="field-group">
+                <label class="field-label">MNOŽSTVÍ</label>
+                <div class="input-wrap"><span class="input-prefix">&gt;_</span>
+                  <input type="number" id="req-amount" min="1" value="1" />
+                </div>
+              </div>
+              <div class="field-group">
+                <label class="field-label">DŮVOD ŽÁDOSTI</label>
+                <div class="input-wrap"><span class="input-prefix">&gt;_</span>
+                  <input type="text" id="req-reason" placeholder="Proč item potřebujete..." />
+                </div>
+              </div>
+              <div class="form-footer">
+                <button class="btn-access small" onclick="submitItemRequest()"><span class="btn-text">ODESLAT ŽÁDOST</span></button>
+                <span id="reqStatus" class="transmit-status"></span>
+              </div>
+            </div>
+          </div>
+
+          <!-- My request history -->
+          <div class="sent-header">// MOJE ŽÁDOSTI</div>
+          <div id="myRequests" class="sent-list"></div>
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <!-- ADMIN SCREEN -->
+  <div id="adminScreen" class="screen">
+    <div class="app-layout">
+      <!-- Admin Sidebar -->
+      <aside class="sidebar admin-sidebar">
+        <div class="sidebar-logo">NX<span class="accent-red">//</span></div>
+        <div class="admin-label">COMMAND<br/>ACCESS</div>
+        <nav class="sidebar-nav">
+          <button class="nav-item active" onclick="showAdminTab('agents', this)">
+            <span class="nav-icon">◈</span><span class="nav-label">AGENTI</span>
+          </button>
+          <button class="nav-item" onclick="showAdminTab('tasks', this)">
+            <span class="nav-icon">▣</span><span class="nav-label">ÚKOLY</span>
+          </button>
+          <button class="nav-item" onclick="showAdminTab('messages', this)">
+            <span class="nav-icon">◉</span><span class="nav-label">ZPRÁVY</span>
+          </button>
+          <button class="nav-item" onclick="showAdminTab('reports', this)">
+            <span class="nav-icon">▲</span><span class="nav-label">HLÁŠENÍ</span>
+          </button>
+          <button class="nav-item" onclick="showAdminTab('warehouse', this)">
+            <span class="nav-icon">⬡</span><span class="nav-label">SKLAD</span>
+          </button>
+        </nav>
+        <div class="sidebar-agent">
+          <div class="agent-dot red"></div>
+          <div class="agent-info">
+            <div class="agent-name">COMMAND</div>
+            <div class="agent-rank">DIRECTOR</div>
+          </div>
+          <button class="logout-btn" onclick="doLogout()" title="Odhlásit">⏻</button>
+        </div>
+      </aside>
+
+      <main class="main-content">
+        <!-- AGENTS TAB -->
+        <div id="atab-agents" class="admin-tab active">
+          <div class="page-header">
+            <div class="page-title">◈ // SPRÁVA AGENTŮ</div>
+            <button class="btn-new-agent" onclick="toggleNewAgent()">+ NOVÝ AGENT</button>
+          </div>
+          <div id="newAgentPanel" class="new-agent-panel hidden">
+            <div class="panel-title">// REGISTRACE NOVÉHO AGENTA</div>
+            <div class="new-agent-grid">
+              <div class="field-group">
+                <label class="field-label">AGENT ID (LOGIN)</label>
+                <div class="input-wrap"><span class="input-prefix">&gt;_</span><input type="text" id="na-login" autocomplete="off" /></div>
+              </div>
+              <div class="field-group">
+                <label class="field-label">AUTH KEY (HESLO)</label>
+                <div class="input-wrap"><span class="input-prefix">&gt;_</span><input type="password" id="na-pass" /></div>
+              </div>
+              <div class="field-group">
+                <label class="field-label">JMÉNO AGENTA</label>
+                <div class="input-wrap"><span class="input-prefix">&gt;_</span><input type="text" id="na-name" /></div>
+              </div>
+              <div class="field-group">
+                <label class="field-label">HODNOCENÍ (1–5)</label>
+                <div class="input-wrap"><span class="input-prefix">&gt;_</span>
+                  <select id="na-rating">
+                    <option value="1">★☆☆☆☆ — 1</option>
+                    <option value="2">★★☆☆☆ — 2</option>
+                    <option value="3" selected>★★★☆☆ — 3</option>
+                    <option value="4">★★★★☆ — 4</option>
+                    <option value="5">★★★★★ — 5</option>
+                  </select>
+                </div>
+              </div>
+              <div class="field-group">
+                <label class="field-label">RANK / HODNOST</label>
+                <div class="input-wrap"><span class="input-prefix">&gt;_</span>
+                  <select id="na-rank">
+                    <option>Recruit</option>
+                    <option>Operative</option>
+                    <option>Agent</option>
+                    <option>Field Lead</option>
+                    <option>Commander</option>
+                    <option>Director</option>
+                  </select>
+                </div>
+              </div>
+              <div class="field-group">
+                <label class="field-label">POZNÁMKA</label>
+                <div class="input-wrap"><span class="input-prefix">&gt;_</span><input type="text" id="na-note" /></div>
+              </div>
+            </div>
+            <div class="new-agent-footer">
+              <button class="btn-access small" onclick="createAgent()"><span class="btn-text">REGISTROVAT AGENTA</span></button>
+              <span id="createStatus" class="transmit-status"></span>
+            </div>
+          </div>
+          <div id="agentGrid" class="agent-grid"></div>
+        </div>
+
+        <!-- TASKS TAB (admin) -->
+        <div id="atab-tasks" class="admin-tab">
+          <div class="page-header"><div class="page-title">▣ // PŘIŘADIT ÚKOL</div></div>
+          <div class="admin-form-card">
+            <div class="field-group">
+              <label class="field-label">CÍLOVÝ AGENT</label>
+              <div class="input-wrap"><span class="input-prefix">&gt;_</span><select id="task-target" class="full-select"></select></div>
+            </div>
+            <div class="field-group">
+              <label class="field-label">NÁZEV OPERACE</label>
+              <div class="input-wrap"><span class="input-prefix">&gt;_</span><input type="text" id="task-title" /></div>
+            </div>
+            <div class="field-group full">
+              <label class="field-label">BRIEFING / POPIS</label>
+              <textarea id="task-desc" class="admin-textarea" placeholder="Zadejte instrukce..."></textarea>
+            </div>
+            <div class="field-group">
+              <label class="field-label">PRIORITA</label>
+              <div class="input-wrap"><span class="input-prefix">&gt;_</span>
+                <select id="task-priority">
+                  <option value="low">LOW — Standardní</option>
+                  <option value="normal" selected>NORMAL — Prioritní</option>
+                  <option value="high">HIGH — Kritická</option>
+                  <option value="urgent">URGENT — Okamžitá akce</option>
+                </select>
+              </div>
+            </div>
+            <div class="form-footer">
+              <button class="btn-access small" onclick="assignTask()"><span class="btn-text">ODESLAT ROZKAZ</span></button>
+              <span id="taskStatus" class="transmit-status"></span>
+            </div>
+          </div>
+        </div>
+
+        <!-- MESSAGES TAB (admin) -->
+        <div id="atab-messages" class="admin-tab">
+          <div class="page-header"><div class="page-title">◉ // POSLAT PŘENOS</div></div>
+          <div class="admin-form-card">
+            <div class="field-group">
+              <label class="field-label">CÍLOVÝ AGENT</label>
+              <div class="input-wrap"><span class="input-prefix">&gt;_</span><select id="msg-target" class="full-select"></select></div>
+            </div>
+            <div class="field-group">
+              <label class="field-label">PŘEDMĚT</label>
+              <div class="input-wrap"><span class="input-prefix">&gt;_</span><input type="text" id="msg-subject" /></div>
+            </div>
+            <div class="field-group full">
+              <label class="field-label">OBSAH PŘENOSU</label>
+              <textarea id="msg-body" class="admin-textarea" placeholder="Obsah zprávy..."></textarea>
+            </div>
+            <div class="form-footer">
+              <button class="btn-access small" onclick="sendMessage()"><span class="btn-text">ODESLAT PŘENOS</span></button>
+              <span id="msgStatus" class="transmit-status"></span>
+            </div>
+          </div>
+        </div>
+
+        <!-- REPORTS TAB (admin) -->
+        <div id="atab-reports" class="admin-tab">
+          <div class="page-header"><div class="page-title">▲ // PŘIJATÁ HLÁŠENÍ</div></div>
+          <div id="allReports" class="msg-stream"></div>
+        </div>
+
+        <!-- WAREHOUSE TAB (admin) -->
+        <div id="atab-warehouse" class="admin-tab">
+          <div class="page-header">
+            <div class="page-title">⬡ // SPRÁVA SKLADU</div>
+            <button class="btn-new-agent" onclick="toggleAddItem()">+ PŘIDAT ITEM</button>
+          </div>
+
+          <!-- Add item form -->
+          <div id="addItemPanel" class="new-agent-panel hidden">
+            <div class="panel-title">// PŘIDAT ITEM DO SKLADU</div>
+            <div class="new-agent-grid">
+              <div class="field-group">
+                <label class="field-label">NÁZEV ITEMU</label>
+                <div class="input-wrap"><span class="input-prefix">&gt;_</span><input type="text" id="wi-name" placeholder="např. Pistole Glock 17" /></div>
+              </div>
+              <div class="field-group">
+                <label class="field-label">KATEGORIE</label>
+                <div class="input-wrap"><span class="input-prefix">&gt;_</span>
+                  <select id="wi-cat">
+                    <option value="weapons">⚔ Zbraně</option>
+                    <option value="ammo">◎ Munice</option>
+                    <option value="vehicles">◧ Vozidla</option>
+                    <option value="equipment">⬢ Vybavení</option>
+                    <option value="other">◆ Ostatní</option>
+                  </select>
+                </div>
+              </div>
+              <div class="field-group">
+                <label class="field-label">MNOŽSTVÍ (ks)</label>
+                <div class="input-wrap"><span class="input-prefix">&gt;_</span><input type="number" id="wi-qty" min="0" value="1" /></div>
+              </div>
+              <div class="field-group">
+                <label class="field-label">MIN. ZÁSOBA (alert pod)</label>
+                <div class="input-wrap"><span class="input-prefix">&gt;_</span><input type="number" id="wi-min" min="0" value="0" /></div>
+              </div>
+              <div class="field-group" style="grid-column:1/-1">
+                <label class="field-label">POPIS / POZNÁMKA</label>
+                <div class="input-wrap"><span class="input-prefix">&gt;_</span><input type="text" id="wi-note" placeholder="Volitelný popis..." /></div>
+              </div>
+              <div class="field-group" style="grid-column:1/-1">
+                <label class="field-label">NÁZEV OBRÁZKU (z složky images/)</label>
+                <div class="input-wrap"><span class="input-prefix">&gt;_</span><input type="text" id="wi-img" placeholder="např. pistole.png" autocomplete="off" /></div>
+                <div class="img-preview-wrap"><span class="field-label" style="margin-top:0.4rem;display:block">NÁHLED:</span><div id="wi-img-preview" class="img-preview-box">—</div></div>
+              </div>
+            </div>
+            <div class="new-agent-footer">
+              <button class="btn-access small" onclick="addWarehouseItem()"><span class="btn-text">PŘIDAT DO SKLADU</span></button>
+              <span id="addItemStatus" class="transmit-status"></span>
+            </div>
+          </div>
+
+          <!-- Category filter (admin) -->
+          <div class="wh-filter-bar">
+            <button class="wh-filter active" onclick="filterAdminWarehouse('all', this)">VŠE</button>
+            <button class="wh-filter" onclick="filterAdminWarehouse('weapons', this)">⚔ ZBRANĚ</button>
+            <button class="wh-filter" onclick="filterAdminWarehouse('ammo', this)">◎ MUNICE</button>
+            <button class="wh-filter" onclick="filterAdminWarehouse('vehicles', this)">◧ VOZIDLA</button>
+            <button class="wh-filter" onclick="filterAdminWarehouse('equipment', this)">⬢ VYBAVENÍ</button>
+            <button class="wh-filter" onclick="filterAdminWarehouse('other', this)">◆ OSTATNÍ</button>
+          </div>
+
+          <div id="adminWarehouseGrid" class="wh-grid admin-wh-grid"></div>
+
+          <!-- Item requests (pending) -->
+          <div class="wh-requests-header">
+            <span>// ŽÁDOSTI O VÝDEJ</span>
+            <span id="pendingCount" class="pending-badge"></span>
+          </div>
+          <div id="adminRequests" class="wh-requests-list"></div>
+        </div>
+
+      </main>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
 </body>
 </html>
