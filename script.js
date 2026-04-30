@@ -1,66 +1,53 @@
-// --- LOGISTIKA SYNDICATE: CORE ENGINE ---
+// --- JÁDRO SYSTÉMU ---
+const defaultItems = ["ZBRANĚ", "MUNICE", "KONTRABAND", "ŽLUTÁ TRÁVA", "TLUMIČ", "DROGY", "VESTA"];
 
-// Funkce pro načtení dat s automatickou opravou chyb
 function loadData() {
-    let saved = JSON.parse(localStorage.getItem('syn_fs')) || {};
-    // Seznam věcí, které musí existovat
-    const keys = ["ZBRANĚ", "MUNICE", "KONTRABAND", "ŽLUTÁ TRÁVA", "TLUMIČ", "DROGY", "VESTA"];
-    
-    keys.forEach(k => {
-        // Pokud to není číslo nebo je to NaN/null, dej tam 0
-        if (typeof saved[k] !== 'number' || isNaN(saved[k])) {
-            saved[k] = 0;
+    let data = JSON.parse(localStorage.getItem('syn_fs')) || {};
+    // Pojistka: Každý klíč musí být číslo, jinak 0
+    defaultItems.forEach(item => {
+        if (typeof data[item] !== 'number' || isNaN(data[item])) {
+            data[item] = 0;
         }
     });
-    return saved;
+    return data;
 }
 
 let fsData = loadData();
-let logs = JSON.parse(localStorage.getItem('syn_logs')) || [];
 
-function saveAndRefresh() {
+function save() {
     localStorage.setItem('syn_fs', JSON.stringify(fsData));
-    localStorage.setItem('syn_logs', JSON.stringify(logs));
     renderAll();
 }
 
-// --- ADMIN FUNKCE ---
+// --- LOGIKA TLAČÍTEK ---
 function modifyStock(action) {
     const select = document.getElementById('folder-select');
-    const amountInput = document.getElementById('item-amount');
+    const input = document.getElementById('item-amount');
     
-    if (!select || !amountInput) return;
+    if (!select || !input) return;
 
-    const item = select.value;
-    const count = parseInt(amountInput.value) || 0;
+    const key = select.value;
+    const amount = parseInt(input.value) || 0;
 
-    if (count <= 0) return;
+    if (amount <= 0) return;
 
     if (action === 'add') {
-        fsData[item] += count;
-        addLog(`PŘIDÁNO: ${count}ks -> ${item}`);
+        fsData[key] += amount;
     } else {
-        fsData[item] = Math.max(0, fsData[item] - count);
-        addLog(`ODEBRÁNO: ${count}ks -> ${item}`);
+        fsData[key] = Math.max(0, fsData[key] - amount);
     }
-    saveAndRefresh();
+    save();
 }
 
-function addLog(msg) {
-    const time = new Date().toLocaleTimeString('cs-CZ', {hour:'2-digit', minute:'2-digit'});
-    logs.unshift({ time, msg });
-    if (logs.length > 10) logs.pop();
-}
-
-// --- VYKRESLOVÁNÍ (RENDER) ---
+// --- ZOBRAZENÍ ---
 function renderAll() {
-    // 1. SKLAD (Karty s ikonami)
+    // 1. Skladové karty
     const grid = document.getElementById('storage-grid');
     if (grid) {
         grid.innerHTML = Object.entries(fsData).map(([name, count]) => `
             <div class="item-card">
                 <div class="item-img-box">
-                    <img src="https://i.imgur.com/8nN7pXv.png" alt="folder">
+                    <img src="images/folder.png" onerror="this.src='https://i.imgur.com/8nN7pXv.png'">
                 </div>
                 <div class="item-info">
                     <label>${name}</label>
@@ -70,27 +57,21 @@ function renderAll() {
         `).join('');
     }
 
-    // 2. ADMIN (Logy a Výběr)
+    // 2. Admin výběr
     const sel = document.getElementById('folder-select');
-    const logBox = document.getElementById('admin-logs');
-
     if (sel) {
         sel.innerHTML = Object.keys(fsData).map(k => `<option value="${k}">${k}</option>`).join('');
     }
-    if (logBox) {
-        logBox.innerHTML = logs.map(l => `<p><span class="cyan">[${l.time}]</span> ${l.msg}</p>`).join('');
-    }
 }
 
-// Spuštění při načtení
+// --- START ---
 window.onload = renderAll;
 
-// Hodiny
 setInterval(() => {
     const c = document.getElementById('clock');
     if (c) c.innerText = new Date().toLocaleTimeString();
 }, 1000);
 
 function accessAdmin() {
-    if (prompt("SYSTÉMOVÝ KÓD:") === "syndicate2026") window.location.href = "admin.html";
+    if (prompt("KÓD:") === "syndicate2026") window.location.href = "admin.html";
 }

@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <title>SYNDICATE - ADMIN</title>
     <link rel="stylesheet" href="style.css">
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Rajdhani:wght@500;700&display=swap" rel="stylesheet">
 </head>
 <body>
     <div class="app-shell">
@@ -13,38 +12,23 @@
             <nav>
                 <a href="index.html" class="nav-btn">TERMINÁL</a>
                 <a href="sklad.html" class="nav-btn">SKLAD</a>
-                <button class="nav-btn active">🔒 ADMIN PANEL</button>
+                <button class="nav-btn active">🔒 ADMIN</button>
             </nav>
         </aside>
 
         <main class="viewport">
-            <h1>ADMINISTRAČNÍ KONZOLE</h1>
-            
-                <div class="admin-grid">
-                    <div class="glass-card admin-box">
-                        <h3>FS MANAGER (SLOŽKY)</h3>
-                        <div class="control-row">
-                            <input type="text" id="new-folder-input" placeholder="NÁZEV SLOŽKY...">
-                            <button onclick="createNewFolder()" class="btn-cyan">VYTVOŘIT</button>
-                        </div>
-                        <div id="active-folders" class="folder-list"></div>
-                    </div>
-
-                    <div class="glass-card admin-box">
-                        <h3>SYSTÉMOVÉ LOGY ACTIVITY</h3>
-                        <div id="admin-logs" class="log-container"></div>
-                    </div>
-
-                    <div class="glass-card admin-box full-width">
-                        <h3>MANIPULACE SE ZBOŽÍM</h3>
-                        <div class="editor-ui">
-                            <select id="folder-select" class="admin-input"></select>
-                            <input type="number" id="item-amount" value="1" min="1" class="admin-input">
-                            <button onclick="modifyStock('add')" class="btn-cyan">PŘIDAT +</button>
-                            <button onclick="modifyStock('rem')" class="btn-cyan btn-rem">ODEBRAT -</button>
-                        </div>
+            <h1>ADMIN PANEL</h1>
+            <div class="glass-card admin-box">
+                <h3>MANIPULACE SE ZBOŽÍM</h3>
+                <div class="editor-ui">
+                    <select id="folder-select"></select>
+                    <input type="number" id="item-amount" value="1" min="1">
+                    <div class="actions">
+                        <button onclick="modifyStock('add')" class="btn-cyan">PŘIDAT +</button>
+                        <button onclick="modifyStock('rem')" class="btn-cyan btn-rem">ODEBRAT -</button>
                     </div>
                 </div>
+            </div>
         </main>
     </div>
     <script src="script.js"></script>
