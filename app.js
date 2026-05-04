@@ -942,9 +942,7 @@ function initNexusHistory() {
     renderNexusHistory(); // Vykreslíme data z DB
 }
 
-/**
- * Zapíše pohyb do databáze a historie
- */
+// Funkce pro zápis do historie
 function logNexusMovement(itemName, changeCount) {
     const nameField = document.getElementById('memberName');
     const operator = nameField && nameField.value.trim() !== "" ? nameField.value.trim() : "Neznámý";
@@ -956,39 +954,30 @@ function logNexusMovement(itemName, changeCount) {
         change: changeCount
     };
 
-    // Uložení do DB (nx_history)
     let history = DB.get('nx_history') || [];
-    history.unshift(entry); // Nový záznam navrch
-    DB.set('nx_history', history.slice(0, 30)); // Držíme posledních 30 záznamů
+    history.unshift(entry);
+    DB.set('nx_history', history.slice(0, 20)); // Uložíme posledních 20 změn
     
     renderNexusHistory();
 }
 
-/**
- * Vykreslí tabulku historie
- */
+// Funkce pro vykreslení tabulky
 function renderNexusHistory() {
     const tbody = document.getElementById('history-table-body');
     if (!tbody) return;
 
     const history = DB.get('nx_history') || [];
-    
-    if (history.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="4" style="padding: 20px; color: #444; text-align: center;">ŽÁDNÉ ZÁZNAMY NEBYLY NALEZENY</td></tr>';
-        return;
-    }
-
     tbody.innerHTML = history.map(h => `
         <tr style="border-bottom: 1px solid #222;">
-            <td style="padding: 10px; color: #888;">${h.time}</td>
-            <td style="padding: 10px; color: #eee;"><strong>${h.operator}</strong></td>
-            <td style="padding: 10px; color: #ccc;">${h.item}</td>
-            <td style="padding: 10px; font-weight: bold; color: ${h.change > 0 ? '#2ecc71' : '#e74c3c'}">
-                ${h.change > 0 ? '+' : ''}${h.change} KS
+            <td style="padding: 8px;">${h.time}</td>
+            <td style="padding: 8px;"><strong>${h.operator}</strong></td>
+            <td style="padding: 8px;">${h.item}</td>
+            <td style="padding: 8px; color: ${h.change > 0 ? '#2ecc71' : '#e74c3c'}">
+                ${h.change > 0 ? '+' : ''}${h.change} ks
             </td>
         </tr>
     `).join('');
 }
 
-// SPUŠTĚNÍ SYSTÉMU (Zajistí, že se vše načte po startu)
-window.addEventListener('load', initNexusHistory);
+// Spustit hned po načtení, aby se ukázala uložená historie
+renderNexusHistory();
