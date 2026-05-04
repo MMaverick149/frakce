@@ -587,7 +587,7 @@ const CAT_LABELS = {
 function initWarehouse() {
   if (!DB.get('nx_warehouse')) {
     DB.set('nx_warehouse', [
-      { id: uid(), name: 'Nabojnice dlouhé', cat: 'ammo',     qty: 0, min: 0,  note: 'Dlouhé náboje',     img: 'nabojelouhy.png'  },
+      { id: uid(), name: 'Nabojnice dlouhé', cat: 'ammo',     qty: 0, min: 0,  note: 'Dlouhé náboje',     img: 'nabojdlouhy.png'  },
       { id: uid(), name: 'Nabojnice pistol',  cat: 'ammo',     qty: 0, min: 0, note: 'Pistolové náboje',   img: 'nabojpistol.png'  },
       { id: uid(), name: 'Baterka',           cat: 'equipment',qty: 0,  min: 0,  note: 'Taktická svítilna',  img: 'baterka.png'  },
       { id: uid(), name: 'Tlumič',            cat: 'equipment',  qty: 0,  min: 0,  note: 'Pro pistoli a dlouhé',  img: 'tlumic.png'  },
