@@ -13,7 +13,7 @@ function initSystem() {
         displayName: 'Director', rank: 'Director',
         rating: 5, note: 'Command access'
       },
-      'demo': {
+      'test': {
         pass: 'demo123', role: 'member',
         displayName: 'Agent Zero', rank: 'Operative',
         rating: 3, note: 'Demo účet'
