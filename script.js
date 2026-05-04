@@ -45,29 +45,78 @@ const bootMessages = [
   '> ACCESS PORTAL READY.',
 ];
 
-function runBoot() {
-  initSystem();
-  startCanvas();
-  startClocks();
+// Konfigurace barev a inicializace systému
+const BOOT_LINES = [
+  "NEXUS CORE v3.0.4 - INITIALIZING...",
+  "KERNEL: LOADED [OK]",
+  "DECRYPTING QUANTUM PROTOCOLS...",
+  "BYPASSING AUTHENTICATION GATEWAY...",
+  "ACCESS GRANTED: ROLE DIRECTOR",
+  "ESTABLISHING SECURE CONNECTION...",
+  "WELCOME BACK, ADMIN."
+];
 
-  const el = document.getElementById('bootLines');
-  let i = 0;
-  function nextLine() {
-    if (i >= bootMessages.length) {
-      setTimeout(() => {
-        showScreen('loginScreen');
-      }, 400);
-      return;
+// Spuštění systému ihned po načtení stránky
+window.addEventListener('load', () => {
+    runBoot();
+});
+
+function runBoot() {
+    const el = document.getElementById('bootLines');
+    if (!el) return; // Ochrana pokud element neexistuje
+
+    let i = 0;
+    function next() {
+        if (i >= BOOT_LINES.length) {
+            setTimeout(() => {
+                // AUTOMATICKÝ LOGIN: Nastavení uživatele a přepnutí obrazovky
+                window.currentUser = { login: 'admin', role: 'Director' };
+                
+                // Skrytí boot screenu a zobrazení admin panelu
+                document.getElementById('bootScreen').style.display = 'none';
+                document.getElementById('adminScreen').style.display = 'grid';
+                
+                // Spuštění vizuálních efektů pozadí
+                startCanvas();
+            }, 800);
+            return;
+        }
+        
+        const line = document.createElement('div');
+        line.className = 'boot-line';
+        line.textContent = BOOT_LINES[i++];
+        el.appendChild(line);
+        
+        // Náhodná prodleva pro efekt hackování
+        setTimeout(next, 100 + Math.random() * 200);
     }
-    const div = document.createElement('div');
-    div.className = 'boot-line';
-    div.textContent = bootMessages[i];
-    div.style.animationDelay = '0ms';
-    el.appendChild(div);
-    i++;
-    setTimeout(nextLine, 180 + Math.random() * 120);
-  }
-  setTimeout(nextLine, 300);
+    
+    // Krátká pauza před začátkem bootu
+    setTimeout(next, 500);
+}
+
+// Funkce pro Canvas (Žlutý neonový efekt)
+function startCanvas() {
+    const canvas = document.getElementById('bgCanvas');
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    
+    // Nastavení rozměrů
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+
+    function draw() {
+        ctx.fillStyle = 'rgba(5, 5, 0, 0.1)'; // Tmavé pozadí s echo efektem
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        
+        ctx.strokeStyle = '#ffea00'; // Žlutá barva z vaší palety
+        ctx.lineWidth = 0.5;
+        
+        // Zde by následovala vaše specifická animace (mřížka/částice)
+        // ...
+        requestAnimationFrame(draw);
+    }
+    draw();
 }
 
 // ─── CANVAS GRID ─────────────────────────────
