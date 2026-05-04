@@ -634,7 +634,6 @@ function renderMemberWarehouse() {
               <span class="wh-item-unit"> KS</span>
             </div>
           </div>
-          ${item.qty === 0 ? '<div class="wh-item-alert critical">VYPRODÁNO</div>' : ''}
           ${item.min > 0 && item.qty > 0 && item.qty <= item.min ? '<div class="wh-item-alert">NÍZKÁ ZÁSOBA</div>' : ''}
         </div>
       `;
