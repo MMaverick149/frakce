@@ -190,11 +190,27 @@
             <button class="wh-filter" onclick="filterWarehouse('other', this)">◆ OSTATNÍ</button>
           </div>
 
-          <div id="memberWarehouseGrid" class="wh-grid"></div>
+                  <!-- Pole pro zadání jména člena -->
+        <div class="member-session">
+            <input type="text" id="memberName" placeholder="Zadejte své jméno..." class="nx-input">
+        </div>
 
-           <div class="user-input-container">
-            <input type="text" id="member-name" placeholder="Zadejte své jméno (člen frakce)..." class="nx-input">
-          </div> 
+        <!-- Tady už asi máte svou sekci s historií -->
+        <div id="historyLog">
+            <table class="history-table">
+                <thead>
+                    <tr>
+                        <th>Datum</th>
+                        <th>Člen</th> <!-- Nový sloupeček -->
+                        <th>Položka</th>
+                        <th>Změna</th>
+                    </tr>
+                </thead>
+                <tbody id="history-table-body">
+                    <!-- Sem JS vkládá řádky -->
+                </tbody>
+            </table>
+        </div>
 
           <!-- SKLAD -->
           <div class="wh-request-panel">
