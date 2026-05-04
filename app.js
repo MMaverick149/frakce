@@ -14,7 +14,7 @@ function initSystem() {
   if (!DB.get('nx_users')) {
     DB.set('nx_users', {
       'admin': {
-        pass: 'nexus2025', role: 'admin',
+        pass: 'admin2026', role: 'admin',
         displayName: 'Director', rank: 'Director',
         rating: 5, note: 'Command access'
       },
@@ -47,11 +47,11 @@ const bootMessages = [
 
 // Konfigurace barev a inicializace systému
 const BOOT_LINES = [
-  "NEXUS CORE v3.0.4 - INITIALIZING...",
-  "KERNEL: LOADED [OK]",
-  "DECRYPTING QUANTUM PROTOCOLS...",
-  "BYPASSING AUTHENTICATION GATEWAY...",
-  "ACCESS GRANTED: ROLE DIRECTOR",
+  "NEXUS CORE v3.0.4 - INICIALIZACE...",
+  "JADRO: NAČTENO [OK]",
+  "DEŠIFROVÁNÍ KVANTOVÝCH PROTOKOLŮ...",
+  "OBCHÁZENÍ AUTENTIZAČNÍ BRÁNY...",
+  "NAVAZOVÁNÍ ZABEZPEČENÉHO PŘIPOJENÍ...",
   "ESTABLISHING SECURE CONNECTION...",
   "WELCOME BACK, ADMIN."
 ];
