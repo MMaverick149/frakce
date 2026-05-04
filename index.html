@@ -459,6 +459,27 @@
     </div>
   </div>
 
+  <!-- Tato část bude v HTML stabilně -->
+<div id="nexus-log-system" style="margin: 20px; padding: 20px; background: #1a1a1a; border: 1px solid #333; color: white;">
+    <h3 style="color: #f1c40f;">SPRÁVA SKLADU</h3>
+    <input type="text" id="memberName" placeholder="Tvé jméno..." style="width: 100%; max-width: 300px; padding: 10px; margin-bottom: 20px;">
+    
+    <h3 style="color: #f1c40f;">HISTORIE</h3>
+    <table style="width: 100%; border-collapse: collapse;">
+        <thead>
+            <tr style="text-align: left; border-bottom: 1px solid #444;">
+                <th>Čas</th>
+                <th>Člen</th>
+                <th>Položka</th>
+                <th>Změna</th>
+            </tr>
+        </thead>
+        <tbody id="history-table-body">
+            <!-- Sem se budou vpisovat řádky -->
+        </tbody>
+    </table>
+</div>
+
   <script src="app.js"></script>
 </body>
 </html>
