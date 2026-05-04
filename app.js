@@ -587,14 +587,13 @@ const CAT_LABELS = {
 function initWarehouse() {
   if (!DB.get('nx_warehouse')) {
     DB.set('nx_warehouse', [
-      { id: uid(), name: 'Nabojnice dlouhé', cat: 'ammo',     qty: 20, min: 5,  note: 'Dlouhé náboje',     img: 'nabojedlouhy.png' },
-      { id: uid(), name: 'Nabojnice pistol',  cat: 'ammo',     qty: 35, min: 10, note: 'Pistolové náboje',   img: 'nabojpistol.png'  },
-      { id: uid(), name: 'Baterka',           cat: 'equipment',qty: 6,  min: 2,  note: 'Taktická svítilna',  img: 'flashlight.png'   },
-      { id: uid(), name: 'Tlumič',            cat: 'weapons',  qty: 4,  min: 1,  note: 'Pro pistoli i SMG',  img: 'tlumic.png'       },
-      { id: uid(), name: 'Zaměřovač',         cat: 'weapons',  qty: 3,  min: 1,  note: 'Optický zaměřovač', img: 'zamerovac.png'    },
-      { id: uid(), name: 'Velký zásobník',    cat: 'weapons',  qty: 5,  min: 2,  note: 'Extended mag',       img: 'velkyzasobnik.png'},
-      { id: uid(), name: 'Zbraň — Neninic',   cat: 'weapons',  qty: 2,  min: 1,  note: '',                   img: 'neninic.png'      },
-      { id: uid(), name: 'Zlatá trasa',       cat: 'other',    qty: 1,  min: 0,  note: 'Speciální item',     img: 'zlatratrava.png'  },
+      { id: uid(), name: 'Nabojnice dlouhé', cat: 'ammo',     qty: 0, min: 0,  note: 'Dlouhé náboje',     img: 'nabojedlouhy.png' },
+      { id: uid(), name: 'Nabojnice pistol',  cat: 'ammo',     qty: 0, min: 0, note: 'Pistolové náboje',   img: 'nabojpistol.png'  },
+      { id: uid(), name: 'Baterka',           cat: 'equipment',qty: 0,  min: 0,  note: 'Taktická svítilna',  img: 'flashlight.png'   },
+      { id: uid(), name: 'Tlumič',            cat: 'equipment',  qty: 0,  min: 0,  note: 'Pro pistoli a dlouhé',  img: 'tlumic.png'  },
+      { id: uid(), name: 'Zaměřovač',         cat: 'equipment',  qty: 0,  min: 0,  note: 'Optický zaměřovač', img: 'zamerovac.png'   },
+      { id: uid(), name: 'Velký zásobník',    cat: 'equipment',  qty: 0,  min: 0,  note: 'Extended mag',       img: 'velkyzasobnik.png'},
+      { id: uid(), name: 'Žlutá Trava',       cat: 'other',    qty: 0,  min: 0,  note: 'Speciální item',     img: 'zlatratrava.png'  },
     ]);
   }
   if (!DB.get('nx_item_requests')) DB.set('nx_item_requests', []);
