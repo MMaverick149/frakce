@@ -603,24 +603,77 @@ function itemImg(item) {
   return `<div class="wh-item-img"><span class="wh-item-icon">${fallback[item.cat]||'◆'}</span></div>`;
 }
 
-function addToHistory(itemId, change, note) {
-    const memberName = document.getElementById('member-name').value || "Neznámý člen";
+// --- SYSTÉM HISTORIE A ČLENŮ ---
+
+// Funkce, která vykreslí políčko pro jméno a tabulku (vloží se pod sklad)
+function initHistorySystem() {
+    const mainContainer = document.querySelector('.container') || document.body;
     
+    const historyHTML = `
+        <div class="nx-section" style="margin-top: 20px;">
+            <h3><i class="fas fa-user-edit"></i> AKTIVNÍ ČLEN</h3>
+            <input type="text" id="memberName" placeholder="Zadejte své jméno (např. John Doe)..." class="nx-input" style="width: 100%; margin-bottom: 20px;">
+            
+            <h3><i class="fas fa-history"></i> HISTORIE SKLADU</h3>
+            <div class="nx-table-wrapper">
+                <table class="nx-table">
+                    <thead>
+                        <tr>
+                            <th>Datum a čas</th>
+                            <th>Člen frakce</th>
+                            <th>Položka</th>
+                            <th>Změna</th>
+                        </tr>
+                    </thead>
+                    <tbody id="history-table-body">
+                        <!-- Zde se zobrazí záznamy -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    `;
+    mainContainer.insertAdjacentHTML('beforeend', historyHTML);
+    renderHistory(); // Při načtení rovnou vykreslíme stávající historii
+}
+
+// Funkce pro zaznamenání pohybu
+function logMovement(itemName, change) {
+    const nameInput = document.getElementById('memberName');
+    const name = nameInput && nameInput.value.trim() !== "" ? nameInput.value.trim() : "Neznámý člen";
+
     const entry = {
-        date: new Date().toLocaleString(),
-        itemId: itemId,
-        change: change,
-        member: memberName, // Tady se uloží jméno z políčka
-        note: note
+        date: new Date().toLocaleString('cs-CZ'),
+        member: name,
+        item: itemName,
+        change: change
     };
 
-    // Načtení stávající historie, přidání záznamu a uložení zpět
-    const history = DB.get('nx_history') || [];
-    history.unshift(entry); // Přidá na začátek seznamu
-    DB.set('nx_history', history);
-    
-    renderHistory(); // Znovu vykreslí tabulku historie
+    let history = DB.get('nx_history') || [];
+    history.unshift(entry); // Nový záznam navrch
+    DB.set('nx_history', history.slice(0, 50)); // Uložíme posledních 50 záznamů
+    renderHistory();
 }
+
+// Funkce pro vykreslení historie do tabulky
+function renderHistory() {
+    const container = document.getElementById('history-table-body');
+    if (!container) return;
+
+    const history = DB.get('nx_history') || [];
+    container.innerHTML = history.map(entry => `
+        <tr>
+            <td>${entry.date}</td>
+            <td><strong>${entry.member}</strong></td>
+            <td>${entry.item}</td>
+            <td style="color: ${entry.change > 0 ? '#4caf50' : '#f44336'}">
+                ${entry.change > 0 ? '+' : ''}${entry.change} ks
+            </td>
+        </tr>
+    `).join('');
+}
+
+// Spuštění systému historie při načtení stránky
+window.addEventListener('load', initHistorySystem);
 
 // ── MEMBER: view warehouse ────────────────────
 let memberWhFilter = 'all';
