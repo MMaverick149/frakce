@@ -733,7 +733,6 @@ function renderAdminWarehouse() {
             </div>
           </div>
           ${item.min > 0 && item.qty <= item.min && item.qty > 0 ? '<div class="wh-item-alert">NÍZKÁ ZÁSOBA</div>' : ''}
-          ${item.qty === 0 ? '<div class="wh-item-alert critical">VYPRODÁNO</div>' : ''}
           <div class="wh-admin-controls">
             <input type="number" class="wh-qty-input" id="qinput-${item.id}" value="1" min="1" title="Množství" />
             <button class="btn-micro" onclick="adjustQty('${item.id}', 1)">+</button>
