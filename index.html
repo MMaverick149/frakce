@@ -11,7 +11,6 @@
   <canvas id="bgCanvas"></canvas>
   <div id="scanline"></div>
 
-  <!-- BOOT SEQUENCE -->
   <div id="bootScreen" class="screen active">
     <div class="boot-wrap">
       <div class="boot-logo">N<span class="blink">█</span>XUS</div>
@@ -28,20 +27,19 @@
           <div class="corner tr"></div>
           <div class="corner bl"></div>
           <div class="corner br"></div>
-          <div class="org-id">ORG // NEXUS FRAMEWORK</div>
-          <div class="portal-title">SECURE<br/>ACCESS</div>
-          <div class="clearance">CLEARANCE REQUIRED</div>
+          <div class="portal-title">SYSTÉMOVÉ<br/>HLAŠENÍ</div>
+          <div class="clearance">VYŽADUJE SE SCHVÁLENÍ</div>
         </div>
         <div class="login-fields">
           <div class="field-group">
-            <label class="field-label">AGENT ID</label>
+            <label class="field-label">ČLEN ID</label>
             <div class="input-wrap">
               <span class="input-prefix">&gt;_</span>
               <input type="text" id="loginName" autocomplete="off" spellcheck="false" />
             </div>
           </div>
           <div class="field-group">
-            <label class="field-label">AUTH KEY</label>
+            <label class="field-label">ČLEN HESLO</label>
             <div class="input-wrap">
               <span class="input-prefix">&gt;_</span>
               <input type="password" id="loginPass" />
@@ -49,14 +47,14 @@
           </div>
           <div id="loginError" class="login-error"></div>
           <button class="btn-access" onclick="doLogin()">
-            <span class="btn-text">INITIATE ACCESS</span>
-            <span class="btn-arrow">▶▶</span>
+            <span class="btn-text">PŘIHLÁSIT SE !</span>
+            <span class="btn-arrow">▶</span>
           </button>
         </div>
         <div class="login-footer">
           <span>SYS v4.1.7</span>
           <span id="loginClock"></span>
-          <span>ENCRYPTED</span>
+          <span>ZAŠIFROVANÉ</span>
         </div>
       </div>
     </div>
