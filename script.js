@@ -56,6 +56,17 @@ const BOOT_LINES = [
   "WELCOME BACK, ADMIN."
 ];
 
+// Konfigurace barev a inicializace systému
+const BOOT_LINES = [
+  "NEXUS CORE v3.0.4 - INITIALIZING...",
+  "KERNEL: LOADED [OK]",
+  "DECRYPTING QUANTUM PROTOCOLS...",
+  "BYPASSING AUTHENTICATION GATEWAY...",
+  "ACCESS GRANTED: ROLE DIRECTOR",
+  "ESTABLISHING SECURE CONNECTION...",
+  "WELCOME BACK, ADMIN."
+];
+
 // Spuštění systému ihned po načtení stránky
 window.addEventListener('load', () => {
     runBoot();
