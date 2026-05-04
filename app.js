@@ -592,7 +592,7 @@ function initWarehouse() {
       { id: uid(), name: 'Baterka',           cat: 'equipment',qty: 0,  min: 0,  note: 'Taktická svítilna',  img: 'baterka.png'   },
       { id: uid(), name: 'Tlumič',            cat: 'equipment',  qty: 0,  min: 0,  note: 'Pro pistoli a dlouhé',  img: 'tlumic.png'  },
       { id: uid(), name: 'Zaměřovač',         cat: 'equipment',  qty: 0,  min: 0,  note: 'Optický zaměřovač', img: 'zamerovac.png'   },
-      { id: uid(), name: 'Velký zásobníkk',    cat: 'equipment',  qty: 0,  min: 0,  note: 'Extended mag',       img: 'velkyzasobnik.png'  },
+      { id: uid(), name: 'Velký zásobník',    cat: 'equipment',  qty: 0,  min: 0,  note: 'Extended mag',       img: 'velkyzasobnik.png'  },
       { id: uid(), name: 'Žlutá Trava',       cat: 'other',    qty: 0,  min: 0,  note: 'Speciální item',     img: 'zlutatrava.png'  },
     ]);
   }
