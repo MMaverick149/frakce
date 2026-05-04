@@ -603,6 +603,25 @@ function itemImg(item) {
   return `<div class="wh-item-img"><span class="wh-item-icon">${fallback[item.cat]||'◆'}</span></div>`;
 }
 
+function addToHistory(itemId, change, note) {
+    const memberName = document.getElementById('member-name').value || "Neznámý člen";
+    
+    const entry = {
+        date: new Date().toLocaleString(),
+        itemId: itemId,
+        change: change,
+        member: memberName, // Tady se uloží jméno z políčka
+        note: note
+    };
+
+    // Načtení stávající historie, přidání záznamu a uložení zpět
+    const history = DB.get('nx_history') || [];
+    history.unshift(entry); // Přidá na začátek seznamu
+    DB.set('nx_history', history);
+    
+    renderHistory(); // Znovu vykreslí tabulku historie
+}
+
 // ── MEMBER: view warehouse ────────────────────
 let memberWhFilter = 'all';
 
