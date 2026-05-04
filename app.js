@@ -593,7 +593,7 @@ function initWarehouse() {
       { id: uid(), name: 'Tlumič',            cat: 'equipment',  qty: 0,  min: 0,  note: 'Pro pistoli a dlouhé',  img: 'tlumic.png'  },
       { id: uid(), name: 'Zaměřovač',         cat: 'equipment',  qty: 0,  min: 0,  note: 'Optický zaměřovač', img: 'zamerovac.png'   },
       { id: uid(), name: 'Velký zásobníkk',    cat: 'equipment',  qty: 0,  min: 0,  note: 'Extended mag',       img: 'velkyzasobnik.png'},
-      { id: uid(), name: 'Žlutá Trava',       cat: 'other',    qty: 0,  min: 0,  note: 'Speciální item',     img: 'zlatratrava.png'  },
+      { id: uid(), name: 'Žlutá Trava',       cat: 'other',    qty: 0,  min: 0,  note: 'Speciální item',     img: 'zlutratrava.png'  },
     ]);
   }
   if (!DB.get('nx_item_requests')) DB.set('nx_item_requests', []);
