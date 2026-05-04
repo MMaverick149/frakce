@@ -1,8 +1,3 @@
-/* ============================================
-   NEXUS FRAMEWORK — APP LOGIC
-   localStorage + boot sequence + canvas
-   ============================================ */
-
 // ─── STORAGE ────────────────────────────────
 const DB = {
   get: k => { try { return JSON.parse(localStorage.getItem(k)); } catch { return null; } },
@@ -48,7 +43,7 @@ const bootMessages = [
 // Konfigurace barev a inicializace systému
 const BOOT_LINES = [
   "NEXUS CORE v3.0.4 - INICIALIZACE...",
-  "JADRO: NAČTENO [OK]",
+  "JADRO: NAČTENO OK",
   "DEŠIFROVÁNÍ KVANTOVÝCH PROTOKOLŮ...",
   "OBCHÁZENÍ AUTENTIZAČNÍ BRÁNY...",
   "NAVAZOVÁNÍ ZABEZPEČENÉHO PŘIPOJENÍ...",
