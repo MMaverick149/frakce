@@ -603,78 +603,6 @@ function itemImg(item) {
   return `<div class="wh-item-img"><span class="wh-item-icon">${fallback[item.cat]||'◆'}</span></div>`;
 }
 
-// --- SYSTÉM HISTORIE A ČLENŮ ---
-
-// Funkce, která vykreslí políčko pro jméno a tabulku (vloží se pod sklad)
-function initHistorySystem() {
-    const mainContainer = document.querySelector('.container') || document.body;
-    
-    const historyHTML = `
-        <div class="nx-section" style="margin-top: 20px;">
-            <h3><i class="fas fa-user-edit"></i> AKTIVNÍ ČLEN</h3>
-            <input type="text" id="memberName" placeholder="Zadejte své jméno (např. John Doe)..." class="nx-input" style="width: 100%; margin-bottom: 20px;">
-            
-            <h3><i class="fas fa-history"></i> HISTORIE SKLADU</h3>
-            <div class="nx-table-wrapper">
-                <table class="nx-table">
-                    <thead>
-                        <tr>
-                            <th>Datum a čas</th>
-                            <th>Člen frakce</th>
-                            <th>Položka</th>
-                            <th>Změna</th>
-                        </tr>
-                    </thead>
-                    <tbody id="history-table-body">
-                        <!-- Zde se zobrazí záznamy -->
-                    </tbody>
-                </table>
-            </div>
-        </div>
-    `;
-    mainContainer.insertAdjacentHTML('beforeend', historyHTML);
-    renderHistory(); // Při načtení rovnou vykreslíme stávající historii
-}
-
-// Funkce pro zaznamenání pohybu
-function logMovement(itemName, change) {
-    const nameInput = document.getElementById('memberName');
-    const name = nameInput && nameInput.value.trim() !== "" ? nameInput.value.trim() : "Neznámý člen";
-
-    const entry = {
-        date: new Date().toLocaleString('cs-CZ'),
-        member: name,
-        item: itemName,
-        change: change
-    };
-
-    let history = DB.get('nx_history') || [];
-    history.unshift(entry); // Nový záznam navrch
-    DB.set('nx_history', history.slice(0, 50)); // Uložíme posledních 50 záznamů
-    renderHistory();
-}
-
-// Funkce pro vykreslení historie do tabulky
-function renderHistory() {
-    const container = document.getElementById('history-table-body');
-    if (!container) return;
-
-    const history = DB.get('nx_history') || [];
-    container.innerHTML = history.map(entry => `
-        <tr>
-            <td>${entry.date}</td>
-            <td><strong>${entry.member}</strong></td>
-            <td>${entry.item}</td>
-            <td style="color: ${entry.change > 0 ? '#4caf50' : '#f44336'}">
-                ${entry.change > 0 ? '+' : ''}${entry.change} ks
-            </td>
-        </tr>
-    `).join('');
-}
-
-// Spuštění systému historie při načtení stránky
-window.addEventListener('load', initHistorySystem);
-
 // ── MEMBER: view warehouse ────────────────────
 let memberWhFilter = 'all';
 
@@ -968,3 +896,99 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 });
+
+// --- MODUL: SPRÁVA ČLENŮ A HISTORIE NEXUS ---
+
+/**
+ * Inicializace rozhraní pro jméno a historii
+ */
+function initNexusHistory() {
+    // Najdeme místo, kam sekci vložíme (zkusíme hlavní kontejner nebo konec body)
+    const target = document.querySelector('.container') || document.querySelector('main') || document.body;
+    
+    // Pokud už políčko existuje, nepodruhé nevytváříme
+    if (document.getElementById('memberName')) return;
+
+    const html = `
+        <div id="nexus-history-section" style="margin-top: 50px; padding: 20px; background: rgba(20, 20, 20, 0.6); border-radius: 8px; border: 1px solid #333;">
+            <h2 style="color: #f1c40f; border-bottom: 1px solid #f1c40f; padding-bottom: 10px;">SPRÁVA OPERACE</h2>
+            
+            <div style="margin: 20px 0;">
+                <label style="display: block; color: #888; margin-bottom: 8px;">IDENTIFIKACE ČLENA (Povinné pro zápis):</label>
+                <input type="text" id="memberName" placeholder="Zadejte volací znak / jméno..." 
+                    style="width: 100%; max-width: 400px; padding: 12px; background: #111; color: #fff; border: 1px solid #444; border-radius: 4px; font-family: monospace;">
+            </div>
+
+            <h3 style="color: #f1c40f; margin-top: 30px;">LOGISTICKÁ HISTORIE</h3>
+            <div style="overflow-x: auto;">
+                <table style="width: 100%; border-collapse: collapse; margin-top: 15px; font-family: monospace;">
+                    <thead>
+                        <tr style="text-align: left; color: #555; border-bottom: 2px solid #222;">
+                            <th style="padding: 10px;">ČAS</th>
+                            <th style="padding: 10px;">OPERÁTOR</th>
+                            <th style="padding: 10px;">POLOŽKA</th>
+                            <th style="padding: 10px;">ZMĚNA</th>
+                        </tr>
+                    </thead>
+                    <tbody id="history-table-body">
+                        <!-- Záznamy se vloží sem -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    `;
+    
+    target.insertAdjacentHTML('beforeend', html);
+    renderNexusHistory(); // Vykreslíme data z DB
+}
+
+/**
+ * Zapíše pohyb do databáze a historie
+ */
+function logNexusMovement(itemName, changeCount) {
+    const nameField = document.getElementById('memberName');
+    const operator = nameField && nameField.value.trim() !== "" ? nameField.value.trim() : "Neznámý";
+
+    const entry = {
+        time: new Date().toLocaleString('cs-CZ'),
+        operator: operator,
+        item: itemName,
+        change: changeCount
+    };
+
+    // Uložení do DB (nx_history)
+    let history = DB.get('nx_history') || [];
+    history.unshift(entry); // Nový záznam navrch
+    DB.set('nx_history', history.slice(0, 30)); // Držíme posledních 30 záznamů
+    
+    renderNexusHistory();
+}
+
+/**
+ * Vykreslí tabulku historie
+ */
+function renderNexusHistory() {
+    const tbody = document.getElementById('history-table-body');
+    if (!tbody) return;
+
+    const history = DB.get('nx_history') || [];
+    
+    if (history.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="4" style="padding: 20px; color: #444; text-align: center;">ŽÁDNÉ ZÁZNAMY NEBYLY NALEZENY</td></tr>';
+        return;
+    }
+
+    tbody.innerHTML = history.map(h => `
+        <tr style="border-bottom: 1px solid #222;">
+            <td style="padding: 10px; color: #888;">${h.time}</td>
+            <td style="padding: 10px; color: #eee;"><strong>${h.operator}</strong></td>
+            <td style="padding: 10px; color: #ccc;">${h.item}</td>
+            <td style="padding: 10px; font-weight: bold; color: ${h.change > 0 ? '#2ecc71' : '#e74c3c'}">
+                ${h.change > 0 ? '+' : ''}${h.change} KS
+            </td>
+        </tr>
+    `).join('');
+}
+
+// SPUŠTĚNÍ SYSTÉMU (Zajistí, že se vše načte po startu)
+window.addEventListener('load', initNexusHistory);
