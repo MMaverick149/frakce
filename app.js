@@ -13,8 +13,7 @@ var ADMIN_PASS = 'nexus2025';
 function initData() {
   if (!DB.get('agents')) {
     DB.set('agents', [
-      { id: 'Nath1559', displayName: 'Nathaniel Hartman', rank: 'Vedení', note: '' }
-      { id: 'demo1', displayName: 'Agent Zero', rank: 'Operative', note: 'Demo ucet',}
+      { id: 'demo1', displayName: 'Agent Zero', rank: 'Operative', rating: 3, note: 'Demo ucet' }
     ]);
   }
   if (!DB.get('tasks'))        DB.set('tasks', {});
@@ -393,11 +392,11 @@ function createAgent() {
   var st = document.getElementById('createStatus');
   if (!login||!name) { st.textContent='// VYPLNTE POVINNE POLE'; return; }
   var agents = DB.get('agents') || [];
-  if (agents.find(function(a){ return a.id===login; })) { st.textContent='// LOGIN JIž EXISTUJE'; return; }
+  if (agents.find(function(a){ return a.id===login; })) { st.textContent='// LOGIN JIZ EXISTUJE'; return; }
   agents.push({ id:login, displayName:name, rank:rank, rating:rating, note:note });
   DB.set('agents', agents);
   addLog('agent', 'Admin vytvoril agenta "'+name+'" (ID: '+login+', rank: '+rank+').');
-  st.textContent='// Člen "'+name+'" Úspešně přidán.';
+  st.textContent='// AGENT "'+name+'" REGISTROVAN';
   setTimeout(function(){ st.textContent=''; },3000);
   ['na-login','na-name','na-note'].forEach(function(id){ document.getElementById(id).value=''; });
   renderAdminAgents();
@@ -407,7 +406,7 @@ function createAgent() {
 function renderAdminAgents() {
   var agents = DB.get('agents') || [];
   var el = document.getElementById('agentGrid');
-  if (!agents.length) { el.innerHTML='<div class="empty-s">// Žádný členové frakce  — Přidej prvního člena</div>'; return; }
+  if (!agents.length) { el.innerHTML='<div class="empty-s">// ZADNI AGENTI — PRIDEJTE PRVNIHO</div>'; return; }
   el.innerHTML = agents.map(function(a){
     return '<div class="agent-card">'+
       '<div class="ac-head"><div><div class="ac-name">'+esc(a.displayName)+'</div><div class="ac-login">ID: '+a.id+'</div></div>'+
@@ -415,6 +414,7 @@ function renderAdminAgents() {
       '<div class="ac-stars" id="acs-'+a.id+'"></div>'+
       (a.note?'<div class="ac-note">'+esc(a.note)+'</div>':'')+
       '<div class="ac-actions">'+
+        '<button class="btn-micro" onclick="editAgentRating(\''+a.id+'\')">RATING</button>'+
         '<button class="btn-micro" onclick="editAgentRank(\''+a.id+'\')">RANK</button>'+
         '<button class="btn-micro" onclick="editAgentNote(\''+a.id+'\')">POZNAMKA</button>'+
         '<button class="btn-micro del" onclick="deleteAgent(\''+a.id+'\')">SMAZAT</button>'+
@@ -423,33 +423,40 @@ function renderAdminAgents() {
   agents.forEach(function(a){ setHtml('acs-'+a.id, stars(a.rating)); });
 }
 
+function editAgentRating(id) {
+  var agents = DB.get('agents')||[];
+  var a = agents.find(function(x){ return x.id===id; });
+  var r = prompt('Hodnoceni pro '+a.displayName+' (1-5):',a.rating);
+  var n = parseInt(r);
+  if (r!==null&&n>=1&&n<=5) { a.rating=n; DB.set('agents',agents); addLog('agent','Admin zmenil rating agenta "'+a.displayName+'" na '+n+'.'); renderAdminAgents(); renderAgentSelect(); }
+}
 function editAgentRank(id) {
-  var ranks=['Recruit','Operative','Agent','Field Lead','Command','Vedení'];
+  var ranks=['Recruit','Operative','Agent','Field Lead','Commander','Director'];
   var agents=DB.get('agents')||[];
   var a=agents.find(function(x){ return x.id===id; });
   var r=prompt('Rank ('+ranks.join(' / ')+'):',a.rank);
-  if (r!==null&&ranks.indexOf(r)!==-1) { a.rank=r; DB.set('agents',agents); addLog('agent','Vedení změnil pozici člna "'+a.displayName+'" na "'+r+'".'); renderAdminAgents(); renderAgentSelect(); }
-  else if (r!==null) alert('Špatná Pozice.');
+  if (r!==null&&ranks.indexOf(r)!==-1) { a.rank=r; DB.set('agents',agents); addLog('agent','Admin zmenil rank agenta "'+a.displayName+'" na "'+r+'".'); renderAdminAgents(); renderAgentSelect(); }
+  else if (r!==null) alert('Neplatny rank.');
 }
 function editAgentNote(id) {
   var agents=DB.get('agents')||[];
   var a=agents.find(function(x){ return x.id===id; });
   var r=prompt('Poznamka:',a.note||'');
-  if (r!==null) { a.note=r; DB.set('agents',agents); addLog('agent','Vedení upravilo poznámku člena "'+a.displayName+'".'); renderAdminAgents(); }
+  if (r!==null) { a.note=r; DB.set('agents',agents); addLog('agent','Admin upravil poznamku agenta "'+a.displayName+'".'); renderAdminAgents(); }
 }
 function deleteAgent(id) {
   if (!confirm('Smazat agenta?')) return;
   var agents=DB.get('agents')||[];
   var a=agents.find(function(x){ return x.id===id; });
   DB.set('agents',agents.filter(function(x){ return x.id!==id; }));
-  addLog('agent','Vedení smazalo Člena "'+(a?a.displayName:id)+'"❗️');
+  addLog('agent','Admin smazal agenta "'+(a?a.displayName:id)+'".');
   renderAdminAgents();
   renderAgentSelect();
 }
 
 function fillAgentSelects() {
   var agents=DB.get('agents')||[];
-  var opts='<option value="">-- Vyberte Člena --</option>'+
+  var opts='<option value="">-- Vyberte agenta --</option>'+
     agents.map(function(a){ return '<option value="'+a.id+'">'+esc(a.displayName)+'</option>'; }).join('');
   ['taskTarget','msgTarget'].forEach(function(id){ var e=document.getElementById(id); if(e) e.innerHTML=opts; });
 }
@@ -461,21 +468,21 @@ function assignTask() {
   var desc=document.getElementById('taskDesc').value.trim();
   var prio=document.getElementById('taskPrio').value;
   var st=document.getElementById('taskStatus');
-  if (!agentId||!title) { st.textContent='// Vypln všecha pole!'; return; }
+  if (!agentId||!title) { st.textContent='// VYPLNTE POLE'; return; }
   var agents=DB.get('agents')||[];
   var agent=agents.find(function(a){ return a.id===agentId; });
   var tasks=DB.get('tasks')||{};
   if (!tasks[agentId]) tasks[agentId]=[];
   tasks[agentId].push({title:title,desc:desc,priority:prio,date:nowStr(),done:false});
   DB.set('tasks',tasks);
-  addLog('task','Admin přidelil ukol ["'+PRIO[prio]+'] '+title+'" členovi "'+(agent?agent.displayName:agentId)+'".');
-  st.textContent='// Příkaz odeslán';
+  addLog('task','Admin pridelil ukol ["'+PRIO[prio]+'] '+title+'" agentovi "'+(agent?agent.displayName:agentId)+'".');
+  st.textContent='// ROZKAZ ODESLAN';
   setTimeout(function(){ st.textContent=''; },3000);
   document.getElementById('taskTitle').value='';
   document.getElementById('taskDesc').value='';
 }
 
-// ── MESSAGES Vedení ────────────────────────────
+// ── MESSAGES ADMIN ────────────────────────────
 function sendMsg() {
   var agentId=document.getElementById('msgTarget').value;
   var subject=document.getElementById('msgSubject').value.trim();
@@ -488,14 +495,14 @@ function sendMsg() {
   if (!msgs[agentId]) msgs[agentId]=[];
   msgs[agentId].push({subject:subject,body:body,date:nowStr()});
   DB.set('messages',msgs);
-  addLog('msg','Vedení odeslalo zprávu ["'+subject+'"] členovi "'+(agent?agent.displayName:agentId)+'".');
+  addLog('msg','Admin odeslal zpravu ["'+subject+'"] agentovi "'+(agent?agent.displayName:agentId)+'".');
   st.textContent='// ODESLANO';
   setTimeout(function(){ st.textContent=''; },3000);
   document.getElementById('msgSubject').value='';
   document.getElementById('msgBody').value='';
 }
 
-// ── WAREHOUSE Vedení ───────────────────────────
+// ── WAREHOUSE ADMIN ───────────────────────────
 var aWhCat='all';
 
 function toggleAddItem() { document.getElementById('addItemPanel').classList.toggle('hidden'); }
@@ -504,7 +511,7 @@ function previewImg(val) {
   var el=document.getElementById('wi-preview');
   if (!el) return;
   if (!val.trim()) { el.innerHTML='—'; return; }
-  el.innerHTML='<img src="images/'+esc(val)+'" alt="preview" onerror="this.parentElement.innerHTML=\'<span style=color:var(--red)>❗️chyba❗️</span>\'"/>';
+  el.innerHTML='<img src="images/'+esc(val)+'" alt="preview" onerror="this.parentElement.innerHTML=\'<span style=color:var(--red)>chyba</span>\'"/>';
 }
 
 function addItem() {
@@ -520,7 +527,7 @@ function addItem() {
   var newItem={id:uid(),name:name,cat:cat,qty:qty,min:min,img:img,note:note};
   items.push(newItem);
   DB.set('warehouse',items);
-  addLog('wh','Vedení přidalo do skladu: "'+name+'" (kat: '+(CAT[cat]||cat)+', množstvi: '+qty+').');
+  addLog('wh','Admin pridal do skladu: "'+name+'" (kat: '+(CAT[cat]||cat)+', mnozstvi: '+qty+').');
   st.textContent='// "'+name+'" PRIDAN';
   setTimeout(function(){ st.textContent=''; },3000);
   ['wi-name','wi-img','wi-note'].forEach(function(id){ document.getElementById(id).value=''; });
@@ -534,7 +541,7 @@ function renderAdminWarehouse() {
   var items=DB.get('warehouse')||[];
   var filtered=aWhCat==='all'?items:items.filter(function(i){ return i.cat===aWhCat; });
   var el=document.getElementById('aWhGrid');
-  if (!filtered.length) { el.innerHTML='<div class="empty-s" style="grid-column:1/-1">// Prázdný Sklad, je potřeba doplnit zásoby.</div>'; }
+  if (!filtered.length) { el.innerHTML='<div class="empty-s" style="grid-column:1/-1">// PRAZDNY SKLAD</div>'; }
   else {
     el.innerHTML=filtered.map(function(item){
       return '<div class="wh-item">'+itemHtml(item)+
@@ -590,7 +597,7 @@ function renderAdminReqs() {
         '<div class="req-reason">'+esc(r.reason)+'</div>'+
       '</div>'+
       (r.status==='pending'
-        ? '<div class="req-actions"><button class="btn-approve" onclick="resolveReq(\''+r.id+'\',\'approved\')">✅Schávlit</button><button class="btn-deny" onclick="resolveReq(\''+r.id+'\',\'denied\')">❌Zamítnout</button></div>'
+        ? '<div class="req-actions"><button class="btn-approve" onclick="resolveReq(\''+r.id+'\',\'approved\')">SCHVALIT</button><button class="btn-deny" onclick="resolveReq(\''+r.id+'\',\'denied\')">ZAMITIT</button></div>'
         : '<span class="status-chip '+r.status+'">'+STAT[r.status]+'</span>')+
       '</div>';
   }).join('');
@@ -609,9 +616,9 @@ function resolveReq(reqId, decision) {
     if (!msgs[req.agentId]) msgs[req.agentId]=[];
     msgs[req.agentId].push({subject:'Zadost schvalena: '+req.itemName,body:'Vase zadost o vydej '+req.amt+'x '+req.itemName+' byla schvalena..',date:nowStr()});
     DB.set('messages',msgs);
-    addLog('req','Vedení ✅schálilo vaší žadost: '+req.amt+'x "'+req.itemName+'" pro člena "'+req.agentName+'". Zasoba odectena.');
+    addLog('req','Admin SCHVALIL zadost: '+req.amt+'x "'+req.itemName+'" pro agenta "'+req.agentName+'". Zasoba odectena.');
   } else {
-    addLog('req','Vedení ❌zamítlo vaší žadost: '+req.amt+'x "'+req.itemName+'" od člena "'+req.agentName+'".');
+    addLog('req','Admin ZAMITL zadost: '+req.amt+'x "'+req.itemName+'" od agenta "'+req.agentName+'".');
   }
   DB.set('itemRequests',reqs);
   renderAdminReqs();
@@ -622,7 +629,7 @@ function resolveReq(reqId, decision) {
 function renderAdminReports() {
   var reports=DB.get('reports')||[];
   var el=document.getElementById('aReports');
-  if (!reports.length) { el.innerHTML='<div class="empty-s">// Žádné Hlášení</div>'; return; }
+  if (!reports.length) { el.innerHTML='<div class="empty-s">// ZADNA HLASENI</div>'; return; }
   el.innerHTML=reports.slice().reverse().map(function(r){
     return '<div class="rep-card"><div class="rep-from">// OD: '+esc(r.agentName)+' — '+r.date+'</div><div class="rep-body">'+esc(r.body)+'</div></div>';
   }).join('');
@@ -635,14 +642,14 @@ var LOG_TYPES = {
   req:   'ZADOST',
   task:  'UKOL',
   msg:   'ZPRAVA',
-  agent: 'Člen',
+  agent: 'AGENT',
   sys:   'SYSTEM'
 };
 
 function renderLog() {
   var log=DB.get('syslog')||[];
   var el=document.getElementById('aLog');
-  if (!log.length) { el.innerHTML='<div class="empty-s">// 📋 Log je prázdný</div>'; return; }
+  if (!log.length) { el.innerHTML='<div class="empty-s">// LOG JE PRAZDNY</div>'; return; }
   el.innerHTML=log.map(function(e){
     return '<div class="log-entry">'+
       '<span class="log-time">'+e.time+'</span>'+
@@ -654,7 +661,7 @@ function renderLog() {
 }
 
 function clearLog() {
-  if (!confirm('Opravdu vymazat cely 📋log?')) return;
+  if (!confirm('Opravdu vymazat cely log?')) return;
   DB.set('syslog',[]);
   renderLog();
   updateLogBadge();
