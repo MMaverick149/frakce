@@ -614,7 +614,7 @@ function resolveReq(reqId, decision) {
     if (item) { item.qty=Math.max(0,item.qty-req.amt); DB.set('warehouse',items); }
     var msgs=DB.get('messages')||{};
     if (!msgs[req.agentId]) msgs[req.agentId]=[];
-    msgs[req.agentId].push({subject:'Zadost schvalena: '+req.itemName,body:'Vase zadost o vydej '+req.amt+'x '+req.itemName+' byla schvalena. Vyzvednete si to u veleni.',date:nowStr()});
+    msgs[req.agentId].push({subject:'Zadost schvalena: '+req.itemName,body:'Vase zadost o vydej '+req.amt+'x '+req.itemName+' byla schvalena..',date:nowStr()});
     DB.set('messages',msgs);
     addLog('req','Admin SCHVALIL zadost: '+req.amt+'x "'+req.itemName+'" pro agenta "'+req.agentName+'". Zasoba odectena.');
   } else {
