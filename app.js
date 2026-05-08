@@ -1,3 +1,5 @@
+/* NEXUS v4 — app.js */
+
 // ── STORAGE ─────────────────────────────────
 var DB={
   get:function(k){try{return JSON.parse(localStorage.getItem(k));}catch(e){return null;}},
@@ -51,7 +53,7 @@ function initData(){
   if(!DB.get('finance')) DB.set('finance',{payments:[],expenses:[{id:uid(),name:'Týdenní příspěvek',amount:5000,type:'weekly',note:'Povinný příspěvek každého člena'}]});
   if(!DB.get('finsettings'))DB.set('finsettings',{weeklyFee:5000,feeDay:0});
   if(!DB.get('panicList'))DB.set('panicList',[]);
-  if(!DB.get('settings'))DB.set('settings',{webhook:'',webhookName:'NEXUS LOG'});
+  if(!DB.get('settings'))DB.set('settings',{webhook:'',webhookName:'Frakce LOG'});
 }
 
 function generateMembers(){
@@ -99,12 +101,13 @@ function defaultWarehouse(){
 
 // ── LOG ──────────────────────────────────────
 function addLog(type,text){
+  var actor=currentMember?currentMember.displayName:(isAdmin?'Superadmin':'Systém');
   var log=DB.get('syslog')||[];
-  var entry={time:nowFull(),type:type,text:text};
+  var entry={time:nowFull(),type:type,actor:actor,text:text};
   log.unshift(entry);
   if(log.length>500)log=log.slice(0,500);
   DB.set('syslog',log);
-  sendToDiscord('['+type.toUpperCase()+'] '+text);
+  sendToDiscord('['+type.toUpperCase()+'] ['+actor+'] '+text);
 }
 
 function sendToDiscord(msg){
@@ -200,19 +203,31 @@ function doMemberLogin(){
   currentMember=m;isAdmin=false;
   addLog('sys','Člen "'+m.displayName+'" se přihlásil.');
   document.getElementById('panicBtn').classList.remove('hidden');
+  // Show ADMIN tab if member has admin access
+  var adminBtn=document.getElementById('adminNavBtn');
+  if(adminBtn){
+    if(m.adminAccess){adminBtn.classList.remove('hidden');}
+    else{adminBtn.classList.add('hidden');}
+  }
   showScreen('memberScreen');
   mTab('board',document.querySelector('#memberScreen .nb'));
+}
+
+function goToAdmin(){
+  if(!currentMember||!currentMember.adminAccess)return;
+  isAdmin=true;
+  addLog('sys','Člen "'+currentMember.displayName+'" vstoupil do Administrace.');
+  showScreen('adminScreen');
+  aTab('members',document.querySelector('#adminScreen .nb'));
 }
 function openAdminModal(){document.getElementById('adminPassInput').value='';document.getElementById('adminPassErr').textContent='';document.getElementById('adminModal').classList.remove('hidden');setTimeout(function(){document.getElementById('adminPassInput').focus();},100);}
 function closeAdminModal(){document.getElementById('adminModal').classList.add('hidden');}
 function doAdminLogin(){
+  // Legacy: only for direct admin access if needed
   var pass=document.getElementById('adminPassInput').value;
-  // Admin password or any member with adminAccess
-  var members=DB.get('members')||[];
-  var found=members.find(function(m){return m.adminAccess&&m.password===pass;});
-  if(pass==='nexusadmin2025'||found){
-    closeAdminModal();isAdmin=true;currentMember=found||null;
-    addLog('sys','Admin přihlášení'+(found?' ('+found.displayName+')':'')+'.');
+  if(pass==='nexusadmin2025'){
+    closeAdminModal();isAdmin=true;currentMember=null;
+    addLog('sys','Přímý admin přístup (superadmin).');
     showScreen('adminScreen');
     aTab('members',document.querySelector('#adminScreen .nb'));
   } else {
@@ -516,7 +531,7 @@ function renderSentReports(){
   var reports=DB.get('reports')||[];
   var mine=reports.filter(function(r){return r.memberId===currentMember.id;});
   var el=document.getElementById('mSentReports');
-  if(!mine.length){el.innerHTML='<div class="empty-s">// Žádné odeslané zprávy</div>';return;}
+  if(!mine.length){el.innerHTML='<div class="empty-s">// Žádná odeslané zprávy</div>';return;}
   el.innerHTML=mine.slice().reverse().map(function(r){
     return '<div class="sent-entry"><span class="sent-date">'+r.date+'</span>'+esc(r.body)+'</div>';
   }).join('');
@@ -796,6 +811,7 @@ function addCloth(){
 function switchAClothTab(cat,btn){
   aClothCat=cat;document.querySelectorAll('#at-clothing .ctab').forEach(function(b){b.classList.remove('active');});btn.classList.add('active');renderAdminClothing();
 }
+var aClothCat='all';
 function renderAdminClothing(){
   var items=DB.get('clothing')||[];
   var filtered=items.filter(function(i){return i.cat===aClothCat;});
@@ -915,10 +931,10 @@ function renderAdminReports(){
 
 // ── SETTINGS ─────────────────────────────────
 function renderSettings(){
-  var s=DB.get('settings')||{webhook:'',webhookName:'NEXUS LOG'};
+  var s=DB.get('settings')||{webhook:'',webhookName:'Frakce LOG'};
   var fs=DB.get('finsettings')||{weeklyFee:5000,feeDay:0};
   document.getElementById('discordWebhook').value=s.webhook||'';
-  document.getElementById('discordName').value=s.webhookName||'NEXUS LOG';
+  document.getElementById('discordName').value=s.webhookName||'Frakce LOG';
   document.getElementById('weeklyFee').value=fs.weeklyFee||5000;
   document.getElementById('feeDay').value=fs.feeDay||0;
   renderPanicList();
@@ -926,13 +942,13 @@ function renderSettings(){
 function saveWebhook(){
   var s=DB.get('settings')||{};
   s.webhook=document.getElementById('discordWebhook').value.trim();
-  s.webhookName=document.getElementById('discordName').value.trim()||'NEXUS LOG';
+  s.webhookName=document.getElementById('discordName').value.trim()||'Frakce LOG';
   DB.set('settings',s);setText('webhookStatus','// ULOŽENO');setTimeout(function(){setText('webhookStatus','');},2000);toast('Webhook uložen','success');
 }
 function testWebhook(){
   var s=DB.get('settings')||{};
   if(!s.webhook){toast('Zadejte webhook URL','error');return;}
-  fetch(s.webhook,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({username:s.webhookName||'Frakce LOG',content:'✅ Test připojení z Frakcee portálu — '+nowStr()})})
+  fetch(s.webhook,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({username:s.webhookName||'Frakce LOG',content:'✅ Test připojení z Frakce portálu — '+nowStr()})})
     .then(function(){toast('Test odeslán na Discord','success');})
     .catch(function(){toast('Chyba při odesílání','error');});
 }
@@ -954,7 +970,7 @@ function renderPanicList(){
 }
 
 // ── LOG ──────────────────────────────────────
-var LOG_LABELS={ev:'VÝDEJ',wh:'SKLAD',task:'ÚKOL',msg:'ZPRÁVA',member:'ČLEN',board:'NÁSTĚNKA',sys:'SYSTÉM',fin:'💸FINANCE',panic:'PANIC'};
+var LOG_LABELS={ev:'VÝDEJ',wh:'SKLAD',task:'ÚKOL',msg:'ZPRÁVA',member:'ČLEN',board:'NÁSTĚNKA',sys:'SYSTÉM',fin:'FINANCE',panic:'PANIC'};
 function renderLog(){
   var log=DB.get('syslog')||[];
   var el=document.getElementById('aLog');

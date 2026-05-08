@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-  <title>Frakce // Portál</title>
+  <title>NEXUS // Portál</title>
   <link rel="stylesheet" href="style.css"/>
   <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Rajdhani:wght@400;600;700&family=Orbitron:wght@700;900&display=swap" rel="stylesheet"/>
 </head>
@@ -18,7 +18,7 @@
 <!-- ══ PANIC OVERLAY ═════════════════════════ -->
 <div id="panicOverlay" class="panic-overlay hidden">
   <div class="panic-box">
-    <div class="panic-title">⚠ PŘÍSTUP ZABLOKOVÁN</div>
+    <div class="panic-title">⚠ PŘÍSTUP ZABLOKOVÁN ⚠</div>
     <div class="panic-text">Váš přístup byl dočasně pozastaven.<br/>Kontaktujte Vedení pro obnovení přístupu.</div>
     <div class="panic-code">KÓD: PANIC-LOCK</div>
   </div>
@@ -28,7 +28,7 @@
 <div id="selectScreen" class="screen active">
   <div class="sel-bg"></div>
   <div class="sel-wrap">
-    <div class="sel-logo">NEX<span class="acc">U</span>S</div>
+    <div class="sel-logo">MBY <span class="acc">F</span>R</div>
     <div class="sel-sub">// FRAKČNÍ PORTÁL //</div>
     <div class="sel-box">
       <div class="sel-label">VYBERTE PROFIL</div>
@@ -36,8 +36,7 @@
         <input type="text" id="memberSearch" class="sel-search" placeholder="Hledat člena..." oninput="filterMembers(this.value)"/>
       </div>
       <div id="memberButtons" class="member-btns"></div>
-      <div class="sel-divider"></div>
-      <button class="btn-admin-open" onclick="openAdminModal()">⚙ ADMINISTRACE</button>
+
     </div>
   </div>
 </div>
@@ -88,6 +87,7 @@
         <button class="nb" onclick="mTab('finance',this)"><span class="ni">$</span><span class="nl">FINANCE</span><span class="nbadge red" id="financeBadge"></span></button>
         <button class="nb" onclick="mTab('excuse',this)"><span class="ni">✉</span><span class="nl">OMLUVENKY</span></button>
         <button class="nb" onclick="mTab('report',this)"><span class="ni">▲</span><span class="nl">HLÁŠENÍ</span></button>
+        <button class="nb admin-only hidden" id="adminNavBtn" onclick="goToAdmin()"><span class="ni">⚙</span><span class="nl">ADMIN</span></button>
       </nav>
       <div class="sb-foot">
         <div class="sb-member-info">
@@ -139,19 +139,20 @@
       <!-- OBLEČENÍ -->
       <div id="mt-clothing" class="mt">
         <div class="ph"><div class="pt">◧ // OBLEČENÍ</div></div>
-        <div class="cloth-tabs">
-          <button class="ctab active" onclick="switchClothTab('masks',this)">MASKY & VOUSY</button>
-          <button class="ctab" onclick="switchClothTab('jackets',this)">BUNDY & TRIČKA</button>
-          <button class="ctab" onclick="switchClothTab('pants',this)">KALHOTY & BOTY</button>
-          <button class="ctab" onclick="switchClothTab('acc',this)">DOPLŇKY</button>
-          <button class="ctab" onclick="switchClothTab('sets',this)">SETY</button>
+        <div class="cloth-filter-bar">
+          <button class="wf active" onclick="filterCloth('all',this)">VŠE</button>
+          <button class="wf" onclick="filterCloth('masks',this)">MASKY & VOUSY</button>
+          <button class="wf" onclick="filterCloth('jackets',this)">BUNDY & TRIČKA</button>
+          <button class="wf" onclick="filterCloth('pants',this)">KALHOTY & BOTY</button>
+          <button class="wf" onclick="filterCloth('acc',this)">DOPLŇKY</button>
+          <button class="wf" onclick="filterCloth('sets',this)">SETY</button>
         </div>
-        <div id="clothGrid" class="cloth-grid"></div>
+        <div id="clothTable" class="cloth-table-wrap"></div>
       </div>
 
       <!-- FINANCE -->
       <div id="mt-finance" class="mt">
-        <div class="ph"><div class="pt">$ // MÉ FINANCE</div></div>
+        <div class="ph"><div class="pt">$ // FINANCE FRAKCE</div></div>
         <div id="myFinance" class="finance-wrap"></div>
       </div>
 
@@ -160,12 +161,12 @@
         <div class="ph"><div class="pt">✉ // OMLUVENKY</div></div>
         <div class="excuse-template">
           <div class="excuse-tmpl-title">// VZOR OMLUVENKY</div>
-                <div class="excuse-tmpl-body">Dobrý den,<br><br>
-      oznamuji, že se dne <strong>[DATUM]</strong> nemohu zúčastnit <strong>[AKCE/SCHŮZKY]</strong>.<br><br>
-      Důvod: <strong>[DŮVOD NEPŘÍTOMNOSTI]</strong><br><br>
-      Předpokládaná délka nepřítomnosti: <strong>[DÉLKA]</strong><br><br>
-      S pozdravem,<br>
-      <strong>[VAŠE JMÉNO]</strong></div>
+          <div class="excuse-tmpl-body">Dobrý den,<br><br>
+            oznamuji, že se dne <strong>[DATUM]</strong> nemohu zúčastnit <strong>[AKCE/SCHŮZKY]</strong>.<br><br>
+            Důvod: <strong>[DŮVOD NEPŘÍTOMNOSTI]</strong><br><br>
+            Předpokládaná délka nepřítomnosti: <strong>[DÉLKA]</strong><br><br>
+            S pozdravem,<br>
+            <strong>[VAŠE JMÉNO]</strong></div>
         </div>
         <div class="excuse-form-title">// ODESLAT OMLUVENKU</div>
         <div class="form-panel" style="margin:0 1.2rem 1rem;">
@@ -187,7 +188,7 @@
         <div class="form-panel" style="margin:1.2rem;">
           <div class="field-group">
             <label class="fl">ZPRÁVA PRO VEDENÍ</label>
-            <textarea id="reportText" class="adm-ta" style="min-height:120px;" placeholder="Zadejte zprávu pro velení..."></textarea>
+            <textarea id="reportText" class="adm-ta" style="min-height:120px;" placeholder="Zadejte zprávu pro vedení..."></textarea>
           </div>
           <div class="fp-ftr"><button class="btn-acc small" onclick="submitReport()">▲ ODESLAT</button><span id="reportStatus" class="smsg"></span></div>
         </div>
