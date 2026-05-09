@@ -828,37 +828,31 @@ function switchAClothTab(cat,btn){
   aClothCat=cat;document.querySelectorAll('#at-clothing .ctab').forEach(function(b){b.classList.remove('active');});btn.classList.add('active');renderAdminClothing();
 }
 function renderAdminClothing(){
-  var items=DB.get('clothing')||[];
-  var filtered=aClothCat==='all'?items:items.filter(function(i){return i.cat===aClothCat;});
-  var el=document.getElementById('aClothCols');
-  if(!filtered.length){el.innerHTML='<div class="empty-s">// Žádné položky</div>';return;}
+  var items = DB.get('clothing') || [];
+  var filtered = aClothCat === 'all' ? items : items.filter(function(i){ return i.cat === aClothCat; });
+  var el = document.getElementById('aClothCols');
   
-  el.innerHTML=filtered.map(function(item){
-    // Foto sekce
-    var imgH = item.img ? '<img src="images/'+esc(item.img)+'" class="cl-col-img" onerror="this.style.display=\'none\'">' : '<div class="cl-col-img-ph">FOTO OBLEČENÍ</div>';
+  if(!filtered.length){ el.innerHTML = '<div class="empty-s">// Žádné položky</div>'; return; }
+  
+  el.innerHTML = filtered.map(function(item){
+    var imgH = item.img ? '<img src="images/'+esc(item.img)+'" class="cl-col-img">' : '<div class="cl-col-img-ph">FOTO OBLEČENÍ</div>';
     
-    // Generování řádků tabulky (v nákresu jsou to ty prázdné nebo vyplněné řádky pod popisem)
-    var rows=(item.rows||[]).map(function(r){
-      return '<tr><td class="cl-row-cat">'+esc(r.cat||'')+'</td><td class="cl-row-val">'+esc(r.val||'')+'</td></tr>';
+    // Generování vlastních řádků z textu
+    var rows = (item.rows || []).map(function(r){
+      return '<tr><td class="cl-row-cat">' + esc(r.cat || '') + '</td><td class="cl-row-val">' + esc(r.val || '') + '</td></tr>';
     }).join('');
 
-    return '<div class="cl-col">'+
-      // 1. NÁZEV (Horní lišta)
-      '<div class="cl-col-title">'+esc(item.name || 'Název Oblečení')+'</div>'+
-      // 2. FOTO (Velký blok)
-      '<div class="cl-col-img-wrap">'+imgH+'</div>'+
-      // 3. POPIS (Střední lišta)
-      '<div class="cl-col-desc-label">Popis Oblečení</div>'+
-      '<div class="cl-col-desc">'+esc(item.desc||'')+'</div>'+
-      // 4. TABULKA (Data)
-      '<table class="cl-col-table">'+
-        '<tr>'+
-          '<td class="cl-row-cat cl-row-head">'+esc(item.catLabel||CLOTH_CAT[item.cat]||item.cat)+'</td>'+
-          '<td class="cl-row-val cl-row-head">'+esc(item.code||'Kód / Číslo')+'</td>'+
-        '</tr>'+
-        rows+
-      '</table>'+
-      '<button class="cloth-del-btn" onclick="delCloth(\''+item.id+'\')">✕ SMAZAT</button>'+
+    return '<div class="cl-col">' +
+      '<div class="cl-col-title">' + esc(item.name) + '</div>' +
+      '<div class="cl-col-img-wrap">' + imgH + '</div>' +
+      '<div class="cl-col-desc-label">Popis Oblečení</div>' +
+      '<div class="cl-col-desc">' + esc(item.desc || '') + '</div>' +
+      '<table class="cl-col-table">' +
+        // První fixní řádek (Kategorie a Kód)
+        '<tr><td class="cl-row-cat" style="color: #c49a14;">' + esc(item.catLabel || item.cat) + '</td><td class="cl-row-val">' + esc(item.code || '-') + '</td></tr>' +
+        rows + 
+      '</table>' +
+      '<button class="cloth-del-btn" onclick="delCloth(\''+item.id+'\')">✕ SMAZAT</button>' +
     '</div>';
   }).join('');
 }

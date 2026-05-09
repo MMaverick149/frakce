@@ -351,49 +351,101 @@ input,select,textarea,button{font-family:'Rajdhani',sans-serif;}
   .radio-grid{grid-template-columns:1fr 1fr;}
 }
 
-/* Oprava vnitřní tabulky na kartě */
-.cl-col-table {
-    width: 100%;
-    border-collapse: collapse;
-    background: #fff; /* Vynutit bílé pozadí celé tabulky */
+/* Kontejner pro karty */
+.cloth-columns {
+    display: flex;
+    flex-wrap: nowrap;
+    gap: 20px;
+    padding: 1.5rem;
+    overflow-x: auto;
+    background: #000; /* Pozadí aplikace */
 }
 
-.cl-col-table td {
-    border: 1px solid #000; /* Černé linky mezi buňkami */
-    padding: 6px;
-    font-size: 0.75rem;
-    color: #000; /* Černý text */
-    vertical-align: middle;
+/* Karta oblečení */
+.cl-col {
+    background: #fff !important; /* Bílá karta jako na nákresu */
+    border: 2px solid #000;
+    min-width: 220px;
+    display: flex;
+    flex-direction: column;
 }
 
-/* První sloupec (Kategorie) */
-.cl-row-cat {
-    background: #fff !important; /* Odstraní případnou tmavou barvu */
-    color: #c49a14 !important; /* Zlatá barva pro klíčová slova jako na nákresu */
-    font-weight: bold;
-    width: 40%;
-}
-
-/* Druhý sloupec (Hodnota) */
-.cl-row-val {
-    background: #fff !important;
-    color: #000 !important;
-    text-align: left;
-}
-
-/* Tlačítko smazat - vylepšení vzhledu */
-.cloth-del-btn {
-    width: 100%;
+.cl-col-title {
     background: #fff;
-    border: none;
-    border-top: 1px solid #000;
-    color: #ff4d4d;
+    color: #000;
+    font-weight: bold;
+    text-align: center;
     padding: 8px;
-    font-size: 0.65rem;
-    cursor: pointer;
+    border-bottom: 2px solid #000;
     text-transform: uppercase;
 }
 
-.cloth-del-btn:hover {
-    background: #ffeeee;
+.cl-col-img-wrap {
+    background: #fff;
+    height: 160px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-bottom: 2px solid #000;
+}
+
+.cl-col-img {
+    max-height: 140px;
+    object-fit: contain;
+}
+
+.cl-col-desc-label {
+    font-size: 0.65rem;
+    font-weight: bold;
+    text-align: center;
+    color: #000;
+    border-bottom: 1px solid #000;
+    padding: 2px;
+}
+
+.cl-col-desc {
+    background: #fff;
+    color: #000;
+    font-size: 0.75rem;
+    padding: 8px;
+    min-height: 40px;
+    text-align: center;
+    border-bottom: 2px solid #000;
+}
+
+/* Mřížka tabulky */
+.cl-col-table {
+    width: 100%;
+    border-collapse: collapse;
+    background: #fff;
+}
+
+.cl-col-table td {
+    border: 1px solid #000 !important; /* Černá mřížka */
+    padding: 5px 8px;
+    font-size: 0.75rem;
+    color: #000 !important;
+    height: 28px;
+}
+
+.cl-row-cat {
+    width: 50%;
+    font-weight: bold;
+    font-family: monospace;
+}
+
+.cl-row-val {
+    width: 50%;
+    text-align: center;
+}
+
+/* Tlačítko smazat */
+.cloth-del-btn {
+    background: #fff;
+    color: #ff4d4d;
+    border: none;
+    border-top: 1px solid #000;
+    padding: 6px;
+    font-size: 0.6rem;
+    cursor: pointer;
 }
