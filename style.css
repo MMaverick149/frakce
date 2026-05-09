@@ -350,3 +350,94 @@ input,select,textarea,button{font-family:'Rajdhani',sans-serif;}
   .fa-summary{grid-template-columns:1fr 1fr;}
   .radio-grid{grid-template-columns:1fr 1fr;}
 }
+
+/* Úprava kontejneru pro horizontální posuv */
+.cloth-columns {
+    display: flex;
+    flex-direction: row;
+    gap: 15px; /* Mezera mezi kartami */
+    padding: 1rem;
+    overflow-x: auto;
+    background: #000; /* Pozadí za kartami */
+}
+
+/* Samotná karta podle nákresu */
+.cl-col {
+    background: #fff; /* Bílé pozadí karty pro kontrast */
+    border: 2px solid #000;
+    min-width: 200px;
+    max-width: 250px;
+    display: flex;
+    flex-direction: column;
+    color: #000;
+}
+
+/* Název oblečení nahoře */
+.cl-col-title {
+    border-bottom: 2px solid #000;
+    text-transform: uppercase;
+    font-weight: bold;
+    padding: 5px;
+    background: #fff;
+}
+
+/* Blok pro obrázek */
+.cl-col-img-wrap {
+    height: 180px;
+    border-bottom: 2px solid #000;
+    background: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    font-style: italic;
+}
+
+/* Štítek "Popis Oblečení" */
+.cl-col-desc-label {
+    background: #fff;
+    border-bottom: 1px solid #000;
+    font-size: 0.7rem;
+    font-weight: bold;
+    text-align: center;
+    padding: 2px;
+}
+
+/* Samotný text popisu */
+.cl-col-desc {
+    min-height: 40px;
+    padding: 5px;
+    font-size: 0.75rem;
+    border-bottom: 2px solid #000;
+    background: #fff;
+}
+
+/* Tabulka s kódy */
+.cl-col-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.cl-col-table td {
+    border: 1px solid #000;
+    padding: 4px;
+    font-size: 0.7rem;
+    height: 25px; /* Pevná výška řádků jako v nákresu */
+}
+
+/* První buňka v řádku (např. "Masky & Vousy") */
+.cl-row-cat {
+    width: 50%;
+    font-weight: bold;
+    text-align: left;
+}
+
+/* Tlačítko smazat schované vespod */
+.cloth-del-btn {
+    border: none;
+    border-top: 1px solid #000;
+    background: #f0f0f0;
+    cursor: pointer;
+    font-size: 0.6rem;
+    padding: 5px;
+}

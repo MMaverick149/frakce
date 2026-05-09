@@ -832,20 +832,33 @@ function renderAdminClothing(){
   var filtered=aClothCat==='all'?items:items.filter(function(i){return i.cat===aClothCat;});
   var el=document.getElementById('aClothCols');
   if(!filtered.length){el.innerHTML='<div class="empty-s">// Žádné položky</div>';return;}
+  
   el.innerHTML=filtered.map(function(item){
-    var imgH=item.img?'<img src="images/'+esc(item.img)+'" class="cl-col-img" onerror="this.style.display=\'none\'">':'<div class="cl-col-img-ph">👕</div>';
+    // Foto sekce
+    var imgH = item.img ? '<img src="images/'+esc(item.img)+'" class="cl-col-img" onerror="this.style.display=\'none\'">' : '<div class="cl-col-img-ph">FOTO OBLEČENÍ</div>';
+    
+    // Generování řádků tabulky (v nákresu jsou to ty prázdné nebo vyplněné řádky pod popisem)
     var rows=(item.rows||[]).map(function(r){
       return '<tr><td class="cl-row-cat">'+esc(r.cat||'')+'</td><td class="cl-row-val">'+esc(r.val||'')+'</td></tr>';
     }).join('');
+
     return '<div class="cl-col">'+
-      '<div class="cl-col-title">'+esc(item.name)+'</div>'+
+      // 1. NÁZEV (Horní lišta)
+      '<div class="cl-col-title">'+esc(item.name || 'Název Oblečení')+'</div>'+
+      // 2. FOTO (Velký blok)
       '<div class="cl-col-img-wrap">'+imgH+'</div>'+
+      // 3. POPIS (Střední lišta)
+      '<div class="cl-col-desc-label">Popis Oblečení</div>'+
       '<div class="cl-col-desc">'+esc(item.desc||'')+'</div>'+
+      // 4. TABULKA (Data)
       '<table class="cl-col-table">'+
-        '<tr><td class="cl-row-cat cl-row-head">'+esc(item.catLabel||CLOTH_CAT[item.cat]||item.cat)+'</td><td class="cl-row-val cl-row-head">'+esc(item.code||'KÓD')+'</td></tr>'+
+        '<tr>'+
+          '<td class="cl-row-cat cl-row-head">'+esc(item.catLabel||CLOTH_CAT[item.cat]||item.cat)+'</td>'+
+          '<td class="cl-row-val cl-row-head">'+esc(item.code||'Kód / Číslo')+'</td>'+
+        '</tr>'+
         rows+
       '</table>'+
-      '<button class="cloth-del-btn" style="margin-top:.5rem;width:100%;" onclick="delCloth(\''+item.id+'\')">✕ SMAZAT</button>'+
+      '<button class="cloth-del-btn" onclick="delCloth(\''+item.id+'\')">✕ SMAZAT</button>'+
     '</div>';
   }).join('');
 }
