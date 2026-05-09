@@ -351,93 +351,49 @@ input,select,textarea,button{font-family:'Rajdhani',sans-serif;}
   .radio-grid{grid-template-columns:1fr 1fr;}
 }
 
-/* Úprava kontejneru pro horizontální posuv */
-.cloth-columns {
-    display: flex;
-    flex-direction: row;
-    gap: 15px; /* Mezera mezi kartami */
-    padding: 1rem;
-    overflow-x: auto;
-    background: #000; /* Pozadí za kartami */
-}
-
-/* Samotná karta podle nákresu */
-.cl-col {
-    background: #fff; /* Bílé pozadí karty pro kontrast */
-    border: 2px solid #000;
-    min-width: 200px;
-    max-width: 250px;
-    display: flex;
-    flex-direction: column;
-    color: #000;
-}
-
-/* Název oblečení nahoře */
-.cl-col-title {
-    border-bottom: 2px solid #000;
-    text-transform: uppercase;
-    font-weight: bold;
-    padding: 5px;
-    background: #fff;
-}
-
-/* Blok pro obrázek */
-.cl-col-img-wrap {
-    height: 180px;
-    border-bottom: 2px solid #000;
-    background: #fff;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-weight: bold;
-    font-style: italic;
-}
-
-/* Štítek "Popis Oblečení" */
-.cl-col-desc-label {
-    background: #fff;
-    border-bottom: 1px solid #000;
-    font-size: 0.7rem;
-    font-weight: bold;
-    text-align: center;
-    padding: 2px;
-}
-
-/* Samotný text popisu */
-.cl-col-desc {
-    min-height: 40px;
-    padding: 5px;
-    font-size: 0.75rem;
-    border-bottom: 2px solid #000;
-    background: #fff;
-}
-
-/* Tabulka s kódy */
+/* Oprava vnitřní tabulky na kartě */
 .cl-col-table {
     width: 100%;
     border-collapse: collapse;
+    background: #fff; /* Vynutit bílé pozadí celé tabulky */
 }
 
 .cl-col-table td {
-    border: 1px solid #000;
-    padding: 4px;
-    font-size: 0.7rem;
-    height: 25px; /* Pevná výška řádků jako v nákresu */
+    border: 1px solid #000; /* Černé linky mezi buňkami */
+    padding: 6px;
+    font-size: 0.75rem;
+    color: #000; /* Černý text */
+    vertical-align: middle;
 }
 
-/* První buňka v řádku (např. "Masky & Vousy") */
+/* První sloupec (Kategorie) */
 .cl-row-cat {
-    width: 50%;
+    background: #fff !important; /* Odstraní případnou tmavou barvu */
+    color: #c49a14 !important; /* Zlatá barva pro klíčová slova jako na nákresu */
     font-weight: bold;
+    width: 40%;
+}
+
+/* Druhý sloupec (Hodnota) */
+.cl-row-val {
+    background: #fff !important;
+    color: #000 !important;
     text-align: left;
 }
 
-/* Tlačítko smazat schované vespod */
+/* Tlačítko smazat - vylepšení vzhledu */
 .cloth-del-btn {
+    width: 100%;
+    background: #fff;
     border: none;
     border-top: 1px solid #000;
-    background: #f0f0f0;
+    color: #ff4d4d;
+    padding: 8px;
+    font-size: 0.65rem;
     cursor: pointer;
-    font-size: 0.6rem;
-    padding: 5px;
+    text-transform: uppercase;
+}
+
+.cloth-del-btn:hover {
+    background: #ffeeee;
 }
