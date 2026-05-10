@@ -478,37 +478,60 @@ function toggleAddCloth(){
   document.getElementById('addClothPanel').classList.toggle('hidden');
 }
 
-function addCloth(){
-  var name=document.getElementById('cl-name').value.trim();
-  var desc=document.getElementById('cl-desc').value.trim();
-  var img=document.getElementById('cl-img')?document.getElementById('cl-img').value.trim():'';
-  var st=document.getElementById('addClothStatus');
-  if(!name){st.textContent='// ZADEJTE NÁZEV SETU';return;}
-  var cats=['masks','chains','jackets','under','vests','bags','hands','pants','shoes','decals'];
-  var setData={id:uid(),name:name,desc:desc,img:img};
-  cats.forEach(function(c){
-    var mi=document.getElementById('cl-'+c+'-m');
-    var di=document.getElementById('cl-'+c+'-d');
-    setData[c+'_m']=mi?parseInt(mi.value)||0:0;
-    setData[c+'_d']=di?parseInt(di.value)||0:0;
-  });
-  var items=DB.get('clothing')||[];
-  items.push(setData);
-  DB.set('clothing',items);
-  addLog('wh','Admin přidal outfit set: "'+name+'".');
-  st.textContent='// SET PŘIDÁN';
-  setTimeout(function(){st.textContent='';},3000);
-  document.getElementById('cl-name').value='';
-  document.getElementById('cl-desc').value='';
-  if(document.getElementById('cl-img'))document.getElementById('cl-img').value='';
-  if(document.getElementById('cl-img-preview'))document.getElementById('cl-img-preview').innerHTML='—';
-  cats.forEach(function(c){
-    var mi=document.getElementById('cl-'+c+'-m');var di=document.getElementById('cl-'+c+'-d');
-    if(mi)mi.value='0';if(di)di.value='0';
-  });
-  toast(name+' přidán','success');
-  renderAdminClothing();
-  renderClothing();
+function addCloth() {
+    // Bezpečné načtení prvků – pokud prvek neexistuje, použije se prázdný řetězec
+    var nameEl = document.getElementById('cl-name');
+    var codeEl = document.getElementById('cl-code');
+    var imgEl = document.getElementById('cl-img');
+    var descEl = document.getElementById('cl-desc');
+    var catEl = document.getElementById('cl-cat');
+    var rowsEl = document.getElementById('cl-rows');
+    var st = document.getElementById('addClothStatus');
+
+    if (!nameEl || !nameEl.value.trim()) {
+        if (st) st.textContent = '// ZADEJTE NÁZEV';
+        return;
+    }
+
+    var name = nameEl.value.trim();
+    var cat = catEl ? catEl.value : 'masks';
+    var code = codeEl ? codeEl.value.trim() : '';
+    var img = imgEl ? imgEl.value.trim() : '';
+    var desc = descEl ? descEl.value.trim() : '';
+    var rowsRaw = rowsEl ? rowsEl.value.trim() : '';
+
+    var rows = [];
+    if (rowsRaw) {
+        rowsRaw.split('\n').forEach(function(line) {
+            var parts = line.split(':');
+            if (parts.length >= 2) {
+                rows.push({ cat: parts[0].trim(), val: parts.slice(1).join(':').trim() });
+            }
+        });
+    }
+
+    var items = DB.get('clothing') || [];
+    items.push({
+        id: uid(),
+        name: name,
+        cat: cat,
+        code: code,
+        img: img, // Zde může být "maska.png" i odkaz na Fivemanager "
+        desc: desc,
+        rows: rows
+    });
+
+    DB.set('clothing', items);
+    if (st) {
+        st.textContent = '// PŘIDÁNO';
+        setTimeout(function() { st.textContent = ''; }, 3000);
+    }
+
+    // Vyčištění polí
+    [nameEl, codeEl, imgEl, descEl, rowsEl].forEach(function(el) { if(el) el.value = ''; });
+    
+    toast(name + ' přidán', 'success');
+    renderAdminClothing();
 }
 
 function switchAClothTab(cat,btn){
