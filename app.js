@@ -11,7 +11,7 @@ var CAT={weapons:'ZBRANĚ',ammo:'MUNICE',drugs:'DROGY',equipment:'VYBAVENÍ',oth
 var PRIO={low:'LOW',normal:'NORMAL',high:'HIGH',urgent:'URGENT'};
 var CLOTH_CAT={masks:'Masky & Vousy',jackets:'Bundy & Trička',pants:'Kalhoty & Boty',acc:'Doplňky',sets:'Sety'};
 
-var currentMemberId=null; 
+var currentMemberId=null; // only store ID, always re-read from DB
 var pendingLoginId=null;
 
 function getMember(id){var members=DB.get('members')||[];return members.find(function(m){return m.id===(id||currentMemberId);})||null;}
@@ -50,19 +50,15 @@ function sendToDiscord(msg){
   fetch(s.webhook,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({username:s.webhookName||'NEXUS LOG',content:'`'+nowStr()+'` '+msg})}).catch(function(){});
 }
 
-// ── ADMIN TABS (DŮLEŽITÉ - CHYBĚLO) ──────────
+// ── ADMIN TABS ─────────────────────────────
 function aTab(tab, btn) {
-    // Schovat všechny sekce v adminu
     document.querySelectorAll('.at').forEach(function(t) { t.classList.add('hidden'); });
-    // Aktivovat správnou sekci (předpokládá ID jako 'as-members', 'as-clothing' atd.)
     var el = document.getElementById('as-' + tab);
     if (el) el.classList.remove('hidden');
 
-    // Aktivovat tlačítko
     document.querySelectorAll('#adminScreen .nb').forEach(function(b) { b.classList.remove('active'); });
     if (btn) btn.classList.add('active');
 
-    // Spustit render vybrané sekce
     if (tab === 'members') renderAdminMembers();
     if (tab === 'warehouse') renderAdminWarehouse();
     if (tab === 'clothing') renderAdminClothing();
@@ -309,13 +305,19 @@ function delCloth(id){
   toast('Set smazán','info');
 }
 
-// ── OSTATNÍ FUNKCE PRO ADMINA (DOPLNĚNÍ) ──────
+// ── LOG ──────────────────────────────────────
+var LOG_LABELS={ev:'VÝDEJ',wh:'SKLAD',task:'ÚKOL',msg:'ZPRÁVA',member:'ČLEN',board:'NÁSTĚNKA',sys:'SYSTÉM',fin:'FINANCE',panic:'PANIC'};
 function renderLog(){
   var log=DB.get('syslog')||[];var el=document.getElementById('aLog');
   if(!el) return;
   if(!log.length){el.innerHTML='<div class="empty-s">// Log je prázdný</div>';return;}
   el.innerHTML=log.map(function(e){
-    return '<div class="log-entry"><span class="log-time">'+e.time+'</span> <span class="log-type '+e.type+'">'+e.type.toUpperCase()+'</span> <span class="log-actor">'+esc(e.actor)+'</span> <span class="log-text">'+esc(e.text)+'</span></div>';
+    return '<div class="log-entry">' +
+      '<span class="log-time">'+e.time+'</span>' +
+      '<span class="log-type '+e.type+'">'+(LOG_LABELS[e.type]||e.type)+'</span>' +
+      '<span class="log-actor">'+esc(e.actor)+'</span>' +
+      '<span class="log-text">'+esc(e.text)+'</span>' +
+      '</div>';
   }).join('');
 }
 
