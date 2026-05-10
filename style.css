@@ -351,101 +351,54 @@ input,select,textarea,button{font-family:'Rajdhani',sans-serif;}
   .radio-grid{grid-template-columns:1fr 1fr;}
 }
 
-/* Kontejner pro karty */
-.cloth-columns {
-    display: flex;
-    flex-wrap: nowrap;
-    gap: 20px;
-    padding: 1.5rem;
-    overflow-x: auto;
-    background: #000; /* Pozadí aplikace */
-}
+/* ── CLOTHING SETS ───────────────────────── */
+.cloth-sets-wrap{padding:.8rem 1.1rem 2rem;}
+.cloth-sets-grid{display:flex;flex-wrap:nowrap;gap:8px;overflow-x:auto;padding-bottom:.5rem;}
+.cloth-set-col{background:var(--card);min-width:220px;max-width:260px;flex-shrink:0;display:flex;flex-direction:column;border:1px solid var(--border);}
+.cs-title{font-family:'Orbitron',sans-serif;font-size:.78rem;font-weight:700;color:var(--acc);padding:.6rem .8rem;background:var(--surf);border-bottom:2px solid var(--acc-dim);text-align:center;letter-spacing:.1em;}
+.cs-img-wrap{width:100%;min-height:100px;max-height:150px;display:flex;align-items:center;justify-content:center;background:var(--surf);border-bottom:1px solid var(--border);padding:.5rem;overflow:hidden;}
+.cs-img{max-width:100%;max-height:140px;object-fit:contain;filter:drop-shadow(0 0 6px rgba(196,154,20,.25));}
+.cs-img-ph{font-size:2.5rem;color:var(--brite);}
+.cs-desc{font-size:.72rem;color:var(--muted);font-style:italic;padding:.28rem .7rem;border-bottom:1px solid var(--border);text-align:center;}
+.cs-table{width:100%;border-collapse:collapse;flex:1;}
+.cs-table tr{border-bottom:1px solid var(--border);}
+.cs-table tr:hover td{background:rgba(196,154,20,.04);}
+.cs-cat{font-family:'Share Tech Mono',monospace;font-size:.58rem;color:var(--acc-dim);padding:.35rem .55rem;border-right:1px solid var(--border);font-weight:600;white-space:nowrap;}
+.cs-label{font-family:'Share Tech Mono',monospace;font-size:.52rem;color:var(--muted);padding:.35rem .28rem;border-right:1px solid var(--border);white-space:nowrap;}
+.cs-val{font-family:'Orbitron',sans-serif;font-size:.8rem;font-weight:700;color:var(--textb);padding:.35rem .45rem;text-align:right;min-width:32px;}
+/* Admin add form */
+.cloth-add-layout{display:flex;gap:1.2rem;align-items:flex-start;}
+.cloth-add-left{width:220px;flex-shrink:0;display:flex;flex-direction:column;gap:.65rem;}
+.cloth-add-right{flex:1;}
+.cloth-add-preview{width:100%;min-height:80px;background:var(--surf);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;color:var(--muted);font-family:'Share Tech Mono',monospace;font-size:.65rem;margin-top:.3rem;overflow:hidden;}
+.cloth-add-table{width:100%;border-collapse:collapse;}
+.cloth-add-table th{font-family:'Share Tech Mono',monospace;font-size:.52rem;letter-spacing:.14em;color:var(--acc-dim);background:var(--surf);border-bottom:2px solid var(--acc-dim);padding:.45rem .6rem;text-align:left;}
+.cloth-add-table td{padding:.32rem .6rem;border-bottom:1px solid var(--border);font-family:'Share Tech Mono',monospace;font-size:.68rem;color:var(--text);}
+.cloth-num-input{width:70px;background:var(--surf);border:1px solid var(--border);color:var(--acc);font-family:'Share Tech Mono',monospace;font-size:.75rem;padding:.22rem .35rem;outline:none;text-align:center;}
+.cloth-num-input:focus{border-color:var(--acc-dim);}
+.cloth-del-btn{font-family:'Share Tech Mono',monospace;font-size:.55rem;background:transparent;border:1px solid var(--red-dim);color:var(--red);padding:.22rem .5rem;cursor:pointer;transition:all .18s;}
+.cloth-del-btn:hover{background:var(--red-dim);}
+@media(max-width:900px){.cloth-add-layout{flex-direction:column;}.cloth-add-left{width:100%;}}
 
-/* Karta oblečení */
-.cl-col {
-    background: #fff !important; /* Bílá karta jako na nákresu */
-    border: 2px solid #000;
-    min-width: 220px;
-    display: flex;
-    flex-direction: column;
-}
+/* ── FINANCE WEEKS ───────────────────────── */
+.fin-weeks-list{display:flex;flex-direction:column;gap:1px;margin:.5rem 1.1rem 1rem;}
+.fin-week-row{background:var(--card);border-left:3px solid var(--brite);padding:.6rem .9rem;display:flex;align-items:center;flex-wrap:wrap;gap:.5rem;}
+.fin-week-row.paid{border-left-color:var(--gdim);}
+.fin-week-row.unpaid{border-left-color:var(--red-dim);}
+.fin-week-row.current{background:var(--surf);border-left-width:4px;}
+.fin-week-key{font-family:'Share Tech Mono',monospace;font-size:.65rem;color:var(--textb);flex:1;min-width:120px;}
+.fin-week-status{font-family:'Share Tech Mono',monospace;font-size:.62rem;font-weight:700;}
+.fin-week-status.paid{color:var(--green);}
+.fin-week-status.unpaid{color:var(--red);animation:blink 1.5s step-end infinite;}
+.fin-week-detail{font-family:'Share Tech Mono',monospace;font-size:.55rem;color:var(--muted);width:100%;}
 
-.cl-col-title {
-    background: #fff;
-    color: #000;
-    font-weight: bold;
-    text-align: center;
-    padding: 8px;
-    border-bottom: 2px solid #000;
-    text-transform: uppercase;
-}
-
-.cl-col-img-wrap {
-    background: #fff;
-    height: 160px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-bottom: 2px solid #000;
-}
-
-.cl-col-img {
-    max-height: 140px;
-    object-fit: contain;
-}
-
-.cl-col-desc-label {
-    font-size: 0.65rem;
-    font-weight: bold;
-    text-align: center;
-    color: #000;
-    border-bottom: 1px solid #000;
-    padding: 2px;
-}
-
-.cl-col-desc {
-    background: #fff;
-    color: #000;
-    font-size: 0.75rem;
-    padding: 8px;
-    min-height: 40px;
-    text-align: center;
-    border-bottom: 2px solid #000;
-}
-
-/* Mřížka tabulky */
-.cl-col-table {
-    width: 100%;
-    border-collapse: collapse;
-    background: #fff;
-}
-
-.cl-col-table td {
-    border: 1px solid #000 !important; /* Černá mřížka */
-    padding: 5px 8px;
-    font-size: 0.75rem;
-    color: #000 !important;
-    height: 28px;
-}
-
-.cl-row-cat {
-    width: 50%;
-    font-weight: bold;
-    font-family: monospace;
-}
-
-.cl-row-val {
-    width: 50%;
-    text-align: center;
-}
-
-/* Tlačítko smazat */
-.cloth-del-btn {
-    background: #fff;
-    color: #ff4d4d;
-    border: none;
-    border-top: 1px solid #000;
-    padding: 6px;
-    font-size: 0.6rem;
-    cursor: pointer;
+/* ── WAREHOUSE DEPOSIT ───────────────────── */
+.wh-deposit-panel{margin:.8rem 1.1rem 1.5rem;background:var(--card);border:1px solid var(--border);border-top:2px solid var(--gdim);padding:1rem;}
+.wh-deposit-title{font-family:'Share Tech Mono',monospace;font-size:.55rem;color:var(--green);letter-spacing:.2em;margin-bottom:.8rem;}
+.wh-deposit-form{display:grid;grid-template-columns:1fr 1fr 100px;gap:.6rem;align-items:end;}
+.dep-ftr{grid-column:1/-1;display:flex;align-items:center;gap:.7rem;}
+@media(max-width:700px){
+  .wh-deposit-form{grid-template-columns:1fr;}
+  .cloth-sets-grid{flex-direction:column;}
+  .cloth-set-col{min-width:unset;}
 }

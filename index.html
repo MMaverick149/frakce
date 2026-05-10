@@ -17,6 +17,7 @@
   </div>
 </div>
 
+
 <!-- SELECT -->
 <div id="selectScreen" class="screen active">
   <div class="sel-bg"></div>
@@ -69,9 +70,9 @@
 <div id="memberScreen" class="screen hidden">
   <div class="layout">
     <aside class="sidebar">
-      <div class="sb-logo">FR<span class="acc">//</span></div>
+      <div class="sb-logo">NX<span class="acc">//</span></div>
       <nav class="sb-nav">
-        <button class="nb active" onclick="mTab('board',this)"><span class="ni">📌</span><span class="nl">NÁSTĚNKA</span></button>
+        <button class="nb active" onclick="mTab('board',this)"><span class="ni">◈</span><span class="nl">NÁSTĚNKA</span></button>
         <button class="nb" onclick="mTab('tasks',this)"><span class="ni">▣</span><span class="nl">ÚKOLY</span><span class="nbadge" id="taskBadge"></span></button>
         <button class="nb" onclick="mTab('messages',this)"><span class="ni">◉</span><span class="nl">ZPRÁVY</span><span class="nbadge" id="msgBadge"></span></button>
         <button class="nb" onclick="mTab('warehouse',this)"><span class="ni">⬡</span><span class="nl">SKLAD</span></button>
@@ -125,20 +126,21 @@
           <button class="wf" onclick="mWhFilter('other',this)">OSTATNÍ</button>
         </div>
         <div id="mWhGrid" class="wh-grid"></div>
+        <div class="wh-deposit-panel">
+          <div class="wh-deposit-title">// VLOŽIT DO SKLADU</div>
+          <div class="wh-deposit-form">
+            <div class="field-group"><label class="fl">VAŠE JMÉNO</label><div class="iw"><span class="ip">&gt;_</span><input type="text" id="depName" placeholder="Jméno..."/></div></div>
+            <div class="field-group"><label class="fl">ITEM</label><div class="iw"><span class="ip">&gt;_</span><select id="depItem" class="fw"></select></div></div>
+            <div class="field-group"><label class="fl">MNOŽSTVÍ</label><div class="iw"><span class="ip">&gt;_</span><input type="number" id="depAmt" value="1" min="1"/></div></div>
+            <div class="dep-ftr"><button class="btn-acc small" onclick="depositItem()">+ VLOŽIT DO SKLADU</button><span id="depStatus" class="smsg"></span></div>
+          </div>
+        </div>
       </div>
 
       <!-- OBLEČENÍ -->
       <div id="mt-clothing" class="mt">
         <div class="ph"><div class="pt">◧ // OBLEČENÍ</div></div>
-        <div class="wh-filters">
-          <button class="wf active" onclick="filterCloth('all',this)">VŠE</button>
-          <button class="wf" onclick="filterCloth('masks',this)">MASKY & VOUSY</button>
-          <button class="wf" onclick="filterCloth('jackets',this)">BUNDY & TRIČKA</button>
-          <button class="wf" onclick="filterCloth('pants',this)">KALHOTY & BOTY</button>
-          <button class="wf" onclick="filterCloth('acc',this)">DOPLŇKY</button>
-          <button class="wf" onclick="filterCloth('sets',this)">SETY</button>
-        </div>
-        <div id="clothColumns" class="cloth-columns"></div>
+        <div id="clothSets" class="cloth-sets-wrap"></div>
       </div>
 
       <!-- FINANCE -->
@@ -195,7 +197,7 @@
           <div class="fp-title">// PŘIDAT KONTAKT</div>
           <div class="form-grid">
             <div class="field-group"><label class="fl">PŘEZDÍVKA *</label><div class="iw"><span class="ip">&gt;_</span><input type="text" id="cNick" placeholder="Přezdívka..."/></div></div>
-            <div class="field-group"><label class="fl">TELEFON *</label><div class="iw"><span class="ip">&gt;_</span><input type="text" id="cPhone" placeholder="(125)..."/></div></div>
+            <div class="field-group"><label class="fl">TELEFON *</label><div class="iw"><span class="ip">&gt;_</span><input type="text" id="cPhone" placeholder="+420..."/></div></div>
             <div class="field-group"><label class="fl">JMÉNO</label><div class="iw"><span class="ip">&gt;_</span><input type="text" id="cFirst" placeholder="Jméno"/></div></div>
             <div class="field-group"><label class="fl">PŘÍJMENÍ</label><div class="iw"><span class="ip">&gt;_</span><input type="text" id="cLast" placeholder="Příjmení"/></div></div>
           </div>
@@ -213,7 +215,7 @@
 <div id="adminScreen" class="screen hidden">
   <div class="layout">
     <aside class="sidebar admin-sb">
-      <div class="sb-logo">NX<span class="acc-r">//</span></div>
+      <div class="sb-logo">MBY<span class="acc-r">//</span></div>
       <div class="admin-badge">VEDENÍ</div>
       <nav class="sb-nav">
         <button class="nb active" onclick="aTab('members',this)"><span class="ni">◈</span><span class="nl">ČLENOVÉ</span></button>
@@ -322,28 +324,37 @@
 
       <!-- CLOTHING ADMIN -->
       <div id="at-clothing" class="at">
-        <div class="ph"><div class="pt">◧ // OBLEČENÍ</div><button class="btn-acc small" onclick="toggleAddCloth()">+ PŘIDAT</button></div>
+        <div class="ph"><div class="pt">◧ // OBLEČENÍ — SETY</div><button class="btn-acc small" onclick="toggleAddCloth()">+ NOVÝ SET</button></div>
         <div id="addClothPanel" class="form-panel hidden" style="margin:0 1.2rem 1rem;">
-          <div class="fp-title">// NOVÁ POLOŽKA — každý řádek tabulky = "Kategorie: Hodnota"</div>
-          <div class="form-grid">
-            <div class="field-group"><label class="fl">NÁZEV OBLEČENÍ</label><div class="iw"><span class="ip">&gt;_</span><input type="text" id="cl-name"/></div></div>
-            <div class="field-group"><label class="fl">KATEGORIE</label><div class="iw"><span class="ip">&gt;_</span><select id="cl-cat"><option value="masks">Masky & Vousy</option><option value="jackets">Bundy & Trička</option><option value="pants">Kalhoty & Boty</option><option value="acc">Doplňky</option><option value="sets">Sety</option></select></div></div>
-            <div class="field-group"><label class="fl">KÓD / ČÍSLO</label><div class="iw"><span class="ip">&gt;_</span><input type="text" id="cl-code" placeholder="např. 14"/></div></div>
-            <div class="field-group"><label class="fl">OBRÁZEK</label><div class="iw"><span class="ip">&gt;_</span><input type="text" id="cl-img" placeholder="maska.png"/></div></div>
-            <div class="field-group fg-full"><label class="fl">POPIS</label><div class="iw"><span class="ip">&gt;_</span><input type="text" id="cl-desc"/></div></div>
-            <div class="field-group fg-full"><label class="fl">ŘÁDKY TABULKY (každý řádek: Název: Hodnota)</label><textarea id="cl-rows" class="adm-ta" style="min-height:80px;" placeholder="Masky & Vousy: Zde bude číslo a nebo kod&#10;Atd: ale to si klidně vypíšu sám..."></textarea></div>
+          <div class="fp-title">// NOVÝ OUTFIT SET — název, foto a čísla kategorií</div>
+          <div class="cloth-add-layout">
+            <div class="cloth-add-left">
+              <div class="field-group"><label class="fl">NÁZEV SETU *</label><div class="iw"><span class="ip">&gt;_</span><input type="text" id="cl-name" placeholder="např. Akce, Meeting..."/></div></div>
+              <div class="field-group"><label class="fl">POPIS</label><div class="iw"><span class="ip">&gt;_</span><input type="text" id="cl-desc" placeholder="Krátký popis..."/></div></div>
+              <div class="field-group"><label class="fl">FOTO (images/název.png)</label><div class="iw"><span class="ip">&gt;_</span><input type="text" id="cl-img" placeholder="outfit.png" oninput="previewClothImg(this.value)"/></div></div>
+              <div id="cl-img-preview" class="cloth-add-preview">—</div>
+            </div>
+            <div class="cloth-add-right">
+              <table class="cloth-add-table">
+                <thead><tr><th>KATEGORIE</th><th>MODEL</th><th>DESIGN</th></tr></thead>
+                <tbody>
+                  <tr><td>Masky &amp; Vousy</td><td><input class="cloth-num-input" type="number" id="cl-masks-m" value="0" min="0"/></td><td><input class="cloth-num-input" type="number" id="cl-masks-d" value="0" min="0"/></td></tr>
+                  <tr><td>Šály &amp; Řetízky</td><td><input class="cloth-num-input" type="number" id="cl-chains-m" value="0" min="0"/></td><td><input class="cloth-num-input" type="number" id="cl-chains-d" value="0" min="0"/></td></tr>
+                  <tr><td>Bundy &amp; Trička</td><td><input class="cloth-num-input" type="number" id="cl-jackets-m" value="0" min="0"/></td><td><input class="cloth-num-input" type="number" id="cl-jackets-d" value="0" min="0"/></td></tr>
+                  <tr><td>Podtrička &amp; Sukně</td><td><input class="cloth-num-input" type="number" id="cl-under-m" value="0" min="0"/></td><td><input class="cloth-num-input" type="number" id="cl-under-d" value="0" min="0"/></td></tr>
+                  <tr><td>Vesty &amp; Doplňky</td><td><input class="cloth-num-input" type="number" id="cl-vests-m" value="0" min="0"/></td><td><input class="cloth-num-input" type="number" id="cl-vests-d" value="0" min="0"/></td></tr>
+                  <tr><td>Batohy &amp; Padáky</td><td><input class="cloth-num-input" type="number" id="cl-bags-m" value="0" min="0"/></td><td><input class="cloth-num-input" type="number" id="cl-bags-d" value="0" min="0"/></td></tr>
+                  <tr><td>Ruce &amp; Rukavice</td><td><input class="cloth-num-input" type="number" id="cl-hands-m" value="0" min="0"/></td><td><input class="cloth-num-input" type="number" id="cl-hands-d" value="0" min="0"/></td></tr>
+                  <tr><td>Kalhoty</td><td><input class="cloth-num-input" type="number" id="cl-pants-m" value="0" min="0"/></td><td><input class="cloth-num-input" type="number" id="cl-pants-d" value="0" min="0"/></td></tr>
+                  <tr><td>Boty</td><td><input class="cloth-num-input" type="number" id="cl-shoes-m" value="0" min="0"/></td><td><input class="cloth-num-input" type="number" id="cl-shoes-d" value="0" min="0"/></td></tr>
+                  <tr><td>Nášivky &amp; Doplňky</td><td><input class="cloth-num-input" type="number" id="cl-decals-m" value="0" min="0"/></td><td><input class="cloth-num-input" type="number" id="cl-decals-d" value="0" min="0"/></td></tr>
+                </tbody>
+              </table>
+            </div>
           </div>
-          <div class="fp-ftr"><button class="btn-acc small" onclick="addCloth()">PŘIDAT</button><span id="addClothStatus" class="smsg"></span></div>
+          <div class="fp-ftr" style="margin-top:.8rem;"><button class="btn-acc small" onclick="addCloth()">+ PŘIDAT SET</button><span id="addClothStatus" class="smsg"></span></div>
         </div>
-        <div class="cloth-tabs">
-          <button class="ctab active" onclick="switchAClothTab('all',this)">VŠE</button>
-          <button class="ctab" onclick="switchAClothTab('masks',this)">MASKY & VOUSY</button>
-          <button class="ctab" onclick="switchAClothTab('jackets',this)">BUNDY & TRIČKA</button>
-          <button class="ctab" onclick="switchAClothTab('pants',this)">KALHOTY & BOTY</button>
-          <button class="ctab" onclick="switchAClothTab('acc',this)">DOPLŇKY</button>
-          <button class="ctab" onclick="switchAClothTab('sets',this)">SETY</button>
-        </div>
-        <div id="aClothCols" class="cloth-columns adm-cloth"></div>
+        <div id="aClothCols" class="cloth-sets-wrap adm-cloth"></div>
       </div>
 
       <!-- FINANCE ADMIN -->
