@@ -468,18 +468,26 @@ function filterCloth(cat,btn){
   renderClothing();
 }
 
+// Na začátek souboru nebo před tyto funkce přidej proměnnou pro sledování kategorie
+var aClothCat = 'all'; 
+
 // ── CLOTHING ADMIN ───────────────────────────
 function previewClothImg(val){
-  var el=document.getElementById('cl-img-preview');if(!el)return;
-  if(!val||!val.trim()){el.innerHTML='—';return;}
-el.innerHTML = '<img src="images/' + esc(val) + '" style="max-width:100%;max-height:110px;object-fit:contain;filter:drop-shadow(0 0 6px rgba(196,154,20,.3));" onerror="this.parentElement.innerHTML=\'<span style=\\\'color:var(--red);font-family:Share Tech Mono,monospace;font-size:.65rem\\\'>nenalezeno</span>\'" />';}
+    var el = document.getElementById('cl-img-preview');
+    if(!el) return;
+    if(!val || !val.trim()){ el.innerHTML = '—'; return; }
+    
+    // Podpora pro lokální i webové obrázky
+    var src = (val.startsWith('http')) ? val : 'images/' + val;
+    
+    el.innerHTML = '<img src="' + esc(src) + '" style="max-width:100%;max-height:110px;object-fit:contain;filter:drop-shadow(0 0 6px rgba(196,154,20,.3));" onerror="this.parentElement.innerHTML=\'<span style=\\\'color:var(--red);font-family:Share Tech Mono,monospace;font-size:.65rem\\\'>nenalezeno</span>\'" />';
+}
 
 function toggleAddCloth(){
-  document.getElementById('addClothPanel').classList.toggle('hidden');
+    document.getElementById('addClothPanel').classList.toggle('hidden');
 }
 
 function addCloth() {
-    // Bezpečné načtení prvků – pokud prvek neexistuje, použije se prázdný řetězec
     var nameEl = document.getElementById('cl-name');
     var codeEl = document.getElementById('cl-code');
     var imgEl = document.getElementById('cl-img');
@@ -493,16 +501,9 @@ function addCloth() {
         return;
     }
 
-    var name = nameEl.value.trim();
-    var cat = catEl ? catEl.value : 'masks';
-    var code = codeEl ? codeEl.value.trim() : '';
-    var img = imgEl ? imgEl.value.trim() : '';
-    var desc = descEl ? descEl.value.trim() : '';
-    var rowsRaw = rowsEl ? rowsEl.value.trim() : '';
-
     var rows = [];
-    if (rowsRaw) {
-        rowsRaw.split('\n').forEach(function(line) {
+    if (rowsEl && rowsEl.value.trim()) {
+        rowsEl.value.trim().split('\n').forEach(function(line) {
             var parts = line.split(':');
             if (parts.length >= 2) {
                 rows.push({ cat: parts[0].trim(), val: parts.slice(1).join(':').trim() });
@@ -513,11 +514,11 @@ function addCloth() {
     var items = DB.get('clothing') || [];
     items.push({
         id: uid(),
-        name: name,
-        cat: cat,
-        code: code,
-        img: img, // Zde může být "maska.png" i odkaz na Fivemanager "
-        desc: desc,
+        name: nameEl.value.trim(),
+        cat: catEl ? catEl.value : 'masks',
+        code: codeEl ? codeEl.value.trim() : '',
+        img: imgEl ? imgEl.value.trim() : '', 
+        desc: descEl ? descEl.value.trim() : '',
         rows: rows
     });
 
@@ -527,17 +528,19 @@ function addCloth() {
         setTimeout(function() { st.textContent = ''; }, 3000);
     }
 
-    // Vyčištění polí
     [nameEl, codeEl, imgEl, descEl, rowsEl].forEach(function(el) { if(el) el.value = ''; });
+    if(document.getElementById('cl-img-preview')) document.getElementById('cl-img-preview').innerHTML = '—';
     
-    toast(name + ' přidán', 'success');
+    toast('Outfit přidán', 'success');
     renderAdminClothing();
 }
 
-function switchAClothTab(cat,btn){
-  document.querySelectorAll('#at-clothing .ctab').forEach(function(b){b.classList.remove('active');});
-  if(btn)btn.classList.add('active');
-  renderAdminClothing();
+// OPRAVA: Přidáno nastavení proměnné aClothCat pro filtrování
+function switchAClothTab(cat, btn){
+    aClothCat = cat; // Nastavíme globální filtr
+    document.querySelectorAll('#at-clothing .ctab').forEach(function(b){ b.classList.remove('active'); });
+    if(btn) btn.classList.add('active');
+    renderAdminClothing();
 }
 
 function renderAdminClothing() {
@@ -545,43 +548,39 @@ function renderAdminClothing() {
     var el = document.getElementById('aClothCols');
     if (!el) return;
 
-    if (!sets.length) {
-        el.innerHTML = '<div class="empty-s">// Žádné sety oblečení – přidejte první set</div>';
+    // Filtrování podle vybrané kategorie
+    var filtered = aClothCat === 'all' ? sets : sets.filter(function(s){ return s.cat === aClothCat; });
+
+    if (!filtered.length) {
+        el.innerHTML = '<div class="empty-s">// Žádné položky v této kategorii</div>';
         return;
     }
 
-    var cols = sets.map(function(s) {
-        var imgH = s.img 
-            ? '<div class="cs-img-wrap"><img src="images/' + esc(s.img) + '" class="cs-img" onerror="this.style.display=\'none\'"></div>' 
+    el.innerHTML = filtered.map(function(s) {
+        // Inteligentní src: pokud začíná na http, neupravujeme, jinak přidáme images/
+        var imgSrc = s.img;
+        if(imgSrc && !imgSrc.startsWith('http')) imgSrc = 'images/' + imgSrc;
+
+        var imgH = imgSrc 
+            ? '<div class="cs-img-wrap"><img src="' + esc(imgSrc) + '" class="cs-img" onerror="this.style.display=\'none\'"></div>' 
             : '<div class="cs-img-wrap cs-img-ph">👕</div>';
 
-        var rows = CLOTH_CATS.map(function(c) {
-            var m = s[c.key + '_m'] !== undefined ? s[c.key + '_m'] : 0;
-            var d = s[c.key + '_d'] !== undefined ? s[c.key + '_d'] : 0;
-            return '<tr><td class="cs-cat">' + esc(c.label) + '</td>' +
-                   '<td class="cs-label">Model</td><td class="cs-val">' + m + '</td>' +
-                   '<td class="cs-label">Design</td><td class="cs-val">' + d + '</td></tr>';
+        // Vykreslení tabulky řádků (Model: Hodnota)
+        var tableRows = (s.rows || []).map(function(r){
+            return '<tr><td class="cs-cat">' + esc(r.cat) + '</td><td class="cs-val">' + esc(r.val) + '</td></tr>';
         }).join('');
 
-        return '<div class="cloth-set-col">' +
-            '<div class="cs-title">' + esc(s.name) + '</div>' +
+        // Přidání hlavního kódu/modelu jako prvního řádku pokud existuje
+        var mainRow = s.code ? '<tr><td class="cs-cat" style="color:#c49a14">Kód/Model</td><td class="cs-val">' + esc(s.code) + '</td></tr>' : '';
+
+        return '<div class="cl-col">' +
+            '<div class="cl-col-title">' + esc(s.name) + '</div>' +
             imgH +
-            (s.desc ? '<div class="cs-desc">' + esc(s.desc) + '</div>' : '') +
-            '<table class="cs-table">' + rows + '</table>' +
-            '<button class="cloth-del-btn" style="margin-top:.5rem;width:100%;" onclick="delCloth(\'' + s.id + '\')">✕ SMAZAT SET</button>' +
+            (s.desc ? '<div class="cl-col-desc">' + esc(s.desc) + '</div>' : '') +
+            '<table class="cl-col-table">' + mainRow + tableRows + '</table>' +
+            '<button class="cloth-del-btn" onclick="delCloth(\'' + s.id + '\')">✕ SMAZAT</button>' +
         '</div>';
     }).join('');
-
-    el.innerHTML = '<div class="cloth-sets-grid">' + cols + '</div>';
-}
-
-function delCloth(id){
-  if(!confirm('Smazat set oblečení?'))return;
-  DB.set('clothing',(DB.get('clothing')||[]).filter(function(i){return i.id!==id;}));
-  renderAdminClothing();
-  renderClothing();
-  addLog('wh','Admin smazal outfit set.');
-  toast('Set smazán','info');
 }
 
 // ── FINANCE ADMIN ────────────────────────────
