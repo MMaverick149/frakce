@@ -17,12 +17,11 @@
   </div>
 </div>
 
-
 <!-- SELECT -->
 <div id="selectScreen" class="screen active">
   <div class="sel-bg"></div>
   <div class="sel-wrap">
-    <div class="sel-logo">MBY<span class="acc">F</span>R</div>
+    <div class="sel-logo">Mby<span class="acc">F</span>R</div>
     <div class="sel-sub">// FRAKČNÍ PORTÁL //</div>
     <div class="sel-box">
       <div class="sel-label">VYBERTE PROFIL</div>
@@ -70,7 +69,7 @@
 <div id="memberScreen" class="screen hidden">
   <div class="layout">
     <aside class="sidebar">
-      <div class="sb-logo">NX<span class="acc">//</span></div>
+      <div class="sb-logo">Mby<span class="acc">F</span>R</div>
       <nav class="sb-nav">
         <button class="nb active" onclick="mTab('board',this)"><span class="ni">◈</span><span class="nl">NÁSTĚNKA</span></button>
         <button class="nb" onclick="mTab('tasks',this)"><span class="ni">▣</span><span class="nl">ÚKOLY</span><span class="nbadge" id="taskBadge"></span></button>
@@ -87,7 +86,7 @@
       <div class="sb-foot">
         <div class="sb-name" id="sbName"></div>
         <div class="sb-pos" id="sbPos"></div>
-        <button class="btn-back" onclick="goBack()">← ODHLÁSIT SE</button>
+        <button class="btn-back" onclick="goBack()">← ODHLÁSIT</button>
       </div>
     </aside>
     <main class="main">
@@ -122,6 +121,7 @@
           <button class="wf active" onclick="mWhFilter('all',this)">VŠE</button>
           <button class="wf" onclick="mWhFilter('weapons',this)">ZBRANĚ</button>
           <button class="wf" onclick="mWhFilter('ammo',this)">MUNICE</button>
+          <button class="wf" onclick="mWhFilter('drugs',this)">DROGY</button>
           <button class="wf" onclick="mWhFilter('equipment',this)">VYBAVENÍ</button>
           <button class="wf" onclick="mWhFilter('other',this)">OSTATNÍ</button>
         </div>
@@ -303,7 +303,7 @@
         <div id="addItemPanel" class="form-panel hidden" style="margin:0 1.2rem 1rem;">
           <div class="form-grid">
             <div class="field-group"><label class="fl">NÁZEV</label><div class="iw"><span class="ip">&gt;_</span><input type="text" id="wi-name"/></div></div>
-            <div class="field-group"><label class="fl">KATEGORIE</label><div class="iw"><span class="ip">&gt;_</span><select id="wi-cat"><option value="weapons">Zbraně</option><option value="ammo">Munice</option><option value="vehicles">Vozidla</option><option value="equipment">Vybavení</option><option value="other">Ostatní</option></select></div></div>
+            <div class="field-group"><label class="fl">KATEGORIE</label><div class="iw"><span class="ip">&gt;_</span><select id="wi-cat"><option value="weapons">Zbraně</option><option value="ammo">Munice</option><option value="drugs">Drogy</option><option value="equipment">Vybavení</option><option value="other">Ostatní</option></select></div></div>
             <div class="field-group"><label class="fl">MNOŽSTVÍ</label><div class="iw"><span class="ip">&gt;_</span><input type="number" id="wi-qty" value="1" min="0"/></div></div>
             <div class="field-group"><label class="fl">MIN. ZÁSOBA</label><div class="iw"><span class="ip">&gt;_</span><input type="number" id="wi-min" value="0" min="0"/></div></div>
             <div class="field-group"><label class="fl">OBRÁZEK</label><div class="iw"><span class="ip">&gt;_</span><input type="text" id="wi-img" placeholder="pistole.png" oninput="previewImg(this.value)"/></div></div>
@@ -316,6 +316,7 @@
           <button class="wf active" onclick="aWhFilter('all',this)">VŠE</button>
           <button class="wf" onclick="aWhFilter('weapons',this)">ZBRANĚ</button>
           <button class="wf" onclick="aWhFilter('ammo',this)">MUNICE</button>
+          <button class="wf" onclick="aWhFilter('drugs',this)">DROGY</button>
           <button class="wf" onclick="aWhFilter('equipment',this)">VYBAVENÍ</button>
           <button class="wf" onclick="aWhFilter('other',this)">OSTATNÍ</button>
         </div>
@@ -331,7 +332,9 @@
             <div class="cloth-add-left">
               <div class="field-group"><label class="fl">NÁZEV SETU *</label><div class="iw"><span class="ip">&gt;_</span><input type="text" id="cl-name" placeholder="např. Akce, Meeting..."/></div></div>
               <div class="field-group"><label class="fl">POPIS</label><div class="iw"><span class="ip">&gt;_</span><input type="text" id="cl-desc" placeholder="Krátký popis..."/></div></div>
-              <div class="field-group"><label class="fl">FOTO (images/název.png)</label><div class="iw"><span class="ip">&gt;_</span><input type="text" id="cl-img" placeholder="outfit.png" oninput="previewClothImg(this.value)"/></div></div>
+              <div class="field-group"><label class="fl">FOTO — název souboru (images/)</label><div class="iw"><span class="ip">&gt;_</span><input type="text" id="cl-img" placeholder="outfit.png" oninput="previewClothImg()"/></div></div>
+              <div class="cl-img-or">— NEBO —</div>
+              <div class="field-group"><label class="fl">FOTO — URL odkaz</label><div class="iw"><span class="ip">&gt;_</span><input type="text" id="cl-img-url" placeholder="https://app.fivemanage.com/..." oninput="previewClothImg()"/></div></div>
               <div id="cl-img-preview" class="cloth-add-preview">—</div>
             </div>
             <div class="cloth-add-right">
@@ -405,7 +408,7 @@
           <div class="fp-title">// DISCORD WEBHOOK</div>
           <div class="form-grid">
             <div class="field-group fg-full"><label class="fl">WEBHOOK URL</label><div class="iw"><span class="ip">&gt;_</span><input type="text" id="discordWebhook" placeholder="https://discord.com/api/webhooks/..."/></div></div>
-            <div class="field-group fg-full"><label class="fl">NÁZEV BOTA</label><div class="iw"><span class="ip">&gt;_</span><input type="text" id="discordName" value="Frakce LOG"/></div></div>
+            <div class="field-group fg-full"><label class="fl">NÁZEV BOTA</label><div class="iw"><span class="ip">&gt;_</span><input type="text" id="discordName" value="NEXUS LOG"/></div></div>
           </div>
           <div class="fp-ftr"><button class="btn-acc small" onclick="saveWebhook()">ULOŽIT</button><button class="btn-ghost small" onclick="testWebhook()" style="margin-left:.5rem">TEST</button><span id="webhookStatus" class="smsg"></span></div>
         </div>
