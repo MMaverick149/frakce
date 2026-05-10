@@ -21,7 +21,7 @@
 <div id="selectScreen" class="screen active">
   <div class="sel-bg"></div>
   <div class="sel-wrap">
-    <div class="sel-logo">Mby<span class="acc">F</span>R</div>
+    <div class="sel-logo">MBY<span class="acc">F</span>R</div>
     <div class="sel-sub">// FRAKČNÍ PORTÁL //</div>
     <div class="sel-box">
       <div class="sel-label">VYBERTE PROFIL</div>
@@ -69,7 +69,7 @@
 <div id="memberScreen" class="screen hidden">
   <div class="layout">
     <aside class="sidebar">
-      <div class="sb-logo">Mby<span class="acc">F</span>R</div>
+      <div class="sb-logo">MBY<span class="acc">F</span>R</div>
       <nav class="sb-nav">
         <button class="nb active" onclick="mTab('board',this)"><span class="ni">◈</span><span class="nl">NÁSTĚNKA</span></button>
         <button class="nb" onclick="mTab('tasks',this)"><span class="ni">▣</span><span class="nl">ÚKOLY</span><span class="nbadge" id="taskBadge"></span></button>
@@ -215,21 +215,21 @@
 <div id="adminScreen" class="screen hidden">
   <div class="layout">
     <aside class="sidebar admin-sb">
-      <div class="sb-logo">MBY<span class="acc-r">//</span></div>
+      <div class="sb-logo">NX<span class="acc-r">//</span></div>
       <div class="admin-badge">VEDENÍ</div>
       <nav class="sb-nav">
-        <button class="nb active" onclick="switchAdminSection('members', this)"><span class="ni">◈</span><span class="nl">ČLENOVÉ</span></button>
-        <button class="nb" onclick="switchAdminSection('board', this)"><span class="ni">📌</span><span class="nl">NÁSTĚNKA</span></button>
-        <button class="nb" onclick="switchAdminSection('tasks', this)"><span class="ni">▣</span><span class="nl">ÚKOLY</span></button>
-        <button class="nb" onclick="switchAdminSection('messages', this)"><span class="ni">◉</span><span class="nl">ZPRÁVY</span></button>
-        <button class="nb" onclick="switchAdminSection('warehouse', this)"><span class="ni">⬡</span><span class="nl">SKLAD</span></button>
-        <button class="nb" onclick="switchAdminSection('clothing', this)"><span class="ni">◧</span><span class="nl">OBLEČENÍ</span></button>
-        <button class="nb" onclick="switchAdminSection('finance', this)"><span class="ni">$</span><span class="nl">FINANCE</span></button>
-        <button class="nb" onclick="switchAdminSection('excuses', this)"><span class="ni">✉</span><span class="nl">OMLUVENKY</span></button>
-        <button class="nb" onclick="switchAdminSection('reports', this)"><span class="ni">▲</span><span class="nl">HLÁŠENÍ</span></button>
-        <button class="nb" onclick="switchAdminSection('radio', this)"><span class="ni">📻</span><span class="nl">VYSÍLAČKA</span></button>
-        <button class="nb" onclick="switchAdminSection('settings', this)"><span class="ni">⚙</span><span class="nl">NASTAVENÍ</span></button>
-        <button class="nb" onclick="switchAdminSection('log', this)"><span class="ni">▪</span><span class="nl">LOG</span></button>
+        <button class="nb active" onclick="aTab('members',this)"><span class="ni">◈</span><span class="nl">ČLENOVÉ</span></button>
+        <button class="nb" onclick="aTab('board',this)"><span class="ni">📌</span><span class="nl">NÁSTĚNKA</span></button>
+        <button class="nb" onclick="aTab('tasks',this)"><span class="ni">▣</span><span class="nl">ÚKOLY</span></button>
+        <button class="nb" onclick="aTab('messages',this)"><span class="ni">◉</span><span class="nl">ZPRÁVY</span></button>
+        <button class="nb" onclick="aTab('warehouse',this)"><span class="ni">⬡</span><span class="nl">SKLAD</span></button>
+        <button class="nb" onclick="aTab('clothing',this)"><span class="ni">◧</span><span class="nl">OBLEČENÍ</span></button>
+        <button class="nb" onclick="aTab('finance',this)"><span class="ni">$</span><span class="nl">FINANCE</span></button>
+        <button class="nb" onclick="aTab('excuses',this)"><span class="ni">✉</span><span class="nl">OMLUVENKY</span></button>
+        <button class="nb" onclick="aTab('reports',this)"><span class="ni">▲</span><span class="nl">HLÁŠENÍ</span></button>
+        <button class="nb" onclick="aTab('radio',this)"><span class="ni">📻</span><span class="nl">VYSÍLAČKA</span></button>
+        <button class="nb" onclick="aTab('settings',this)"><span class="ni">⚙</span><span class="nl">NASTAVENÍ</span></button>
+        <button class="nb" onclick="aTab('log',this)"><span class="ni">▪</span><span class="nl">LOG</span></button>
       </nav>
       <div class="sb-foot">
         <button class="btn-back" onclick="goBackToMember()">← ZPĚT</button>
@@ -303,7 +303,7 @@
         <div id="addItemPanel" class="form-panel hidden" style="margin:0 1.2rem 1rem;">
           <div class="form-grid">
             <div class="field-group"><label class="fl">NÁZEV</label><div class="iw"><span class="ip">&gt;_</span><input type="text" id="wi-name"/></div></div>
-            <div class="field-group"><label class="fl">KATEGORIE</label><div class="iw"><span class="ip">&gt;_</span><select id="wi-cat"><option value="weapons">Zbraně</option><option value="ammo">Munice</option><option value="drugs">Drogy</option><option value="equipment">Vybavení</option><option value="other">Ostatní</option></select></div></div>
+            <div class="field-group"><label class="fl">KATEGORIE</label><div class="iw"><span class="ip">&gt;_</span><select id="wi-cat"><option value="weapons">Zbraně</option><option value="ammo">Munice</option><option value="vehicles">Vozidla</option><option value="equipment">Vybavení</option><option value="other">Ostatní</option></select></div></div>
             <div class="field-group"><label class="fl">MNOŽSTVÍ</label><div class="iw"><span class="ip">&gt;_</span><input type="number" id="wi-qty" value="1" min="0"/></div></div>
             <div class="field-group"><label class="fl">MIN. ZÁSOBA</label><div class="iw"><span class="ip">&gt;_</span><input type="number" id="wi-min" value="0" min="0"/></div></div>
             <div class="field-group"><label class="fl">OBRÁZEK</label><div class="iw"><span class="ip">&gt;_</span><input type="text" id="wi-img" placeholder="pistole.png" oninput="previewImg(this.value)"/></div></div>
@@ -368,6 +368,7 @@
             <div class="field-group"><label class="fl">NÁZEV</label><div class="iw"><span class="ip">&gt;_</span><input type="text" id="exp-name"/></div></div>
             <div class="field-group"><label class="fl">ČÁSTKA ($)</label><div class="iw"><span class="ip">&gt;_</span><input type="number" id="exp-amount" min="0"/></div></div>
             <div class="field-group"><label class="fl">TYP</label><div class="iw"><span class="ip">&gt;_</span><select id="exp-type"><option value="weekly">Týdenní</option><option value="onetime">Jednorázový</option></select></div></div>
+            <div class="field-group"><label class="fl">NEPOVINNÁ</label><div class="iw" style="padding:.4rem .8rem;"><label style="display:flex;align-items:center;gap:.5rem;cursor:pointer;"><input type="checkbox" id="exp-optional" style="accent-color:var(--acc)"/><span style="font-family:'Share Tech Mono',monospace;font-size:.7rem;color:var(--textb)">Člen platí dobrovolně</span></label></div></div>
             <div class="field-group fg-full"><label class="fl">POZNÁMKA</label><div class="iw"><span class="ip">&gt;_</span><input type="text" id="exp-note"/></div></div>
           </div>
           <div class="fp-ftr"><button class="btn-acc small" onclick="addExpense()">PŘIDAT</button><span id="expStatus" class="smsg"></span></div>
@@ -408,7 +409,7 @@
           <div class="fp-title">// DISCORD WEBHOOK</div>
           <div class="form-grid">
             <div class="field-group fg-full"><label class="fl">WEBHOOK URL</label><div class="iw"><span class="ip">&gt;_</span><input type="text" id="discordWebhook" placeholder="https://discord.com/api/webhooks/..."/></div></div>
-            <div class="field-group fg-full"><label class="fl">NÁZEV BOTA</label><div class="iw"><span class="ip">&gt;_</span><input type="text" id="discordName" value="NEXUS LOG"/></div></div>
+            <div class="field-group fg-full"><label class="fl">NÁZEV BOTA</label><div class="iw"><span class="ip">&gt;_</span><input type="text" id="discordName" value="Frakce LOG"/></div></div>
           </div>
           <div class="fp-ftr"><button class="btn-acc small" onclick="saveWebhook()">ULOŽIT</button><button class="btn-ghost small" onclick="testWebhook()" style="margin-left:.5rem">TEST</button><span id="webhookStatus" class="smsg"></span></div>
         </div>
