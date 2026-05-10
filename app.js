@@ -468,29 +468,30 @@ function filterCloth(cat,btn){
   renderClothing();
 }
 
-// Na začátek souboru nebo před tyto funkce přidej proměnnou pro sledování kategorie
-var aClothCat = 'all'; 
+// Na začátek souboru app.js přidej tyto globální proměnné, aby fungovalo přepínání
+var aTab = 'clothing'; 
+var aClothCat = 'all';
 
 // ── CLOTHING ADMIN ───────────────────────────
-// Ujisti se, že tato proměnná je definovaná globálně (na začátku app.js)
-var aClothCat = 'all'; 
 
-function previewClothImg(val){
+// Funkce pro náhled obrázku (podporuje lokální soubory i externí linky)
+function previewClothImg(val) {
     var el = document.getElementById('cl-img-preview');
-    if(!el) return;
-    if(!val || !val.trim()){ el.innerHTML = '—'; return; }
+    if (!el) return;
+    if (!val || !val.trim()) { el.innerHTML = '—'; return; }
     
-    // Podpora pro lokální i webové obrázky
     var src = (val.startsWith('http')) ? val : 'images/' + val;
     
     el.innerHTML = '<img src="' + esc(src) + '" style="max-width:100%;max-height:110px;object-fit:contain;filter:drop-shadow(0 0 6px rgba(196,154,20,.3));" onerror="this.parentElement.innerHTML=\'<span style=\\\'color:var(--red);font-family:Share Tech Mono,monospace;font-size:.65rem\\\'>nenalezeno</span>\'" />';
 }
 
-function toggleAddCloth(){
+// Přepínání panelu pro přidání
+function toggleAddCloth() {
     var panel = document.getElementById('addClothPanel');
-    if(panel) panel.classList.toggle('hidden');
+    if (panel) panel.classList.toggle('hidden');
 }
 
+// Hlavní funkce pro přidání outfitu do databáze
 function addCloth() {
     var nameEl = document.getElementById('cl-name');
     var codeEl = document.getElementById('cl-code');
@@ -500,12 +501,13 @@ function addCloth() {
     var rowsEl = document.getElementById('cl-rows');
     var st = document.getElementById('addClothStatus');
 
-    // Kontrola existence prvků, aby nedošlo k chybě "properties of null"
+    // Kontrola, zda prvek existuje (řeší chybu: Cannot read properties of null)
     if (!nameEl || !nameEl.value.trim()) {
         if (st) st.textContent = '// ZADEJTE NÁZEV';
         return;
     }
 
+    // Zpracování řádků tabulky z textarey (formát Kategorie: Hodnota)
     var rows = [];
     if (rowsEl && rowsEl.value.trim()) {
         rowsEl.value.trim().split('\n').forEach(function(line) {
@@ -534,50 +536,52 @@ function addCloth() {
         setTimeout(function() { st.textContent = ''; }, 3000);
     }
 
-    // Vyčištění polí po přidání
-    [nameEl, codeEl, imgEl, descEl, rowsEl].forEach(function(el) { if(el) el.value = ''; });
+    // Vyčištění polí
+    [nameEl, codeEl, imgEl, descEl, rowsEl].forEach(function(el) { if (el) el.value = ''; });
     var prev = document.getElementById('cl-img-preview');
-    if(prev) prev.innerHTML = '—';
+    if (prev) prev.innerHTML = '—';
     
     toast('Outfit přidán', 'success');
     renderAdminClothing();
 }
 
-function switchAClothTab(cat, btn){
-    aClothCat = cat; // Nastavení filtru
-    document.querySelectorAll('#at-clothing .ctab').forEach(function(b){ b.classList.remove('active'); });
-    if(btn) btn.classList.add('active');
+// Oprava přepínání složek (řeší chybu: aTab is not defined)
+function switchAClothTab(cat, btn) {
+    aClothCat = cat;
+    document.querySelectorAll('#at-clothing .ctab').forEach(function(b) { b.classList.remove('active'); });
+    if (btn) btn.classList.add('active');
     renderAdminClothing();
 }
 
+// Vykreslení karet v adminu přesně podle tvého nákresu
 function renderAdminClothing() {
     var sets = DB.get('clothing') || [];
     var el = document.getElementById('aClothCols');
     if (!el) return;
 
-    // Filtrování podle aktuální složky (aClothCat)
-    var filtered = aClothCat === 'all' ? sets : sets.filter(function(s){ return s.cat === aClothCat; });
+    // Filtrování podle kategorie
+    var filtered = aClothCat === 'all' ? sets : sets.filter(function(s) { return s.cat === aClothCat; });
 
     if (!filtered.length) {
-        el.innerHTML = '<div class="empty-s" style="color:white; padding:2rem;">// Žádné položky v této kategorii</div>';
+        el.innerHTML = '<div class="empty-s" style="color:white; padding:2rem;">// Žádné položky</div>';
         return;
     }
 
     el.innerHTML = filtered.map(function(s) {
-        // Logika pro URL obrázku
+        // Cesta k obrázku
         var imgSrc = s.img;
-        if(imgSrc && !imgSrc.startsWith('http')) imgSrc = 'images/' + imgSrc;
+        if (imgSrc && !imgSrc.startsWith('http')) imgSrc = 'images/' + imgSrc;
 
         var imgH = imgSrc 
             ? '<img src="' + esc(imgSrc) + '" class="cl-col-img" onerror="this.parentElement.innerHTML=\'<div class=\\\'cl-col-img-ph\\\'>CHYBA OBRÁZKU</div>\'">' 
             : '<div class="cl-col-img-ph">FOTO OBLEČENÍ</div>';
 
-        // Sestavení tabulky řádků (Model/Design)
-        var tableRows = (s.rows || []).map(function(r){
+        // Sestavení řádků tabulky (Model/Design)
+        var tableRows = (s.rows || []).map(function(r) {
             return '<tr><td class="cl-row-cat">' + esc(r.cat) + '</td><td class="cl-row-val">' + esc(r.val) + '</td></tr>';
         }).join('');
 
-        // Hlavní řádek (Kód/Číslo zadané v poli)
+        // Hlavní řádek s kódem
         var mainRow = s.code ? '<tr><td class="cl-row-cat" style="color:#c49a14">Kód / Model</td><td class="cl-row-val">' + esc(s.code) + '</td></tr>' : '';
 
         return '<div class="cl-col">' +
@@ -594,14 +598,14 @@ function renderAdminClothing() {
     }).join('');
 }
 
-function delCloth(id){
-    if(!confirm('Smazat tuto položku?')) return;
+// Funkce pro smazání
+function delCloth(id) {
+    if (!confirm('Smazat tuto položku?')) return;
     var items = DB.get('clothing') || [];
-    DB.set('clothing', items.filter(function(i){ return i.id !== id; }));
+    DB.set('clothing', items.filter(function(i) { return i.id !== id; }));
     
     renderAdminClothing();
-    // Pokud máš i uživatelské zobrazení, aktualizuj ho
-    if(typeof renderClothing === 'function') renderClothing();
+    if (typeof renderClothing === 'function') renderClothing();
     
     toast('Smazáno', 'info');
 }
