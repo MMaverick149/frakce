@@ -99,7 +99,7 @@ function defaultWarehouse(){
     {id:uid(),name:'Fialový Kanabis',cat:'drugs',qty:0,min:0,note:'Speciální item',img:'fialovykanabis.png'},
     {id:uid(),name:'Joy',cat:'drugs',qty:0,min:0,note:'Speciální item',img:'joy.png'},
     {id:uid(),name:'Prášky na bolest',cat:'drugs',qty:0,min:0,note:'Speciální item',img:'praskynabolest.png'},
-    {id:uid(),name:'Prazený sáček',cat:'other',qty:0,min:0,note:'Speciální item',img:'prazdnysacek.png'},
+    {id:uid(),name:'Prazdný sáček',cat:'other',qty:0,min:0,note:'Speciální item',img:'prazdnysacek.png'},
 
   ];
 }
