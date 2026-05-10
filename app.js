@@ -472,6 +472,9 @@ function filterCloth(cat,btn){
 var aClothCat = 'all'; 
 
 // ── CLOTHING ADMIN ───────────────────────────
+// Ujisti se, že tato proměnná je definovaná globálně (na začátku app.js)
+var aClothCat = 'all'; 
+
 function previewClothImg(val){
     var el = document.getElementById('cl-img-preview');
     if(!el) return;
@@ -484,7 +487,8 @@ function previewClothImg(val){
 }
 
 function toggleAddCloth(){
-    document.getElementById('addClothPanel').classList.toggle('hidden');
+    var panel = document.getElementById('addClothPanel');
+    if(panel) panel.classList.toggle('hidden');
 }
 
 function addCloth() {
@@ -496,6 +500,7 @@ function addCloth() {
     var rowsEl = document.getElementById('cl-rows');
     var st = document.getElementById('addClothStatus');
 
+    // Kontrola existence prvků, aby nedošlo k chybě "properties of null"
     if (!nameEl || !nameEl.value.trim()) {
         if (st) st.textContent = '// ZADEJTE NÁZEV';
         return;
@@ -523,21 +528,23 @@ function addCloth() {
     });
 
     DB.set('clothing', items);
+    
     if (st) {
         st.textContent = '// PŘIDÁNO';
         setTimeout(function() { st.textContent = ''; }, 3000);
     }
 
+    // Vyčištění polí po přidání
     [nameEl, codeEl, imgEl, descEl, rowsEl].forEach(function(el) { if(el) el.value = ''; });
-    if(document.getElementById('cl-img-preview')) document.getElementById('cl-img-preview').innerHTML = '—';
+    var prev = document.getElementById('cl-img-preview');
+    if(prev) prev.innerHTML = '—';
     
     toast('Outfit přidán', 'success');
     renderAdminClothing();
 }
 
-// OPRAVA: Přidáno nastavení proměnné aClothCat pro filtrování
 function switchAClothTab(cat, btn){
-    aClothCat = cat; // Nastavíme globální filtr
+    aClothCat = cat; // Nastavení filtru
     document.querySelectorAll('#at-clothing .ctab').forEach(function(b){ b.classList.remove('active'); });
     if(btn) btn.classList.add('active');
     renderAdminClothing();
@@ -548,39 +555,55 @@ function renderAdminClothing() {
     var el = document.getElementById('aClothCols');
     if (!el) return;
 
-    // Filtrování podle vybrané kategorie
+    // Filtrování podle aktuální složky (aClothCat)
     var filtered = aClothCat === 'all' ? sets : sets.filter(function(s){ return s.cat === aClothCat; });
 
     if (!filtered.length) {
-        el.innerHTML = '<div class="empty-s">// Žádné položky v této kategorii</div>';
+        el.innerHTML = '<div class="empty-s" style="color:white; padding:2rem;">// Žádné položky v této kategorii</div>';
         return;
     }
 
     el.innerHTML = filtered.map(function(s) {
-        // Inteligentní src: pokud začíná na http, neupravujeme, jinak přidáme images/
+        // Logika pro URL obrázku
         var imgSrc = s.img;
         if(imgSrc && !imgSrc.startsWith('http')) imgSrc = 'images/' + imgSrc;
 
         var imgH = imgSrc 
-            ? '<div class="cs-img-wrap"><img src="' + esc(imgSrc) + '" class="cs-img" onerror="this.style.display=\'none\'"></div>' 
-            : '<div class="cs-img-wrap cs-img-ph">👕</div>';
+            ? '<img src="' + esc(imgSrc) + '" class="cl-col-img" onerror="this.parentElement.innerHTML=\'<div class=\\\'cl-col-img-ph\\\'>CHYBA OBRÁZKU</div>\'">' 
+            : '<div class="cl-col-img-ph">FOTO OBLEČENÍ</div>';
 
-        // Vykreslení tabulky řádků (Model: Hodnota)
+        // Sestavení tabulky řádků (Model/Design)
         var tableRows = (s.rows || []).map(function(r){
-            return '<tr><td class="cs-cat">' + esc(r.cat) + '</td><td class="cs-val">' + esc(r.val) + '</td></tr>';
+            return '<tr><td class="cl-row-cat">' + esc(r.cat) + '</td><td class="cl-row-val">' + esc(r.val) + '</td></tr>';
         }).join('');
 
-        // Přidání hlavního kódu/modelu jako prvního řádku pokud existuje
-        var mainRow = s.code ? '<tr><td class="cs-cat" style="color:#c49a14">Kód/Model</td><td class="cs-val">' + esc(s.code) + '</td></tr>' : '';
+        // Hlavní řádek (Kód/Číslo zadané v poli)
+        var mainRow = s.code ? '<tr><td class="cl-row-cat" style="color:#c49a14">Kód / Model</td><td class="cl-row-val">' + esc(s.code) + '</td></tr>' : '';
 
         return '<div class="cl-col">' +
             '<div class="cl-col-title">' + esc(s.name) + '</div>' +
-            imgH +
-            (s.desc ? '<div class="cl-col-desc">' + esc(s.desc) + '</div>' : '') +
-            '<table class="cl-col-table">' + mainRow + tableRows + '</table>' +
-            '<button class="cloth-del-btn" onclick="delCloth(\'' + s.id + '\')">✕ SMAZAT</button>' +
+            '<div class="cl-col-img-wrap">' + imgH + '</div>' +
+            '<div class="cl-col-desc-label">Popis Oblečení</div>' +
+            '<div class="cl-col-desc">' + esc(s.desc || '—') + '</div>' +
+            '<table class="cl-col-table">' +
+                mainRow +
+                tableRows +
+            '</table>' +
+            '<button class="cloth-del-btn" onclick="delCloth(\'' + s.id + '\')">✕ SMAZAT POLOŽKU</button>' +
         '</div>';
     }).join('');
+}
+
+function delCloth(id){
+    if(!confirm('Smazat tuto položku?')) return;
+    var items = DB.get('clothing') || [];
+    DB.set('clothing', items.filter(function(i){ return i.id !== id; }));
+    
+    renderAdminClothing();
+    // Pokud máš i uživatelské zobrazení, aktualizuj ho
+    if(typeof renderClothing === 'function') renderClothing();
+    
+    toast('Smazáno', 'info');
 }
 
 // ── FINANCE ADMIN ────────────────────────────
