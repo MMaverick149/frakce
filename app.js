@@ -475,35 +475,59 @@ function filterCloth(cat,btn){
   renderClothing();
 }
 
-// ── CLOTHING ADMIN LOGIC ───────────────────────────
+// ── GLOBÁLNÍ PROMĚNNÉ ───────────────────────────
+// currentAdminSection řeší konflikt, kde jsi měl proměnnou i funkci pojmenovanou 'aTab'
+var currentAdminSection = 'members'; 
+var aClothCat = 'all'; 
+
+// ── ADMIN MENU LOGIKA ───────────────────────────
 
 /**
- * Funkce pro náhled obrázku při přidávání.
- * Podporuje lokální soubory i přímé odkazy (Fivemanager).
+ * Hlavní funkce pro přepínání sekcí v Adminu.
+ * V HTML ji volej jako: onclick="switchAdminSection('clothing', this)"
  */
+function switchAdminSection(sectionId, btn) {
+    // 1. Skryje všechny sekce označené třídou 'admin-section'
+    document.querySelectorAll('.admin-section').forEach(function(s) {
+        s.classList.add('hidden');
+    });
+    
+    // 2. Zobrazí tu správnou sekci (ID musí začínat na 'as-')
+    var target = document.getElementById('as-' + sectionId);
+    if (target) {
+        target.classList.remove('hidden');
+    }
+    
+    // 3. Upraví aktivní vzhled tlačítek v sidebaru
+    document.querySelectorAll('.sb-nav .nb').forEach(function(b) {
+        b.classList.remove('active');
+    });
+    if (btn) btn.classList.add('active');
+    
+    currentAdminSection = sectionId;
+
+    // Pokud přepneš na oblečení, automaticky se spustí vykreslení karet
+    if (sectionId === 'clothing') {
+        renderAdminClothing();
+    }
+}
+
+// ── CLOTHING ADMIN ───────────────────────────
+
 function previewClothImg(val) {
     var el = document.getElementById('cl-img-preview');
     if (!el) return;
     if (!val || !val.trim()) { el.innerHTML = '—'; return; }
     
-    // Pokud odkaz začíná na http, použije se přímo, jinak se hledá ve složce images/
     var src = (val.startsWith('http')) ? val : 'images/' + val;
-    
-    el.innerHTML = '<img src="' + esc(src) + '" style="max-width:100%;max-height:110px;object-fit:contain;filter:drop-shadow(0 0 6px rgba(196,154,20,.3));" onerror="this.parentElement.innerHTML=\'<span style=\\\'color:var(--red);font-family:Share Tech Mono,monospace;font-size:.65rem\\\'>nenalezeno</span>\'" />';
+    el.innerHTML = '<img src="' + esc(src) + '" style="max-width:100%;max-height:110px;object-fit:contain;" onerror="this.parentElement.innerHTML=\'nenalezeno\'">';
 }
 
-/**
- * Otevírá/Zavírá panel pro přidání nového outfitu.
- */
 function toggleAddCloth() {
     var panel = document.getElementById('addClothPanel');
     if (panel) panel.classList.toggle('hidden');
 }
 
-/**
- * Hlavní funkce pro uložení nového outfitu do DB.
- * Řeší chybu "Cannot read properties of null (reading 'value')".
- */
 function addCloth() {
     var nameEl = document.getElementById('cl-name');
     var codeEl = document.getElementById('cl-code');
@@ -513,13 +537,12 @@ function addCloth() {
     var rowsEl = document.getElementById('cl-rows');
     var st = document.getElementById('addClothStatus');
 
-    // Validace existence prvků v HTML
+    // Kontrola existence prvků (řeší chybu 'reading value of null')
     if (!nameEl || !nameEl.value.trim()) {
         if (st) st.textContent = '// ZADEJTE NÁZEV';
         return;
     }
 
-    // Zpracování textu z textarea do formátu tabulky
     var rows = [];
     if (rowsEl && rowsEl.value.trim()) {
         rowsEl.value.trim().split('\n').forEach(function(line) {
@@ -548,40 +571,37 @@ function addCloth() {
         setTimeout(function() { st.textContent = ''; }, 3000);
     }
 
-    // Reset formuláře
+    // Vyčištění polí
     [nameEl, codeEl, imgEl, descEl, rowsEl].forEach(function(el) { if (el) el.value = ''; });
-    var prev = document.getElementById('cl-img-preview');
-    if (prev) prev.innerHTML = '—';
-    
-    toast('Outfit přidán', 'success');
     renderAdminClothing();
 }
 
 /**
- * Funkce pro přepínání kategorií (složek) v Adminu.
- * Řeší chybu "aTab is not defined".
+ * Přepínání složek (kategorií) uvnitř sekce Oblečení
  */
 function switchAClothTab(cat, btn) {
     aClothCat = cat;
-    document.querySelectorAll('#at-clothing .ctab').forEach(function(b) { b.classList.remove('active'); });
+    document.querySelectorAll('#at-clothing .ctab').forEach(function(b) {
+        b.classList.remove('active');
+    });
     if (btn) btn.classList.add('active');
     renderAdminClothing();
 }
 
 /**
- * Vykreslování karet v adminu. 
- * Opravena syntaxe ternárních operátorů a spojování řetězců.
+ * Vykreslení karet. Opraveny chyby v uvozovkách a syntaxi u obrázků.
  */
 function renderAdminClothing() {
     var sets = DB.get('clothing') || [];
     var el = document.getElementById('aClothCols');
     if (!el) return;
 
-    // Filtrování podle aktuální složky
-    var filtered = aClothCat === 'all' ? sets : sets.filter(function(s) { return s.cat === aClothCat; });
+    var filtered = aClothCat === 'all' ? sets : sets.filter(function(s) { 
+        return s.cat === aClothCat; 
+    });
 
     if (!filtered.length) {
-        el.innerHTML = '<div class="empty-s" style="color:white; padding:2rem;">// Žádné položky v této kategorii</div>';
+        el.innerHTML = '<div class="empty-s" style="color:white; padding:2rem;">// Žádné položky</div>';
         return;
     }
 
@@ -589,12 +609,11 @@ function renderAdminClothing() {
         var imgSrc = s.img;
         if (imgSrc && !imgSrc.startsWith('http')) imgSrc = 'images/' + imgSrc;
 
-        // Opravená podmínka pro zobrazení obrázku
+        // Oprava syntaxe: ternary operator ? :
         var imgH = imgSrc 
-            ? '<img src="' + esc(imgSrc) + '" class="cl-col-img" onerror="this.parentElement.innerHTML=\'<div class=\\\'cl-col-img-ph\\\'>CHYBA OBRÁZKU</div>\'">' 
+            ? '<img src="' + esc(imgSrc) + '" class="cl-col-img" onerror="this.parentElement.innerHTML=\'<div class=\\\'cl-col-img-ph\\\'>CHYBA</div>\'">' 
             : '<div class="cl-col-img-ph">FOTO OBLEČENÍ</div>';
 
-        // Vykreslení řádků tabulky dle tvého nákresu
         var tableRows = (s.rows || []).map(function(r) {
             return '<tr><td class="cl-row-cat">' + esc(r.cat) + '</td><td class="cl-row-val">' + esc(r.val) + '</td></tr>';
         }).join('');
@@ -606,26 +625,17 @@ function renderAdminClothing() {
             '<div class="cl-col-img-wrap">' + imgH + '</div>' +
             '<div class="cl-col-desc-label">Popis Oblečení</div>' +
             '<div class="cl-col-desc">' + esc(s.desc || '—') + '</div>' +
-            '<table class="cl-col-table">' +
-                mainRow +
-                tableRows +
-            '</table>' +
-            '<button class="cloth-del-btn" onclick="delCloth(\'' + s.id + '\')">✕ SMAZAT POLOŽKU</button>' +
+            '<table class="cl-col-table">' + mainRow + tableRows + '</table>' +
+            '<button class="cloth-del-btn" onclick="delCloth(\'' + s.id + '\')">✕ SMAZAT</button>' +
         '</div>';
     }).join('');
 }
 
-/**
- * Smazání outfitu.
- */
 function delCloth(id) {
-    if (!confirm('Opravdu smazat?')) return;
+    if (!confirm('Smazat?')) return;
     var items = DB.get('clothing') || [];
     DB.set('clothing', items.filter(function(i) { return i.id !== id; }));
-    
     renderAdminClothing();
-    if (typeof renderClothing === 'function') renderClothing();
-    toast('Položka smazána', 'info');
 }
 
 // ── FINANCE ADMIN ────────────────────────────
