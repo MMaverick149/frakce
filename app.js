@@ -9,7 +9,7 @@ var CAT={weapons:'ZBRANĚ',ammo:'MUNICE',drugs:'DROGY',equipment:'VYBAVENÍ',oth
 var PRIO={low:'LOW',normal:'NORMAL',high:'HIGH',urgent:'URGENT'};
 var CLOTH_CAT={masks:'Masky & Vousy',jackets:'Bundy & Trička',pants:'Kalhoty & Boty',acc:'Doplňky',sets:'Sety'};
 
-var currentMemberId=null; // only store ID, always re-read from DB
+var currentMemberId=null;
 var pendingLoginId=null;
 
 function getMember(id){var members=DB.get('members')||[];return members.find(function(m){return m.id===(id||currentMemberId);})||null;}
@@ -213,7 +213,7 @@ function openAdminModal(){
 function closeAdminModal(){document.getElementById('adminModal').classList.add('hidden');}
 function doAdminLogin(){
   var pass=document.getElementById('adminPassInput').value;
-  if(pass==='nexusadmin2025'){
+  if(pass==='frakceadmin2025'){
     closeAdminModal();currentMemberId=null;
     addLog('sys','Superadmin přihlášení.');
     showScreen('adminScreen');
@@ -271,7 +271,7 @@ function mTab(tab,btn){
   if(tab==='finance')   renderMyFinance();
   if(tab==='excuse')    renderMyExcuses();
   if(tab==='report')    renderSentReports();
-  if(tab==='radio')     renderRadio();
+  if(tab==='radio')     renderMyRadio();
   if(tab==='contacts')  renderContacts();
   updateBadges();
 }
@@ -409,6 +409,7 @@ function renderMemberWarehouse(){
       '</div></div></div>';
   }).join('');
 }
+
 function pickupItem(itemId){
   var m=getMember();
   var nameEl=document.getElementById('pn-'+itemId);var amtEl=document.getElementById('pa-'+itemId);
@@ -478,7 +479,7 @@ function renderClothing(){
     return;
   }
   var cols=sets.map(function(s){
-   var imgH = s.img 
+    var imgH=s.img
     ? '<div class="cs-img-wrap"><img src="images/' + esc(s.img) + '" class="cs-img" onerror="this.style.display=\'none\'"></div>' 
     : '<div class="cs-img-wrap cs-img-ph">👕</div>';
     var rows=CLOTH_CATS.map(function(c){
@@ -700,10 +701,8 @@ function renderMyFinance(){
   var wk=getWeekKey();
   var el=document.getElementById('myFinance');if(!el)return;
   var html='';
-
-  // Weekly mandatory fee
   if(fs.weeklyFee>0){
-    var weeklyPaid=fin.payments.some(function(p){return p.memberId===m.id&&p.weekKey===wk&&p.expenseId==='weekly';});
+    var weeklyPaid=fin.payments.some(function(p){return p.memberId===m.id&&p.weekKey===wk&&(p.expenseId==='weekly'||(!p.expenseId&&!p.note)||p.note==='Týdenní příspěvek');});
     html+='<div class="fa-expenses" style="margin-bottom:1rem;">'+
       '<div class="fa-exp-title">// TÝDENNÍ PŘÍSPĚVEK — '+wk+'</div>'+
       '<div class="fa-pay-row '+(weeklyPaid?'paid':'unpaid')+'" style="border-radius:4px;margin-top:.3rem;">'+
@@ -713,36 +712,33 @@ function renderMyFinance(){
           '<span class="fa-pay-status '+(weeklyPaid?'paid':'unpaid')+'">'+(weeklyPaid?'✓ ZAPLACENO':'✗ NEZAPLACENO')+'</span>'+
           (!weeklyPaid?'<button class="btn-record-pay" onclick="memberPayWeekly()">ZAPLATIL JSEM</button>':'')+
         '</div>'+
-      '</div>'+
-    '</div>';
+      '</div></div>';
   }
-
-  // Optional / onetime expenses
-  var optionals=fin.expenses.filter(function(e){return e.optional;});
+  var optionals=fin.expenses.filter(function(e){return e.optional===true||e.optional===1;});
   if(optionals.length){
     html+='<div class="fa-expenses"><div class="fa-exp-title">// NEPOVINNÉ PŘÍSPĚVKY</div>';
     optionals.forEach(function(e){
       var paid=fin.payments.some(function(p){return p.memberId===m.id&&p.expenseId===e.id;});
+      var safeName=String(e.name||'').replace(/"/g,'&quot;');
       html+='<div class="fa-pay-row '+(paid?'paid':'unpaid')+'" style="border-radius:4px;margin-top:.3rem;">'+
         '<div>'+
-          '<span class="fa-pay-name">'+escMF(e.name)+'</span>'+
-          (e.note?'<div style="font-size:.65rem;color:var(--muted);font-family:Share Tech Mono,monospace;margin-top:.15rem;">'+escMF(e.note)+'</div>':'')+
+          '<span class="fa-pay-name">'+esc(e.name)+'</span>'+
+          (e.note?'<div style="font-size:.65rem;color:var(--muted);font-family:Share Tech Mono,monospace;margin-top:.15rem;">'+esc(e.note)+'</div>':'')+
           '<div style="font-size:.65rem;color:var(--muted);font-family:Share Tech Mono,monospace;margin-top:.1rem;">$'+e.amount+' / '+(e.type==='weekly'?'týden':'jednorázově')+'</div>'+
         '</div>'+
         '<div style="display:flex;gap:.6rem;align-items:center;">'+
-          '<span class="fa-pay-status '+(paid?'paid':'unpaid')+'">'+(paid?'✓ ZAPLATENO':'✗ NEZAPLACENO')+'</span>'+
-          (!paid?'<button class="btn-record-pay" onclick="memberPayOptional(\''+e.id+'\',\''+escMF(e.name)+'\',\''+e.amount+'\')">ZAPLATIL JSEM</button>':'')+
+          '<span class="fa-pay-status '+(paid?'paid':'unpaid')+'">'+(paid?'✓ ZAPLACENO':'✗ NEZAPLACENO')+'</span>'+
+          (!paid?'<button class="btn-record-pay" onclick="memberPayOptional(\"'+e.id+'\",\"'+safeName+'\",'+e.amount+')">ZAPLATIL JSEM</button>':'')+
         '</div>'+
       '</div>';
     });
     html+='</div>';
   }
-
   if(!html)html='<div class="empty-s">// Žádné aktivní příspěvky</div>';
   el.innerHTML=html;
 }
 
-function escMF(s){if(!s)return'';return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'');}
+
 
 function memberPayWeekly(){
   var m=getMember();if(!m)return;
@@ -825,10 +821,10 @@ function saveRadios(){
 
 // ── SETTINGS ─────────────────────────────────
 function renderSettings(){
-  var s=DB.get('settings')||{webhook:'',webhookName:'NEXUS LOG'};
+  var s=DB.get('settings')||{webhook:'',webhookName:'Frakce LOG'};
   var fs=DB.get('finsettings')||{weeklyFee:5000,feeDay:0};
   document.getElementById('discordWebhook').value=s.webhook||'';
-  document.getElementById('discordName').value=s.webhookName||'NEXUS LOG';
+  document.getElementById('discordName').value=s.webhookName||'Frakce LOG';
   document.getElementById('weeklyFee').value=fs.weeklyFee||5000;
   document.getElementById('feeDay').value=fs.feeDay||0;
   renderPanicList();
@@ -842,7 +838,7 @@ function saveWebhook(){
 function testWebhook(){
   var s=DB.get('settings')||{};
   if(!s.webhook){toast('Zadejte webhook URL','error');return;}
-  fetch(s.webhook,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({username:s.webhookName||'Frakce LOG',content:'✅ Test z NEXUS portálu — '+nowStr()})})
+  fetch(s.webhook,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({username:s.webhookName||'Frakce LOG',content:'✅ Test z Frakce LOG portálu — '+nowStr()})})
     .then(function(){toast('Test odeslán','success');}).catch(function(){toast('Chyba odesílání','error');});
 }
 function saveFinanceSettings(){
@@ -1113,6 +1109,98 @@ function renderLog(){
   }).join('');
 }
 function clearLog(){if(!confirm('Vymazat celý log?'))return;DB.set('syslog',[]);renderLog();toast('Log vymazán','info');}
+
+
+// ── OMLUVENKY (MEMBER) ───────────────────────
+function submitExcuse(){
+  var m=getMember();if(!m)return;
+  var date=document.getElementById('excDate').value;
+  var event=document.getElementById('excEvent').value.trim();
+  var reason=document.getElementById('excReason').value.trim();
+  var note=document.getElementById('excNote').value.trim();
+  var st=document.getElementById('excStatus');
+  if(!date||!event||!reason){st.textContent='// VYPLŇTE POVINNÁ POLE';return;}
+  var excuses=DB.get('excuses')||[];
+  excuses.push({id:uid(),memberId:m.id,memberName:m.displayName,date:date,event:event,reason:reason,note:note,status:'pending',submitted:nowStr()});
+  DB.set('excuses',excuses);
+  addLog('sys','Člen "'+m.displayName+'" odeslal omluvenku na "'+event+'".');
+  ['excDate','excEvent','excReason','excNote'].forEach(function(i){document.getElementById(i).value='';});
+  st.textContent='// ODESLÁNO';setTimeout(function(){st.textContent='';},2500);
+  toast('Omluvenka odeslána','success');renderMyExcuses();renderAdminExcuses();
+}
+function renderMyExcuses(){
+  var m=getMember();if(!m)return;
+  var excuses=(DB.get('excuses')||[]).filter(function(e){return e.memberId===m.id;});
+  var el=document.getElementById('myExcuses');if(!el)return;
+  if(!excuses.length){el.innerHTML='<div class="empty-s">// Žádné omluvenky</div>';return;}
+  el.innerHTML=excuses.slice().reverse().map(function(e){
+    return '<div class="excuse-card excuse-'+e.status+'">'+
+      '<div class="excuse-head"><span class="excuse-member">'+esc(e.event)+' — '+esc(e.date)+'</span>'+
+      '<span class="excuse-chip '+e.status+'">'+(e.status==='pending'?'ČEKÁ':e.status==='accepted'?'PŘIJATO':'ZAMÍTNUTO')+'</span></div>'+
+      '<div class="excuse-detail">'+esc(e.reason)+'</div>'+
+      (e.note?'<div class="excuse-detail" style="color:var(--muted)">'+esc(e.note)+'</div>':'')+
+      '<div class="excuse-date-info">Odesláno: '+e.submitted+'</div>'+
+    '</div>';
+  }).join('');
+}
+
+// ── HLÁŠENÍ (MEMBER) ─────────────────────────
+function submitReport(){
+  var m=getMember();if(!m)return;
+  var body=document.getElementById('reportText').value.trim();
+  var st=document.getElementById('reportStatus');
+  if(!body){st.textContent='// ZADEJTE ZPRÁVU';return;}
+  var reports=DB.get('reports')||[];
+  reports.push({id:uid(),memberId:m.id,memberName:m.displayName,body:body,date:nowStr()});
+  DB.set('reports',reports);
+  addLog('sys','Člen "'+m.displayName+'" odeslal hlášení.');
+  document.getElementById('reportText').value='';
+  st.textContent='// ODESLÁNO';setTimeout(function(){st.textContent='';},2500);
+  toast('Hlášení odesláno','success');renderSentReports();renderAdminReports();
+}
+function renderSentReports(){
+  var m=getMember();if(!m)return;
+  var reports=(DB.get('reports')||[]).filter(function(r){return r.memberId===m.id;});
+  var el=document.getElementById('mSentReports');if(!el)return;
+  if(!reports.length){el.innerHTML='<div class="empty-s">// Žádná odeslána hlášení</div>';return;}
+  el.innerHTML=reports.slice().reverse().map(function(r){
+    return '<div class="rep-card"><div class="rep-from">// '+r.date+'</div><div class="rep-body">'+esc(r.body)+'</div></div>';
+  }).join('');
+}
+
+// ── RÁDIO (MEMBER) ───────────────────────────
+function renderMyRadio(){
+  var radios=DB.get('radios')||{primary:'',secondary:'',action:'',vedeni:''};
+  var m=getMember();
+  var vedeni=m&&isVedeni(m.position);
+  var el=document.getElementById('mRadioPanel');if(!el)return;
+  var rows=[
+    {label:'PRIMÁRNÍ',val:radios.primary},
+    {label:'SEKUNDÁRNÍ',val:radios.secondary},
+    {label:'AKCE',val:radios.action}
+  ];
+  if(vedeni)rows.push({label:'VEDENÍ',val:radios.vedeni});
+  el.innerHTML=rows.map(function(r){
+    return '<div class="radio-row"><span class="radio-label">'+r.label+'</span><span class="radio-freq">'+(r.val||'—')+'</span></div>';
+  }).join('');
+}
+
+// ── KONTAKTY (MEMBER) ────────────────────────
+function renderContacts(){
+  var members=DB.get('members')||[];
+  var el=document.getElementById('mContacts');if(!el)return;
+  if(!members.length){el.innerHTML='<div class="empty-s">// Žádní členové</div>';return;}
+  el.innerHTML=members.map(function(m){
+    var vedeni=isVedeni(m.position);
+    return '<div class="contact-card">'+
+      '<div class="cc-hex">'+esc(m.displayName.charAt(0).toUpperCase())+'</div>'+
+      '<div class="cc-info">'+
+        '<div class="cc-name">'+esc(m.displayName)+'</div>'+
+        '<div class="cc-pos '+(vedeni?'vedeni':'other')+'">'+esc(m.position)+'</div>'+
+      '</div>'+
+    '</div>';
+  }).join('');
+}
 
 // ── START ────────────────────────────────────
 document.addEventListener('DOMContentLoaded',function(){
