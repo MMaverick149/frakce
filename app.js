@@ -714,7 +714,7 @@ function renderMyFinance(){
         '</div>'+
       '</div></div>';
   }
-  var optionals=fin.expenses.filter(function(e){return e.optional===true||e.optional===1;});
+  var optionals=fin.expenses.filter(function(e){return !!e.optional;});
   if(optionals.length){
     html+='<div class="fa-expenses"><div class="fa-exp-title">// NEPOVINNÉ PŘÍSPĚVKY</div>';
     optionals.forEach(function(e){
@@ -768,7 +768,7 @@ function memberPayOptional(expenseId,name,amount){
 // ── EXCUSES ADMIN ────────────────────────────
 function renderAdminExcuses(){
   var excuses=DB.get('excuses')||[];
-  var el=document.getElementById('allExcuses');
+  var el=document.getElementById('allExcuses');if(!el)return;
   if(!excuses.length){el.innerHTML='<div class="empty-s">// Žádné omluvenky</div>';return;}
   el.innerHTML=excuses.slice().reverse().map(function(e){
     return '<div class="excuse-card excuse-'+e.status+'">'+
@@ -791,7 +791,7 @@ function resolveExcuse(id,decision){
 // ── REPORTS ADMIN ────────────────────────────
 function renderAdminReports(){
   var reports=DB.get('reports')||[];
-  var el=document.getElementById('aReports');
+  var el=document.getElementById('aReports');if(!el)return;
   if(!reports.length){el.innerHTML='<div class="empty-s">// Žádná hlášení</div>';return;}
   el.innerHTML=reports.slice().reverse().map(function(r){
     return '<div class="rep-card"><div class="rep-from">// OD: '+esc(r.memberName)+' — '+r.date+'</div><div class="rep-body">'+esc(r.body)+'</div></div>';
@@ -1173,7 +1173,7 @@ function renderMyRadio(){
   var radios=DB.get('radios')||{primary:'',secondary:'',action:'',vedeni:''};
   var m=getMember();
   var vedeni=m&&isVedeni(m.position);
-  var el=document.getElementById('mRadioPanel');if(!el)return;
+  var el=document.getElementById('radioDisplay');if(!el)return;
   var rows=[
     {label:'PRIMÁRNÍ',val:radios.primary},
     {label:'SEKUNDÁRNÍ',val:radios.secondary},
@@ -1187,19 +1187,45 @@ function renderMyRadio(){
 
 // ── KONTAKTY (MEMBER) ────────────────────────
 function renderContacts(){
-  var members=DB.get('members')||[];
-  var el=document.getElementById('mContacts');if(!el)return;
-  if(!members.length){el.innerHTML='<div class="empty-s">// Žádní členové</div>';return;}
-  el.innerHTML=members.map(function(m){
-    var vedeni=isVedeni(m.position);
+  var m=getMember();if(!m)return;
+  var contacts=(DB.get('contacts')||{})[m.id]||[];
+  var el=document.getElementById('contactsList');if(!el)return;
+  if(!contacts.length){el.innerHTML='<div class="empty-s">// Žádné kontakty</div>';return;}
+  el.innerHTML=contacts.map(function(c,i){
     return '<div class="contact-card">'+
-      '<div class="cc-hex">'+esc(m.displayName.charAt(0).toUpperCase())+'</div>'+
+      '<div class="cc-hex">'+esc((c.nick||c.first||'?').charAt(0).toUpperCase())+'</div>'+
       '<div class="cc-info">'+
-        '<div class="cc-name">'+esc(m.displayName)+'</div>'+
-        '<div class="cc-pos '+(vedeni?'vedeni':'other')+'">'+esc(m.position)+'</div>'+
+        '<div class="cc-name">'+esc(c.nick)+'</div>'+
+        '<div class="cc-pos other">'+esc(c.phone)+'</div>'+
+        (c.first||c.last?'<div style="font-size:.65rem;color:var(--muted);font-family:Share Tech Mono,monospace;">'+esc((c.first||'')+' '+(c.last||''))+'</div>':'')+
       '</div>'+
+      '<button class="btn-micro del" onclick="deleteContact('+i+')" style="margin-left:auto">✕</button>'+
     '</div>';
   }).join('');
+}
+function addContact(){
+  var m=getMember();if(!m)return;
+  var nick=document.getElementById('cNick').value.trim();
+  var phone=document.getElementById('cPhone').value.trim();
+  var first=document.getElementById('cFirst').value.trim();
+  var last=document.getElementById('cLast').value.trim();
+  var st=document.getElementById('contactStatus');
+  if(!nick||!phone){st.textContent='// VYPLŇTE POVINNÁ POLE';return;}
+  var contacts=DB.get('contacts')||{};
+  if(!contacts[m.id])contacts[m.id]=[];
+  contacts[m.id].push({nick:nick,phone:phone,first:first,last:last});
+  DB.set('contacts',contacts);
+  ['cNick','cPhone','cFirst','cLast'].forEach(function(i){document.getElementById(i).value='';});
+  st.textContent='// PŘIDÁNO';setTimeout(function(){st.textContent='';},2000);
+  toast(nick+' přidán','success');renderContacts();
+}
+function deleteContact(idx){
+  var m=getMember();if(!m)return;
+  var contacts=DB.get('contacts')||{};
+  if(!contacts[m.id])return;
+  contacts[m.id].splice(idx,1);
+  DB.set('contacts',contacts);
+  toast('Kontakt smazán','info');renderContacts();
 }
 
 // ── START ────────────────────────────────────
