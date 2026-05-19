@@ -402,3 +402,12 @@ input,select,textarea,button{font-family:'Rajdhani',sans-serif;}
   .cloth-sets-grid{flex-direction:column;}
   .cloth-set-col{min-width:unset;}
 }
+
+/* ── PASSWORD CHANGE PANEL ───────────────── */
+.pw-change-panel{background:rgba(192,57,43,.06);border:1px solid var(--red-dim);border-top:2px solid var(--red);}
+.pw-change-panel .fp-title{color:var(--red);}
+
+/* ── BADGE LABELS ────────────────────────── */
+.badge-admin{font-family:'Share Tech Mono',monospace;font-size:.5rem;background:rgba(196,154,20,.15);border:1px solid var(--acc-dim);color:var(--acc);padding:.1rem .35rem;letter-spacing:.08em;}
+.badge-panic{font-family:'Share Tech Mono',monospace;font-size:.5rem;background:rgba(192,57,43,.15);border:1px solid var(--red-dim);color:var(--red);padding:.1rem .35rem;letter-spacing:.08em;animation:blink 1s step-end infinite;}
+.mc-badges{display:flex;flex-direction:column;gap:.3rem;align-items:flex-end;}

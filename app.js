@@ -714,7 +714,7 @@ function renderMyFinance(){
         '</div>'+
       '</div></div>';
   }
-  var optionals=fin.expenses.filter(function(e){return !!e.optional;});
+  var optionals=fin.expenses.filter(function(e){return e.optional===true||e.optional===1;});
   if(optionals.length){
     html+='<div class="fa-expenses"><div class="fa-exp-title">// NEPOVINNÉ PŘÍSPĚVKY</div>';
     optionals.forEach(function(e){
@@ -768,7 +768,7 @@ function memberPayOptional(expenseId,name,amount){
 // ── EXCUSES ADMIN ────────────────────────────
 function renderAdminExcuses(){
   var excuses=DB.get('excuses')||[];
-  var el=document.getElementById('allExcuses');if(!el)return;
+  var el=document.getElementById('allExcuses');
   if(!excuses.length){el.innerHTML='<div class="empty-s">// Žádné omluvenky</div>';return;}
   el.innerHTML=excuses.slice().reverse().map(function(e){
     return '<div class="excuse-card excuse-'+e.status+'">'+
@@ -791,7 +791,7 @@ function resolveExcuse(id,decision){
 // ── REPORTS ADMIN ────────────────────────────
 function renderAdminReports(){
   var reports=DB.get('reports')||[];
-  var el=document.getElementById('aReports');if(!el)return;
+  var el=document.getElementById('aReports');
   if(!reports.length){el.innerHTML='<div class="empty-s">// Žádná hlášení</div>';return;}
   el.innerHTML=reports.slice().reverse().map(function(r){
     return '<div class="rep-card"><div class="rep-from">// OD: '+esc(r.memberName)+' — '+r.date+'</div><div class="rep-body">'+esc(r.body)+'</div></div>';
@@ -890,7 +890,43 @@ function renderMemberGrid(){
     '</div>';
   }).join('');
 }
-function toggleNewMember(){document.getElementById('newMemberPanel').classList.toggle('hidden');}
+function toggleNewMember(){
+  document.getElementById('newMemberPanel').classList.toggle('hidden');
+  document.getElementById('pwChangePanel').classList.add('hidden');
+}
+function togglePwPanel(){
+  var panel=document.getElementById('pwChangePanel');
+  panel.classList.toggle('hidden');
+  document.getElementById('newMemberPanel').classList.add('hidden');
+  if(!panel.classList.contains('hidden')) populatePwMember();
+}
+function populatePwMember(){
+  var members=DB.get('members')||[];
+  var sel=document.getElementById('pw-member');if(!sel)return;
+  sel.innerHTML=members.map(function(m){
+    return '<option value="'+m.id+'">'+esc(m.displayName)+' ('+esc(m.id)+')</option>';
+  }).join('');
+}
+function changePassword(){
+  var memberId=document.getElementById('pw-member').value;
+  var newPass=document.getElementById('pw-new').value;
+  var confirm=document.getElementById('pw-confirm').value;
+  var st=document.getElementById('pwStatus');
+  if(!newPass||newPass.length<4){st.textContent='// HESLO MUSÍ MÍT ALESPOŇ 4 ZNAKY';st.style.color='#e05555';return;}
+  if(newPass!==confirm){st.textContent='// HESLA SE NESHODUJÍ';st.style.color='#e05555';return;}
+  var members=DB.get('members')||[];
+  var m=members.find(function(x){return x.id===memberId;});
+  if(!m){st.textContent='// ČLEN NENALEZEN';st.style.color='#e05555';return;}
+  m.password=newPass;
+  DB.set('members',members);
+  addLog('member','Admin změnil heslo člena "'+m.displayName+'".');
+  document.getElementById('pw-new').value='';
+  document.getElementById('pw-confirm').value='';
+  st.style.color='var(--acc)';
+  st.textContent='// HESLO ZMĚNĚNO PRO: '+m.displayName;
+  setTimeout(function(){st.textContent='';},3000);
+  toast('Heslo změněno ✓','success');
+}
 function createMember(){
   var id=document.getElementById('nm-id').value.trim();
   var name=document.getElementById('nm-name').value.trim();
@@ -909,7 +945,7 @@ function createMember(){
   setTimeout(function(){st.textContent='';},3000);
   ['nm-id','nm-name','nm-pass','nm-note'].forEach(function(i){document.getElementById(i).value='';});
   document.getElementById('nm-admin').checked=false;
-  toast(name+' registrován','success');renderMemberGrid();renderMemberSelect();
+  toast(name+' registrován','success');renderMemberGrid();renderMemberSelect();populatePwMember();
 }
 function changePosition(id){
   var members=DB.get('members')||[];var m=members.find(function(x){return x.id===id;});if(!m)return;
@@ -1175,60 +1211,33 @@ function renderMyRadio(){
   var vedeni=m&&isVedeni(m.position);
   var el=document.getElementById('radioDisplay');if(!el)return;
   var rows=[
-    {label:'PRIMÁRNÍ',val:radios.primary},
-    {label:'SEKUNDÁRNÍ',val:radios.secondary},
-    {label:'AKCE',val:radios.action}
+    {label:'PRIMÁRNÍ',val:radios.primary,color:'var(--acc)'},
+    {label:'SEKUNDÁRNÍ',val:radios.secondary,color:'var(--acc)'},
+    {label:'AKCE',val:radios.action,color:'var(--green)'}
   ];
-  if(vedeni)rows.push({label:'VEDENÍ',val:radios.vedeni});
-  el.innerHTML=rows.map(function(r){
-    return '<div class="radio-row"><span class="radio-label">'+r.label+'</span><span class="radio-freq">'+(r.val||'—')+'</span></div>';
-  }).join('');
+  if(vedeni)rows.push({label:'VEDENÍ',val:radios.vedeni,color:'var(--red)'});
+  el.innerHTML='<div class="radio-grid">'+rows.map(function(r){
+    return '<div class="radio-card">'+
+      '<div class="radio-label">'+r.label+'</div>'+
+      '<div class="radio-freq" style="color:'+r.color+';">'+(r.val||'—')+'</div>'+
+      (r.desc?'<div class="radio-desc">'+r.desc+'</div>':'')+
+    '</div>';
+  }).join('')+'</div>';
 }
-
-// ── KONTAKTY (MEMBER) ────────────────────────
 function renderContacts(){
   var m=getMember();if(!m)return;
   var contacts=(DB.get('contacts')||{})[m.id]||[];
   var el=document.getElementById('contactsList');if(!el)return;
   if(!contacts.length){el.innerHTML='<div class="empty-s">// Žádné kontakty</div>';return;}
   el.innerHTML=contacts.map(function(c,i){
+    var fullName=((c.first||'')+' '+(c.last||'')).trim();
     return '<div class="contact-card">'+
-      '<div class="cc-hex">'+esc((c.nick||c.first||'?').charAt(0).toUpperCase())+'</div>'+
-      '<div class="cc-info">'+
-        '<div class="cc-name">'+esc(c.nick)+'</div>'+
-        '<div class="cc-pos other">'+esc(c.phone)+'</div>'+
-        (c.first||c.last?'<div style="font-size:.65rem;color:var(--muted);font-family:Share Tech Mono,monospace;">'+esc((c.first||'')+' '+(c.last||''))+'</div>':'')+
+      '<div class="contact-info">'+
+        '<div class="contact-nick">'+esc(c.nick)+'</div>'+
+        (fullName?'<div class="contact-name">'+esc(fullName)+'</div>':'')+
+        '<div class="contact-phone">'+esc(c.phone)+'</div>'+
       '</div>'+
-      '<button class="btn-micro del" onclick="deleteContact('+i+')" style="margin-left:auto">✕</button>'+
+      '<button class="btn-micro del" onclick="deleteContact('+i+')">✕</button>'+
     '</div>';
   }).join('');
 }
-function addContact(){
-  var m=getMember();if(!m)return;
-  var nick=document.getElementById('cNick').value.trim();
-  var phone=document.getElementById('cPhone').value.trim();
-  var first=document.getElementById('cFirst').value.trim();
-  var last=document.getElementById('cLast').value.trim();
-  var st=document.getElementById('contactStatus');
-  if(!nick||!phone){st.textContent='// VYPLŇTE POVINNÁ POLE';return;}
-  var contacts=DB.get('contacts')||{};
-  if(!contacts[m.id])contacts[m.id]=[];
-  contacts[m.id].push({nick:nick,phone:phone,first:first,last:last});
-  DB.set('contacts',contacts);
-  ['cNick','cPhone','cFirst','cLast'].forEach(function(i){document.getElementById(i).value='';});
-  st.textContent='// PŘIDÁNO';setTimeout(function(){st.textContent='';},2000);
-  toast(nick+' přidán','success');renderContacts();
-}
-function deleteContact(idx){
-  var m=getMember();if(!m)return;
-  var contacts=DB.get('contacts')||{};
-  if(!contacts[m.id])return;
-  contacts[m.id].splice(idx,1);
-  DB.set('contacts',contacts);
-  toast('Kontakt smazán','info');renderContacts();
-}
-
-// ── START ────────────────────────────────────
-document.addEventListener('DOMContentLoaded',function(){
-  initData();startClock();renderMemberSelect();
-});
