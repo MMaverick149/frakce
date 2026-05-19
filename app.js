@@ -479,8 +479,9 @@ function renderClothing(){
     return;
   }
   var cols=sets.map(function(s){
+    var imgSrc=s.imgIsUrl?esc(s.img):'images/'+esc(s.img);
     var imgH=s.img
-    ? '<div class="cs-img-wrap"><img src="images/' + esc(s.img) + '" class="cs-img" onerror="this.style.display=\'none\'"></div>' 
+    ? '<div class="cs-img-wrap"><img src="'+imgSrc+'" class="cs-img" onerror="this.style.display=\'none\'"></div>'
     : '<div class="cs-img-wrap cs-img-ph">👕</div>';
     var rows=CLOTH_CATS.map(function(c){
       var m=s[c.key+'_m']!==undefined?s[c.key+'_m']:0;
@@ -509,7 +510,8 @@ function filterCloth(cat,btn){
 function previewClothImg(val){
   var el=document.getElementById('cl-img-preview');if(!el)return;
   if(!val||!val.trim()){el.innerHTML='—';return;}
-el.innerHTML = '<img src="images/' + esc(val) + '" style="max-width:100%;max-height:110px;object-fit:contain;filter:drop-shadow(0 0 6px rgba(196,154,20,.3));" onerror="this.parentElement.innerHTML=\'<span style=\\\'color:var(--red);font-family:Share Tech Mono,monospace;font-size:.65rem\\\'>nenalezeno</span>\'"/>';
+var src3=(val.startsWith('http')||val.startsWith('//'))?esc(val):'images/'+esc(val);
+  el.innerHTML='<img src="'+src3+'";max-height:110px;object-fit:contain;filter:drop-shadow(0 0 6px rgba(196,154,20,.3));" onerror="this.parentElement.innerHTML=\'<span style=\\\'color:var(--red);font-family:Share Tech Mono,monospace;font-size:.65rem\\\'>nenalezeno</span>\'"/>';
 }
 
 function toggleAddCloth(){
@@ -568,8 +570,9 @@ function renderAdminClothing(){
     return;
   }
   var cols=sets.map(function(s){
+    var imgSrc=s.imgIsUrl?esc(s.img):'images/'+esc(s.img);
     var imgH=s.img
-      ? '<div class="cs-img-wrap"><img src="images/'+esc(s.img)+'" class="cs-img" onerror="this.style.display=\'none\'"/></div>'
+      ? '<div class="cs-img-wrap"><img src="'+imgSrc+'" class="cs-img" onerror="this.style.display=\'none\'"/></div>'
       : '<div class="cs-img-wrap cs-img-ph">👕</div>';
     var rows=CLOTH_CATS.map(function(c){
       var m=s[c.key+'_m']!==undefined?s[c.key+'_m']:0;
