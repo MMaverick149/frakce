@@ -197,7 +197,7 @@
           <div class="fp-title">// PŘIDAT KONTAKT</div>
           <div class="form-grid">
             <div class="field-group"><label class="fl">PŘEZDÍVKA *</label><div class="iw"><span class="ip">&gt;_</span><input type="text" id="cNick" placeholder="Přezdívka..."/></div></div>
-            <div class="field-group"><label class="fl">TELEFON *</label><div class="iw"><span class="ip">&gt;_</span><input type="text" id="cPhone" placeholder="+420..."/></div></div>
+            <div class="field-group"><label class="fl">TELEFON *</label><div class="iw"><span class="ip">&gt;_</span><input type="text" id="cPhone" placeholder="(685)845 ..."/></div></div>
             <div class="field-group"><label class="fl">JMÉNO</label><div class="iw"><span class="ip">&gt;_</span><input type="text" id="cFirst" placeholder="Jméno"/></div></div>
             <div class="field-group"><label class="fl">PŘÍJMENÍ</label><div class="iw"><span class="ip">&gt;_</span><input type="text" id="cLast" placeholder="Příjmení"/></div></div>
           </div>
@@ -239,7 +239,7 @@
 
       <!-- MEMBERS -->
       <div id="at-members" class="at active">
-        <div class="ph"><div class="pt">◈ // SPRÁVA ČLENŮ</div><button class="btn-acc small" onclick="toggleNewMember()">+ NOVÝ ČLEN</button></div>
+        <div class="ph"><div class="pt">◈ // SPRÁVA ČLENŮ</div><div style="display:flex;gap:.5rem;"><button class="btn-acc small" onclick="toggleNewMember()">+ NOVÝ ČLEN</button><button class="btn-acc small" onclick="togglePwPanel()" style="background:rgba(192,57,43,.15);border-color:var(--red);color:var(--red);">🔑 HESLO</button></div></div>
         <div id="newMemberPanel" class="form-panel hidden" style="margin:0 1.2rem 1rem;">
           <div class="fp-title">// REGISTRACE ČLENA</div>
           <div class="form-grid">
@@ -251,6 +251,16 @@
             <div class="field-group fg-full"><label class="fl">POZNÁMKA</label><div class="iw"><span class="ip">&gt;_</span><input type="text" id="nm-note"/></div></div>
           </div>
           <div class="fp-ftr"><button class="btn-acc small" onclick="createMember()">REGISTROVAT</button><span id="createStatus" class="smsg"></span></div>
+        </div>
+        <!-- PASSWORD CHANGE PANEL -->
+        <div id="pwChangePanel" class="form-panel hidden" style="margin:0 1.2rem 1rem;background:rgba(192,57,43,.06);border-top:2px solid var(--red);">
+          <div class="fp-title" style="color:var(--red);">// ZMĚNA HESLA ČLENA</div>
+          <div class="form-grid">
+            <div class="field-group"><label class="fl">ČLEN</label><div class="iw"><span class="ip">&gt;_</span><select id="pw-member" class="fw"></select></div></div>
+            <div class="field-group"><label class="fl">NOVÉ HESLO</label><div class="iw"><span class="ip">&gt;_</span><input type="password" id="pw-new" placeholder="min. 4 znaky"/></div></div>
+            <div class="field-group"><label class="fl">POTVRDIT HESLO</label><div class="iw"><span class="ip">&gt;_</span><input type="password" id="pw-confirm" placeholder="Zopakuj heslo..."/></div></div>
+          </div>
+          <div class="fp-ftr"><button class="btn-acc small" onclick="changePassword()" style="background:rgba(192,57,43,.2);border-color:var(--red);color:var(--red);">ZMĚNIT HESLO</button><span id="pwStatus" class="smsg"></span></div>
         </div>
         <div id="memberGrid" class="member-grid"></div>
       </div>

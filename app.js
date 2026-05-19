@@ -1241,3 +1241,35 @@ function renderContacts(){
     '</div>';
   }).join('');
 }
+
+function addContact(){
+  var m=getMember();if(!m)return;
+  var nick=document.getElementById('cNick').value.trim();
+  var phone=document.getElementById('cPhone').value.trim();
+  var first=document.getElementById('cFirst').value.trim();
+  var last=document.getElementById('cLast').value.trim();
+  var st=document.getElementById('contactStatus');
+  if(!nick||!phone){st.textContent='// VYPLŇTE POVINNÁ POLE';return;}
+  var contacts=DB.get('contacts')||{};
+  if(!contacts[m.id])contacts[m.id]=[];
+  contacts[m.id].push({nick:nick,phone:phone,first:first,last:last});
+  DB.set('contacts',contacts);
+  ['cNick','cPhone','cFirst','cLast'].forEach(function(i){document.getElementById(i).value='';});
+  st.textContent='// PŘIDÁNO';setTimeout(function(){st.textContent='';},2000);
+  toast(nick+' přidán','success');renderContacts();
+}
+function deleteContact(idx){
+  var m=getMember();if(!m)return;
+  var contacts=DB.get('contacts')||{};
+  if(!contacts[m.id])return;
+  contacts[m.id].splice(idx,1);
+  DB.set('contacts',contacts);
+  toast('Kontakt smazán','info');renderContacts();
+}
+
+// ── START ──────────────────────────────────────
+window.addEventListener('DOMContentLoaded',function(){
+  initData();
+  startClock();
+  renderMemberSelect();
+});
