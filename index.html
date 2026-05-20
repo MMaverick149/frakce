@@ -147,6 +147,33 @@
       <div id="mt-finance" class="mt">
         <div class="ph"><div class="pt">$ // FINANCE</div></div>
         <div id="myFinance" class="finance-wrap"></div>
+        <!-- VLOŽIT DO KASY -->
+        <div class="ph" style="margin-top:.5rem;"><div class="pt">💰 // VLOŽIT DO KASY</div></div>
+        <div class="form-panel" style="margin:0 1.2rem .5rem;">
+          <div class="form-grid">
+            <div class="field-group">
+              <label class="fl">ČÁSTKA ($) *</label>
+              <div class="iw"><span class="ip">&gt;_</span><input type="number" id="incAmount" placeholder="0" min="1"/></div>
+            </div>
+            <div class="field-group">
+              <label class="fl">ZDROJ *</label>
+              <div class="iw"><span class="ip">&gt;_</span>
+                <select id="incSource"><option value="">Načítání...</option></select>
+              </div>
+            </div>
+            <div class="field-group fg-full">
+              <label class="fl">POZNÁMKA</label>
+              <div class="iw"><span class="ip">&gt;_</span><input type="text" id="incNote" placeholder="Volitelný popis..."/></div>
+            </div>
+          </div>
+          <div class="fp-ftr">
+            <button class="btn-acc small" onclick="submitIncome()">💰 NAHLÁSIT PŘÍJEM</button>
+            <span id="incStatus" class="smsg"></span>
+          </div>
+        </div>
+        <!-- MÉ PŘÍJMY -->
+        <div class="ph" style="margin-top:.5rem;"><div class="pt">📊 // MÉ PŘÍJMY</div></div>
+        <div id="myIncomeList" style="padding:.5rem 1.2rem 1rem;"></div>
       </div>
 
       <!-- OMLUVENKY -->
@@ -229,6 +256,7 @@
         <button class="nb" onclick="aTab('reports',this)"><span class="ni">▲</span><span class="nl">HLÁŠENÍ</span></button>
         <button class="nb" onclick="aTab('radio',this)"><span class="ni">📻</span><span class="nl">VYSÍLAČKA</span></button>
         <button class="nb" onclick="aTab('settings',this)"><span class="ni">⚙</span><span class="nl">NASTAVENÍ</span></button>
+        <button class="nb" onclick="aTab('incomes',this)"><span class="ni">💰</span><span class="nl">PŘÍJMY</span></button>
         <button class="nb" onclick="aTab('log',this)"><span class="ni">▪</span><span class="nl">LOG</span></button>
       </nav>
       <div class="sb-foot">
@@ -435,6 +463,12 @@
           <div class="fp-title">// PANIC MANAGEMENT</div>
           <div id="panicList"></div>
         </div>
+      </div>
+
+      <!-- PŘÍJMY ADMIN -->
+      <div id="at-incomes" class="at">
+        <div class="ph"><div class="pt">💰 // PŘÍJMY DO KASY</div></div>
+        <div id="adminIncomePanel" style="padding:.5rem 1.2rem 1rem;"></div>
       </div>
 
       <!-- LOG -->

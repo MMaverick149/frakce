@@ -411,3 +411,39 @@ input,select,textarea,button{font-family:'Rajdhani',sans-serif;}
 .badge-admin{font-family:'Share Tech Mono',monospace;font-size:.5rem;background:rgba(196,154,20,.15);border:1px solid var(--acc-dim);color:var(--acc);padding:.1rem .35rem;letter-spacing:.08em;}
 .badge-panic{font-family:'Share Tech Mono',monospace;font-size:.5rem;background:rgba(192,57,43,.15);border:1px solid var(--red-dim);color:var(--red);padding:.1rem .35rem;letter-spacing:.08em;animation:blink 1s step-end infinite;}
 .mc-badges{display:flex;flex-direction:column;gap:.3rem;align-items:flex-end;}
+
+/* ── PŘÍJMY DO KASY ─────────────────────────── */
+.inc-my-stat{background:linear-gradient(135deg,rgba(180,140,60,.12),rgba(180,140,60,.04));border:1px solid var(--acc-dim);border-left:3px solid var(--acc);padding:.9rem 1.2rem;margin-bottom:.8rem;border-radius:2px;}
+.inc-stat-label{font-family:'Share Tech Mono',monospace;font-size:.6rem;color:var(--muted);letter-spacing:.1em;margin-bottom:.3rem;}
+.inc-stat-val{font-family:'Orbitron',sans-serif;font-size:1.6rem;font-weight:700;color:var(--acc);}
+
+.inc-card{background:var(--card);border:1px solid var(--border);border-left:3px solid var(--border);padding:.65rem .9rem;margin-bottom:.4rem;border-radius:2px;transition:border-color .2s;}
+.inc-card.confirmed{border-left-color:var(--green);}
+.inc-card.rejected{border-left-color:var(--red);opacity:.6;}
+.inc-card.pending{border-left-color:var(--acc);}
+.inc-card-top{display:flex;align-items:center;justify-content:space-between;gap:.5rem;flex-wrap:wrap;}
+.inc-card-bot{display:flex;align-items:center;justify-content:space-between;margin-top:.35rem;flex-wrap:wrap;gap:.4rem;}
+.inc-source{font-family:'Share Tech Mono',monospace;font-size:.65rem;background:rgba(180,140,60,.12);border:1px solid var(--acc-dim);color:var(--acc);padding:.1rem .4rem;letter-spacing:.06em;}
+.inc-note{font-family:'Share Tech Mono',monospace;font-size:.62rem;color:var(--muted);}
+.inc-amount{font-family:'Orbitron',sans-serif;font-size:1rem;font-weight:700;color:var(--textb);}
+.inc-date{font-family:'Share Tech Mono',monospace;font-size:.58rem;color:var(--muted);}
+.inc-status{font-family:'Share Tech Mono',monospace;font-size:.58rem;letter-spacing:.06em;}
+.inc-status.confirmed{color:var(--green);}
+.inc-status.rejected{color:var(--red);}
+.inc-status.pending{color:var(--acc);}
+
+.inc-summary{display:grid;grid-template-columns:repeat(2,1fr);gap:.5rem;margin-bottom:1rem;}
+.inc-sum-card{background:var(--card);border:1px solid var(--border);padding:.7rem 1rem;border-radius:2px;}
+.inc-sum-title{font-family:'Share Tech Mono',monospace;font-size:.55rem;color:var(--muted);letter-spacing:.08em;margin-bottom:.3rem;}
+.inc-sum-val{font-family:'Orbitron',sans-serif;font-size:1.1rem;font-weight:700;}
+.inc-sum-val.green{color:var(--green);}
+.inc-sum-val.acc{color:var(--acc);}
+
+.inc-leaderboard{background:var(--card);border:1px solid var(--border);padding:.7rem 1rem;margin-bottom:1rem;border-radius:2px;}
+.inc-rank-row{display:flex;align-items:center;gap:.6rem;padding:.35rem 0;border-bottom:1px solid var(--border);}
+.inc-rank-row:last-child{border-bottom:none;}
+.inc-rank-num{font-family:'Orbitron',sans-serif;font-size:.7rem;color:var(--acc);width:2rem;flex-shrink:0;}
+.inc-rank-name{font-family:'Rajdhani',sans-serif;font-weight:600;font-size:.9rem;color:var(--textb);flex:1;}
+.inc-rank-val{font-family:'Share Tech Mono',monospace;font-size:.75rem;color:var(--green);font-weight:700;}
+
+.inc-pending{background:var(--card);border:1px solid var(--border);padding:.7rem 1rem;border-radius:2px;}

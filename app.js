@@ -65,6 +65,7 @@ function initData(){
   if(!DB.get('settings'))DB.set('settings',{webhook:'',webhookName:'Frakce LOG'});
   if(!DB.get('radios'))DB.set('radios',{primary:'',secondary:'',action:'',vedeni:''});
   if(!DB.get('contacts'))DB.set('contacts',{});
+  if(!DB.get('incomes'))DB.set('incomes',[]);
 }
 
 function generateMembers(){
@@ -251,6 +252,7 @@ function aTab(tab,btn){
   if(tab==='radio')      renderAdminRadio();
   if(tab==='settings')   renderSettings();
   if(tab==='log')        renderLog();
+  if(tab==='incomes')    renderAdminIncomes();
 }
 
 // ════════════════════════════════
@@ -268,11 +270,12 @@ function mTab(tab,btn){
   if(tab==='messages')  renderMemberMessages();
   if(tab==='warehouse'){renderMemberWarehouse();populateDepositSelect();}
   if(tab==='clothing')  renderClothing();
-  if(tab==='finance')   renderMyFinance();
+  if(tab==='finance')   {renderMyFinance();populateIncSource();}
   if(tab==='excuse')    renderMyExcuses();
   if(tab==='report')    renderSentReports();
   if(tab==='radio')     renderMyRadio();
   if(tab==='contacts')  renderContacts();
+  if(tab==='incomes')   {renderMyIncomes();}
   updateBadges();
 }
 
@@ -632,7 +635,9 @@ function renderAdminFinance(){
   var fs=DB.get('finsettings')||{weeklyFee:5000};
   var members=DB.get('members')||[];
   var wk=getWeekKey();
-  var total=fin.payments.reduce(function(s,p){return s+p.amount;},0);
+  var incomes=DB.get('incomes')||[];
+  var confirmedIncome=incomes.filter(function(i){return i.status==='confirmed';}).reduce(function(s,i){return s+i.amount;},0);
+  var total=fin.payments.reduce(function(s,p){return s+p.amount;},0)+confirmedIncome;
   var totalExp=fin.expenses.reduce(function(s,e){return s+e.amount;},0);
   var el=document.getElementById('financeAdminPanel');
   var summary='<div class="fa-summary">'+
@@ -1270,6 +1275,169 @@ function deleteContact(idx){
   toast('Kontakt smazán','info');renderContacts();
 }
 
+
+// ── PŘÍJMY DO KASY ───────────────────────────
+function populateIncSource(){
+  var items=DB.get('warehouse')||[];
+  var drugs=items.filter(function(i){return i.cat==='drugs';});
+  var sel=document.getElementById('incSource');if(!sel)return;
+  var extra=['Zakázka','Loupež','Jiné'];
+  sel.innerHTML=drugs.map(function(i){
+    return '<option value="'+esc(i.name)+'">'+esc(i.name)+'</option>';
+  }).join('')+extra.map(function(s){
+    return '<option value="'+s+'">'+s+'</option>';
+  }).join('');
+}
+
+function submitIncome(){
+  var m=getMember();if(!m)return;
+  var amount=parseInt(document.getElementById('incAmount').value)||0;
+  var source=document.getElementById('incSource').value;
+  var note=document.getElementById('incNote').value.trim();
+  var st=document.getElementById('incStatus');
+  if(!amount||amount<=0){st.textContent='// ZADEJTE ČÁSTKU';return;}
+  var incomes=DB.get('incomes')||[];
+  incomes.push({
+    id:uid(),
+    memberId:m.id,
+    memberName:m.displayName,
+    amount:amount,
+    source:source,
+    note:note,
+    date:nowStr(),
+    status:'pending'
+  });
+  DB.set('incomes',incomes);
+  addLog('fin','Člen "'+m.displayName+'" nahlásil příjem $'+amount+' ('+source+').');
+  document.getElementById('incAmount').value='';
+  document.getElementById('incNote').value='';
+  st.textContent='// ODESLÁNO KE SCHVÁLENÍ';
+  setTimeout(function(){st.textContent='';},3000);
+  toast('Příjem nahlášen ✓','success');
+  renderMyIncomes();
+}
+
+function renderMyIncomes(){
+  var m=getMember();if(!m)return;
+  var incomes=(DB.get('incomes')||[]).filter(function(i){return i.memberId===m.id;});
+  var el=document.getElementById('myIncomeList');if(!el)return;
+
+  // Celková statistika člena
+  var confirmed=incomes.filter(function(i){return i.status==='confirmed';});
+  var totalMy=confirmed.reduce(function(s,i){return s+i.amount;},0);
+  var statHtml='<div class="inc-my-stat">'+
+    '<div class="inc-stat-label">// TVŮJ CELKOVÝ PŘÍSPĚVEK DO KASY</div>'+
+    '<div class="inc-stat-val">$'+totalMy.toLocaleString('cs-CZ')+'</div>'+
+  '</div>';
+
+  if(!incomes.length){el.innerHTML=statHtml+'<div class="empty-s">// Žádné záznamy</div>';return;}
+  var rows=incomes.slice().reverse().map(function(i){
+    var cls=i.status==='confirmed'?'confirmed':i.status==='rejected'?'rejected':'pending';
+    var label={confirmed:'✓ POTVRZENO',rejected:'✗ ZAMÍTNUTO',pending:'⏳ ČEKÁ'}[i.status];
+    return '<div class="inc-card '+cls+'">'+
+      '<div class="inc-card-top">'+
+        '<div>'+
+          '<span class="inc-source">'+esc(i.source)+'</span>'+
+          (i.note?'<span class="inc-note"> — '+esc(i.note)+'</span>':'')+
+        '</div>'+
+        '<div class="inc-amount">$'+i.amount.toLocaleString('cs-CZ')+'</div>'+
+      '</div>'+
+      '<div class="inc-card-bot">'+
+        '<span class="inc-date">'+i.date+'</span>'+
+        '<span class="inc-status '+cls+'">'+label+'</span>'+
+      '</div>'+
+    '</div>';
+  }).join('');
+  el.innerHTML=statHtml+rows;
+}
+
+// ── PŘÍJMY ADMIN ─────────────────────────────
+function renderAdminIncomes(){
+  var incomes=DB.get('incomes')||[];
+  var members=DB.get('members')||[];
+  var el=document.getElementById('adminIncomePanel');if(!el)return;
+
+  var confirmed=incomes.filter(function(i){return i.status==='confirmed';});
+  var pending=incomes.filter(function(i){return i.status==='pending';});
+  var totalKasa=confirmed.reduce(function(s,i){return s+i.amount;},0);
+
+  // Souhrn kasy
+  var summary='<div class="inc-summary">'+
+    '<div class="inc-sum-card"><div class="inc-sum-title">CELKEM V KASE</div><div class="inc-sum-val green">$'+totalKasa.toLocaleString('cs-CZ')+'</div></div>'+
+    '<div class="inc-sum-card"><div class="inc-sum-title">ČEKÁ NA SCHVÁLENÍ</div><div class="inc-sum-val acc">'+pending.length+' záznamů</div></div>'+
+  '</div>';
+
+  // Žebříček členů
+  var memberTotals={};
+  confirmed.forEach(function(i){
+    if(!memberTotals[i.memberId])memberTotals[i.memberId]={name:i.memberName,total:0};
+    memberTotals[i.memberId].total+=i.amount;
+  });
+  var sorted=Object.values(memberTotals).sort(function(a,b){return b.total-a.total;});
+  var leaderboard='<div class="inc-leaderboard"><div class="fa-exp-title">// ŽEBŘÍČEK PŘÍSPĚVKŮ</div>'+
+    (sorted.length?sorted.map(function(x,idx){
+      return '<div class="inc-rank-row">'+
+        '<span class="inc-rank-num">#'+(idx+1)+'</span>'+
+        '<span class="inc-rank-name">'+esc(x.name)+'</span>'+
+        '<span class="inc-rank-val">$'+x.total.toLocaleString('cs-CZ')+'</span>'+
+      '</div>';
+    }).join(''):'<div class="empty-s">// Žádné potvrzené příjmy</div>')+
+  '</div>';
+
+// Čekající ke schválení
+  var pendingHtml='<div class="inc-pending"><div class="fa-exp-title">// KE SCHVÁLENÍ</div>'+
+    (pending.length?pending.slice().reverse().map(function(i){
+      return '<div class="inc-card pending">'+
+        '<div class="inc-card-top">'+
+          '<div>'+
+            '<span class="inc-rank-name">'+esc(i.memberName)+'</span>'+
+            '<span class="inc-source" style="margin-left:.5rem;">'+esc(i.source)+'</span>'+
+            (i.note?'<span class="inc-note"> — '+esc(i.note)+'</span>':'')+
+          '</div>'+
+          '<div class="inc-amount">$'+i.amount.toLocaleString('cs-CZ')+'</div>'+
+        '</div>'+
+        '<div class="inc-card-bot">'+
+          '<span class="inc-date">'+i.date+'</span>'+
+          '<div style="display:flex;gap:.4rem;">'+
+            '<button class="btn-acc small" onclick="resolveIncome(\''+i.id+'\',\'confirmed\')">✓ POTVRDIT</button>'+
+            '<button class="btn-danger" onclick="resolveIncome(\''+i.id+'\',\'rejected\')">✗ ZAMÍTNOUT</button>'+
+          '</div>'+
+        '</div>'+
+      '</div>';
+    }).join(''):'<div class="empty-s">// Nic nečeká na schválení</div>')+
+  '</div>';
+
+  // Historie potvrzených
+  var historyHtml='<div class="inc-pending" style="margin-top:1rem;"><div class="fa-exp-title">// HISTORIE PŘÍJMŮ</div>'+
+    (confirmed.length?confirmed.slice().reverse().map(function(i){
+      return '<div class="inc-card confirmed" style="opacity:.8;">'+
+        '<div class="inc-card-top">'+
+          '<div>'+
+            '<span class="inc-rank-name">'+esc(i.memberName)+'</span>'+
+            '<span class="inc-source" style="margin-left:.5rem;">'+esc(i.source)+'</span>'+
+            (i.note?'<span class="inc-note"> — '+esc(i.note)+'</span>':'')+
+          '</div>'+
+          '<div class="inc-amount">$'+i.amount.toLocaleString('cs-CZ')+'</div>'+
+        '</div>'+
+        '<div class="inc-card-bot"><span class="inc-date">'+i.date+'</span><span class="inc-status confirmed">✓ POTVRZENO</span></div>'+
+      '</div>';
+    }).join(''):'<div class="empty-s">// Žádné potvrzené příjmy</div>')+
+  '</div>';
+
+  el.innerHTML=summary+leaderboard+pendingHtml+historyHtml;
+}
+
+function resolveIncome(id,decision){
+  var incomes=DB.get('incomes')||[];
+  var item=incomes.find(function(i){return i.id===id;});
+  if(!item)return;
+  item.status=decision;
+  DB.set('incomes',incomes);
+  addLog('fin','Admin '+(decision==='confirmed'?'potvrdil':'zamítl')+' příjem $'+item.amount+' od "'+item.memberName+'" ('+item.source+').');
+  toast(decision==='confirmed'?'Příjem potvrzen ✓':'Zamítnuto','info');
+  renderAdminIncomes();
+  renderAdminFinance();
+}
 // ── START ──────────────────────────────────────
 window.addEventListener('DOMContentLoaded',function(){
   initData();
